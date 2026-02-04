@@ -44,3 +44,12 @@ next-env.d.ts
 
 # docs
 /docs
+
+# vercel
+.vercel
+
+# database
+.db
+/supabase
+/seeds
+/src/database
