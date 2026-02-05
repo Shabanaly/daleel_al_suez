@@ -1,5 +1,3 @@
-'use client'
-
 import { useState, useEffect } from 'react'
 import { Bell, Check, Clock, ExternalLink } from 'lucide-react'
 import {
@@ -13,6 +11,7 @@ import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { formatDistanceToNow } from 'date-fns'
 import { ar } from 'date-fns/locale'
+import { createClient } from '@/lib/supabase/client'
 
 export function NotificationBell() {
     const [unreadCount, setUnreadCount] = useState(0)
@@ -32,9 +31,35 @@ export function NotificationBell() {
 
     useEffect(() => {
         fetchNotifications()
-        // Poll for new notifications every minute
-        const interval = setInterval(fetchNotifications, 60000)
-        return () => clearInterval(interval)
+
+        // Set up Supabase Realtime subscription for instant updates
+        const supabase = createClient()
+
+        // Subscribe to notifications table changes
+        const channel = supabase
+            .channel('notifications-changes')
+            .on(
+                'postgres_changes',
+                {
+                    event: '*', // Listen to INSERT, UPDATE, DELETE
+                    schema: 'public',
+                    table: 'notifications'
+                },
+                () => {
+                    // Fetch new notifications when any change occurs
+                    fetchNotifications()
+                }
+            )
+            .subscribe()
+
+        // Also use polling as fallback (every 10 seconds instead of 60)
+        const interval = setInterval(fetchNotifications, 10000)
+
+        return () => {
+            // Cleanup: unsubscribe from realtime and clear interval
+            supabase.removeChannel(channel)
+            clearInterval(interval)
+        }
     }, [])
 
     useEffect(() => {
