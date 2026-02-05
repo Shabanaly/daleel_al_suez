@@ -23,10 +23,10 @@ export function NotificationBell() {
         const count = await getUnreadNotificationsCountAction()
         setUnreadCount(count)
 
-        if (isOpen) {
-            const recent = await getRecentNotificationsAction()
-            setNotifications(recent)
-        }
+        // Always fetch recent notifications, not just when dropdown is open
+        // This ensures data is ready when user clicks the bell
+        const recent = await getRecentNotificationsAction()
+        setNotifications(recent)
     }
 
     useEffect(() => {
