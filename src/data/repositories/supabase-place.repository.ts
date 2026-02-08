@@ -138,7 +138,8 @@ export class SupabasePlaceRepository implements IPlaceRepository {
                 social_links: place.socialLinks,
                 images: place.images,
                 created_by: userId,
-                working_hours: place.workingHours,
+                opens_at: place.opensAt,
+                closes_at: place.closesAt,
                 status: place.status || 'pending'
             })
             .select("*, categories(name), areas(name)")
@@ -157,7 +158,8 @@ export class SupabasePlaceRepository implements IPlaceRepository {
         if (place.areaId) updates.area_id = place.areaId;
         if (place.socialLinks) updates.social_links = place.socialLinks;
         if (place.googleMapsUrl) updates.google_maps_url = place.googleMapsUrl;
-        if (place.workingHours) updates.working_hours = place.workingHours;
+        if (place.opensAt !== undefined) updates.opens_at = place.opensAt;
+        if (place.closesAt !== undefined) updates.closes_at = place.closesAt;
 
         // Clean up entity keys
         delete updates.categoryId;
@@ -166,7 +168,8 @@ export class SupabasePlaceRepository implements IPlaceRepository {
         delete updates.areaName;
         delete updates.socialLinks;
         delete updates.googleMapsUrl;
-        delete updates.workingHours;
+        delete updates.opensAt;
+        delete updates.closesAt;
         delete updates.createdBy;
         delete updates.createdByName;
         delete updates.id;
@@ -239,7 +242,8 @@ export class SupabasePlaceRepository implements IPlaceRepository {
             googleMapsUrl: row.google_maps_url,
             website: row.website,
             socialLinks: row.social_links || {},
-            workingHours: row.working_hours,
+            opensAt: row.opens_at,
+            closesAt: row.closes_at,
             type: row.type || 'business',
             status: row.status
         };

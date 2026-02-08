@@ -32,7 +32,8 @@ export default function PlaceForm({ initialData, categories, areas }: PlaceFormP
     const [type, setType] = useState<'business' | 'professional'>(initialData?.type || 'business')
     const [images, setImages] = useState<string[]>(initialData?.images || [])
     const [address, setAddress] = useState(initialData?.address || '')
-    const [workingHours, setWorkingHours] = useState(initialData?.workingHours || '')
+    const [opensAt, setOpensAt] = useState(initialData?.opensAt || '')
+    const [closesAt, setClosesAt] = useState(initialData?.closesAt || '')
 
     // Social Links State
     const [socialLinks, setSocialLinks] = useState(initialData?.socialLinks || { facebook: '', instagram: '' })
@@ -51,7 +52,8 @@ export default function PlaceForm({ initialData, categories, areas }: PlaceFormP
             images,
             socialLinks,
             type,
-            workingHours
+            opensAt,
+            closesAt
         }
 
         if (initialData?.id) {
@@ -216,19 +218,9 @@ export default function PlaceForm({ initialData, categories, areas }: PlaceFormP
                                 <label className="text-xs text-slate-400 mb-1 block">يفتح في</label>
                                 <input
                                     type="time"
-                                    value={workingHours.split(' - ')[0] || ''}
-                                    onChange={(e) => {
-                                        const open = e.target.value;
-                                        const parts = workingHours.split(' - ');
-                                        const close = parts.length > 1 ? parts[1] : '';
-                                        if (open) {
-                                            setWorkingHours(`${open} - ${close}`);
-                                        } else {
-                                            setWorkingHours(''); // Clear if open time is removed? Or just keep close? Let's clear for now or handle better.
-                                            // Actually, let's keep it simple: always format "Open - Close"
-                                            setWorkingHours(` - ${close}`);
-                                        }
-                                    }}
+                                    name="opens_at"
+                                    value={opensAt}
+                                    onChange={(e) => setOpensAt(e.target.value)}
                                     className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white outline-none focus:border-primary transition-colors text-center dir-ltr"
                                 />
                             </div>
@@ -236,18 +228,13 @@ export default function PlaceForm({ initialData, categories, areas }: PlaceFormP
                                 <label className="text-xs text-slate-400 mb-1 block">يغلق في</label>
                                 <input
                                     type="time"
-                                    value={workingHours.split(' - ')[1] || ''}
-                                    onChange={(e) => {
-                                        const close = e.target.value;
-                                        const parts = workingHours.split(' - ');
-                                        const open = parts.length > 0 ? parts[0] : '';
-                                        setWorkingHours(`${open} - ${close}`);
-                                    }}
+                                    name="closes_at"
+                                    value={closesAt}
+                                    onChange={(e) => setClosesAt(e.target.value)}
                                     className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white outline-none focus:border-primary transition-colors text-center dir-ltr"
                                 />
                             </div>
                         </div>
-                        <input type="hidden" name="workingHours" value={workingHours} />
                     </div>
                     <div>
                         <div className="flex justify-between items-center mb-2">

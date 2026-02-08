@@ -41,6 +41,10 @@ export async function createPlaceAction(prevState: ActionState, formData: FormDa
             address: formData.get('address') as string,
             description: formData.get('description') as string,
             phone: formData.get('phone') as string,
+            whatsapp: formData.get('whatsapp') as string,
+            googleMapsUrl: formData.get('google_maps_url') as string,
+            opensAt: formData.get('opens_at') as string,
+            closesAt: formData.get('closes_at') as string,
             images: [],
         }, user.id)
 

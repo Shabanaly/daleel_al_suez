@@ -133,9 +133,11 @@ export function PlaceDetailsView({
                                 <Clock className="text-primary" size={20} />
                                 مواعيد العمل
                             </h3>
-                            {place.workingHours ? (
+                            {place.opensAt && place.closesAt ? (
                                 <div className="space-y-2 text-sm">
-                                    <p className="text-muted-foreground">{place.workingHours}</p>
+                                    <p className="text-muted-foreground">
+                                        يومياً من {place.opensAt?.slice(0, 5)} إلى {place.closesAt?.slice(0, 5)}
+                                    </p>
                                 </div>
                             ) : (
                                 <div className="text-sm text-muted-foreground">

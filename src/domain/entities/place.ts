@@ -17,7 +17,8 @@ export interface Place {
     website?: string;
     facebook?: string;
     instagram?: string;
-    workingHours?: string;
+    opensAt?: string | null;
+    closesAt?: string | null;
 
     // New Fields
     type: 'business' | 'professional';
