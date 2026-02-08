@@ -5,6 +5,8 @@ export type Category = {
     name: string
     slug: string
     icon: string
+    is_featured: boolean
+    sort_order: number
     created_at: string
     updated_at: string
 }

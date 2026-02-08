@@ -1,6 +1,6 @@
 'use client'
 
-import { LayoutDashboard, Store, Users, Variable, Settings, LogOut, Menu, X, User } from 'lucide-react'
+import { LayoutDashboard, Store, Users, Variable, Settings, LogOut, Menu, X, User, LifeBuoy } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -22,12 +22,13 @@ export function AdminSidebar({ currentUserRole }: AdminSidebarProps) {
 
     // Dynamic navigation based on role
     const navigation = [
-        { name: 'لوحة التحكم', href: '/admin', icon: LayoutDashboard },
+        { name: 'الرئيسية', href: '/admin', icon: LayoutDashboard },
         { name: 'الأماكن', href: '/admin/places', icon: Store },
         { name: 'التصنيفات', href: '/admin/categories', icon: Variable },
         // Only show Users and Settings for Super Admin
         ...(isSuperAdmin ? [
             { name: 'المستخدمين', href: '/admin/users', icon: Users },
+            { name: 'الدعم الفني', href: '/admin/support', icon: LifeBuoy },
             { name: 'الإعدادات', href: '/admin/settings', icon: Settings }
         ] : []),
         { name: 'حسابي', href: '/admin/profile', icon: User },

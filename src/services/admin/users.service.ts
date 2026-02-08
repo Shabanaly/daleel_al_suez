@@ -26,21 +26,14 @@ export async function getUsers() {
     const { data: profiles, error } = await supabase
         .from('profiles')
         .select('*')
-
-    // Sort logic moved to service or keep in client? 
-    // Usually DB sort is better if scalable, but for complex business logic sorting (Role Priority), 
-    // it's okay to do it in JS if dataset is small (<1000 users). 
-    // For now, let's just return raw data to match current behavior, potentially sorting by created_at desc.
+        .order('created_at', { ascending: false })
 
     if (error) {
         console.error('Error fetching users:', error)
         return []
     }
 
-    // Default sort by created_at desc
-    return (profiles as Profile[]).sort((a, b) =>
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    )
+    return profiles as Profile[]
 }
 
 export async function getUserStats(userId: string): Promise<UserStats> {

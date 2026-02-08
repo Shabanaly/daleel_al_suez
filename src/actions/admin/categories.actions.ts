@@ -19,6 +19,8 @@ export async function createCategory(prevState: CategoryState, formData: FormDat
     const name = formData.get('name') as string
     const slug = formData.get('slug') as string
     const icon = formData.get('icon') as string
+    const is_featured = formData.get('is_featured') === 'true'
+    const sort_order = parseInt(formData.get('sort_order') as string) || 0
 
     // Basic validation
     if (!name || name.length < 3) {
@@ -51,7 +53,7 @@ export async function createCategory(prevState: CategoryState, formData: FormDat
         // 3. Insert category (no created_by needed)
         const { data, error } = await supabase
             .from('categories')
-            .insert({ name, slug, icon })
+            .insert({ name, slug, icon, is_featured, sort_order })
             .select()
             .single()
 
@@ -65,7 +67,7 @@ export async function createCategory(prevState: CategoryState, formData: FormDat
             action: 'category.create',
             targetId: data.id,
             details: {
-                after: { name, slug, icon }
+                after: { name, slug, icon, is_featured, sort_order }
             }
         })
     } catch (e) {
@@ -80,6 +82,8 @@ export async function updateCategory(id: string, prevState: CategoryState, formD
     const name = formData.get('name') as string
     const slug = formData.get('slug') as string
     const icon = formData.get('icon') as string
+    const is_featured = formData.get('is_featured') === 'true'
+    const sort_order = parseInt(formData.get('sort_order') as string) || 0
 
     // Basic validation
     if (!name || name.length < 3) {
@@ -119,7 +123,7 @@ export async function updateCategory(id: string, prevState: CategoryState, formD
         // 4. Update category
         const { error } = await supabase
             .from('categories')
-            .update({ name, slug, icon })
+            .update({ name, slug, icon, is_featured, sort_order })
             .eq('id', id)
 
         if (error) {
@@ -131,7 +135,7 @@ export async function updateCategory(id: string, prevState: CategoryState, formD
         if (oldCategory) {
             const changes = generateChangesSummary(
                 oldCategory,
-                { name, slug, icon }
+                { name, slug, icon, is_featured, sort_order }
             )
 
             await logAudit({
@@ -139,7 +143,7 @@ export async function updateCategory(id: string, prevState: CategoryState, formD
                 targetId: id,
                 details: {
                     before: oldCategory,
-                    after: { name, slug, icon },
+                    after: { name, slug, icon, is_featured, sort_order },
                     changes
                 }
             })

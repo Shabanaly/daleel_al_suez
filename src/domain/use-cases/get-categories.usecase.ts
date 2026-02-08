@@ -4,7 +4,7 @@ import { ICategoryRepository } from "../interfaces/category-repository.interface
 export class GetCategoriesUseCase {
     constructor(private categoryRepository: ICategoryRepository) { }
 
-    async execute(): Promise<Category[]> {
-        return this.categoryRepository.getAllCategories();
+    async execute(options?: { isFeatured?: boolean }): Promise<Category[]> {
+        return this.categoryRepository.getAllCategories(options);
     }
 }

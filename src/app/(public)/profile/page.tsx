@@ -2,20 +2,49 @@
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
-import { User, Mail, Calendar, LogOut, ShieldCheck, Loader2, Heart } from 'lucide-react'
-import Link from 'next/link'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { User, Loader2, LogOut, Shield, AlertTriangle, LifeBuoy, Bell, Activity } from 'lucide-react'
+import { ProfileTabs, type TabItem } from '@/presentation/components/profile/profile-tabs'
+import { OverviewSection } from '@/presentation/components/profile/overview-section'
+import { SecuritySection } from '@/presentation/components/profile/security-section'
+import { DangerZone } from '@/presentation/components/profile/danger-zone'
+import { SupportList } from '@/presentation/components/profile/support/support-list'
+import { getUserTickets } from '@/actions/support.actions'
+import { NotificationSettings } from '@/presentation/components/profile/notification-settings'
+import { ActivityDashboard } from '@/presentation/components/profile/activity-dashboard'
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from "@/components/ui/accordion"
+
+type TabType = 'overview' | 'security' | 'danger' | 'support' | 'notifications' | 'activity'
 
 export default function ProfilePage() {
     const [user, setUser] = useState<any>(null)
     const [profile, setProfile] = useState<any>(null)
     const [loading, setLoading] = useState(true)
+    const [activeTab, setActiveTab] = useState<TabType>('overview')
+    const [tickets, setTickets] = useState<any[]>([])
     const router = useRouter()
+    const searchParams = useSearchParams()
     const supabase = createClient()
+
+    // Get ticketId from URL if present
+    const ticketIdParam = searchParams.get('ticketId')
 
     const [isEditing, setIsEditing] = useState(false)
     const [formData, setFormData] = useState({ fullName: '', password: '' })
     const [saving, setSaving] = useState(false)
+
+    // Handle initial tab from URL
+    useEffect(() => {
+        const tabParam = searchParams.get('tab')
+        if (tabParam && ['overview', 'security', 'danger', 'support', 'notifications', 'activity'].includes(tabParam)) {
+            setActiveTab(tabParam as TabType)
+        }
+    }, [searchParams])
 
     useEffect(() => {
         const getUser = async () => {
@@ -50,6 +79,20 @@ export default function ProfilePage() {
 
         getUser()
     }, [router, supabase])
+
+    useEffect(() => {
+        if (activeTab === 'support' && user) {
+            const fetchTickets = async () => {
+                try {
+                    const data = await getUserTickets()
+                    setTickets(data || [])
+                } catch (error) {
+                    console.error('Error fetching tickets:', error)
+                }
+            }
+            fetchTickets()
+        }
+    }, [activeTab, user])
 
     const handleSignOut = async () => {
         await supabase.auth.signOut()
@@ -88,10 +131,20 @@ export default function ProfilePage() {
     if (!user) return null
 
     const isAdmin = profile?.role === 'admin' || profile?.role === 'super_admin'
+    const isOAuthUser = user.app_metadata?.provider === 'google' || user.app_metadata?.provider === 'facebook'
+
+    const tabs: (TabItem & { component: React.ReactNode })[] = [
+        { id: 'overview', label: 'نظرة عامة', icon: User, component: <OverviewSection user={user} profile={profile} isAdmin={isAdmin} /> },
+        { id: 'activity', label: 'النشاط', icon: Activity, component: <ActivityDashboard /> },
+        { id: 'security', label: 'الأمان', icon: Shield, component: <SecuritySection user={user} isOAuthUser={isOAuthUser} /> },
+        { id: 'notifications', label: 'الإشعارات', icon: Bell, component: <NotificationSettings /> },
+        { id: 'support', label: 'الدعم الفني', icon: LifeBuoy, component: <SupportList tickets={tickets} initialTicketId={ticketIdParam} /> },
+        { id: 'danger', label: 'منطقة الخطر', icon: AlertTriangle, component: <DangerZone user={user} isOAuthUser={isOAuthUser} /> },
+    ]
 
     return (
         <div className="container mx-auto px-4 py-12 relative">
-            <div className="max-w-2xl mx-auto bg-card border border-border rounded-3xl overflow-hidden shadow-xl relative z-10">
+            <div className="max-w-4xl mx-auto bg-card border border-border rounded-3xl overflow-hidden shadow-xl relative z-10">
                 {/* Header/Cover */}
                 <div className="h-32 bg-gradient-to-r from-primary to-blue-600 relative">
                     <div className="absolute -bottom-10 right-8">
@@ -121,59 +174,41 @@ export default function ProfilePage() {
                         <h1 className="text-2xl font-bold text-foreground">
                             {user.user_metadata?.full_name || 'مستخدم دليل السويس'}
                         </h1>
-                        <p className="text-muted-foreground flex items-center gap-2 mt-1">
-                            <Mail size={16} />
+                        <p className="text-muted-foreground text-sm mt-1">
                             {user.email}
                         </p>
                     </div>
 
-                    <div className="grid gap-4">
-                        <div className="flex items-center gap-3 p-4 bg-muted/50 rounded-xl border border-border">
-                            <div className="p-2 bg-primary/10 text-primary rounded-lg">
-                                <Calendar size={20} />
-                            </div>
-                            <div>
-                                <p className="text-sm text-muted-foreground">تاريخ الانضمام</p>
-                                <p className="font-medium text-foreground">
-                                    {new Date(user.created_at).toLocaleDateString('ar-EG', {
-                                        year: 'numeric',
-                                        month: 'long',
-                                        day: 'numeric'
-                                    })}
-                                </p>
-                            </div>
-                        </div>
-
-                        {/* Favorites */}
-                        <Link
-                            href="/favorites"
-                            className="flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-xl hover:bg-red-100 transition-colors group"
-                        >
-                            <div className="p-2 bg-red-500/10 text-red-500 rounded-lg group-hover:bg-red-500/20">
-                                <Heart size={20} className="fill-current" />
-                            </div>
-                            <div>
-                                <p className="font-bold text-red-900">مفضلاتي</p>
-                                <p className="text-sm text-red-600">الأماكن المحفوظة</p>
-                            </div>
-                        </Link>
-
-                        {isAdmin && (
-                            <Link
-                                href="/admin"
-                                className="flex items-center gap-3 p-4 bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800 rounded-xl hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors group"
-                            >
-                                <div className="p-2 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-lg group-hover:bg-indigo-500/20">
-                                    <ShieldCheck size={20} />
-                                </div>
-                                <div className="flex-1">
-                                    <p className="font-bold text-indigo-900 dark:text-indigo-100">لوحة التحكم</p>
-                                    <p className="text-sm text-indigo-600 dark:text-indigo-300">أنت تمتلك صلاحيات الأدمن، اضغط للدخول</p>
-                                </div>
-                            </Link>
-                        )}
+                    {/* Mobile View: Accordion */}
+                    <div className="md:hidden">
+                        <Accordion type="single" collapsible value={activeTab} onValueChange={(val) => val && setActiveTab(val as TabType)}>
+                            {tabs.map((tab) => (
+                                <AccordionItem key={tab.id} value={tab.id}>
+                                    <AccordionTrigger>
+                                        <div className="flex items-center gap-2">
+                                            <tab.icon size={18} />
+                                            <span>{tab.label}</span>
+                                        </div>
+                                    </AccordionTrigger>
+                                    <AccordionContent>
+                                        <div className="pt-2">
+                                            {tab.component}
+                                        </div>
+                                    </AccordionContent>
+                                </AccordionItem>
+                            ))}
+                        </Accordion>
                     </div>
 
+                    {/* Desktop View: Tabs */}
+                    <div className="hidden md:block">
+                        <ProfileTabs items={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
+                        <div className="mt-6">
+                            {tabs.find(t => t.id === activeTab)?.component}
+                        </div>
+                    </div>
+
+                    {/* Logout Button */}
                     <div className="mt-8 pt-8 border-t border-border">
                         <button
                             onClick={handleSignOut}
@@ -208,19 +243,6 @@ export default function ProfilePage() {
                                     placeholder="الاسم الكامل"
                                     required
                                 />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium mb-1.5">كلمة المرور الجديدة</label>
-                                <input
-                                    type="password"
-                                    value={formData.password}
-                                    onChange={e => setFormData({ ...formData, password: e.target.value })}
-                                    className="w-full px-3 py-2 rounded-lg border border-input bg-background focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
-                                    placeholder="اتركها فارغة إذا لم ترد التغيير"
-                                    minLength={6}
-                                />
-                                <p className="text-xs text-muted-foreground mt-1">اترك هذا الحقل فارغاً للاحتفاظ بكلمة المرور الحالية.</p>
                             </div>
 
                             <div className="flex gap-3 pt-4">

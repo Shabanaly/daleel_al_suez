@@ -11,9 +11,14 @@ export function DeletePlaceButton({ id }: { id: string }) {
         if (!confirm('هل أنت متأكد من حذف هذا المكان؟')) return
         setLoading(true)
         try {
-            await deletePlaceAction(id)
+            const result = await deletePlaceAction(id)
+            if (result && !result.success) {
+                alert(`فشل الحذف: ${result.message}`)
+                console.error(result)
+            }
         } catch (error) {
-            alert('فشل الحذف')
+            alert('حدث خطأ غير متوقع')
+            console.error(error)
         } finally {
             setLoading(false)
         }

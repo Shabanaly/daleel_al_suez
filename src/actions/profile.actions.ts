@@ -32,3 +32,34 @@ export async function updateProfile(data: { fullName?: string, password?: string
     revalidatePath('/profile')
     return { success: true }
 }
+
+export async function updatePassword(data: { currentPassword: string, newPassword: string }) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user || !user.email) {
+        throw new Error('غير مصرح')
+    }
+
+    // Verify current password
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: user.email,
+        password: data.currentPassword
+    })
+
+    if (signInError) {
+        throw new Error('كلمة المرور الحالية غير صحيحة')
+    }
+
+    // Update to new password
+    const { error: updateError } = await supabase.auth.updateUser({
+        password: data.newPassword
+    })
+
+    if (updateError) {
+        throw new Error(updateError.message)
+    }
+
+    revalidatePath('/profile')
+    return { success: true }
+}

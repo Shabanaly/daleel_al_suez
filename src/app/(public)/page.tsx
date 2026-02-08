@@ -10,7 +10,7 @@ export default async function Home() {
   // Fetch featured places and categories
   const [featuredPlaces, categories] = await Promise.all([
     getFeaturedPlacesUseCase.execute(),
-    getCategoriesUseCase.execute()
+    getCategoriesUseCase.execute({ isFeatured: true })
   ])
 
   // Get places count per category

@@ -4,4 +4,6 @@ export interface Category {
     slug: string;
     icon?: string;
     description?: string;
+    is_featured?: boolean;
+    sort_order?: number;
 }

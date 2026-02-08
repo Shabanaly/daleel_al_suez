@@ -7,6 +7,7 @@ export interface Notification {
     title: string;
     message: string;
     link?: string;
+    place_slug?: string; // For role-based routing to place details
     is_read: boolean;
     created_at: string;
 }

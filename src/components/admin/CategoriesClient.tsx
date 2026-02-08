@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { deleteCategory } from '@/actions/admin/categories.actions'
-import { Plus, Pencil, Trash2, Search, Layers } from 'lucide-react'
+import { Plus, Pencil, Trash2, Search, Layers, Star } from 'lucide-react'
 import { getIconComponent } from '@/lib/icons'
 import { format } from 'date-fns'
 import type { Category } from '@/services/admin/categories.service'

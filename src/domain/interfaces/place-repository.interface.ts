@@ -19,6 +19,6 @@ export interface IPlaceRepository {
     getAllPlaces(): Promise<Place[]>; // For Super Admin
     createPlace(place: Partial<Place>, userId: string, client?: any): Promise<Place>;
     updatePlace(id: string, place: Partial<Place>, client?: any): Promise<Place>;
-    deletePlace(id: string): Promise<void>;
+    deletePlace(id: string, client?: any): Promise<void>;
     getPlaceById(id: string): Promise<Place | null>;
 }

@@ -18,6 +18,20 @@ export function NotificationBell() {
     const [notifications, setNotifications] = useState<Notification[]>([])
     const [isOpen, setIsOpen] = useState(false)
     const [loading, setLoading] = useState(false)
+    const [userRole, setUserRole] = useState<string | null>(null)
+
+    // Helper function to generate role-based notification links
+    const getNotificationLink = (notification: Notification): string => {
+        // If notification has place_slug, route based on user role
+        if (notification.place_slug) {
+            if (userRole === 'admin' || userRole === 'super_admin') {
+                return '/admin/places'
+            }
+            return `/places/${notification.place_slug}`
+        }
+        // Fallback to static link or default
+        return notification.link || '/profile'
+    }
 
     const fetchNotifications = async () => {
         const count = await getUnreadNotificationsCountAction()
@@ -30,6 +44,21 @@ export function NotificationBell() {
     }
 
     useEffect(() => {
+        // Fetch user role
+        const fetchUserRole = async () => {
+            const supabase = createClient()
+            const { data: { user } } = await supabase.auth.getUser()
+            if (user) {
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('role')
+                    .eq('id', user.id)
+                    .single()
+                setUserRole(profile?.role || 'user')
+            }
+        }
+
+        fetchUserRole()
         fetchNotifications()
 
         // Set up Supabase Realtime subscription for instant updates
@@ -155,9 +184,9 @@ export function NotificationBell() {
                                                     <Clock size={10} />
                                                     {formatDistanceToNow(new Date(notif.created_at), { addSuffix: true, locale: ar })}
                                                 </span>
-                                                {notif.link && (
+                                                {(notif.link || notif.place_slug) && (
                                                     <Link
-                                                        href={notif.link}
+                                                        href={getNotificationLink(notif)}
                                                         onClick={() => setIsOpen(false)}
                                                         className="text-primary flex items-center gap-1 font-bold hover:underline"
                                                     >

@@ -191,11 +191,10 @@ export class SupabasePlaceRepository implements IPlaceRepository {
         return this.mapToEntity(data);
     }
 
-    async deletePlace(id: string): Promise<void> {
-        const { error } = await this.supabase
-            .from("places")
-            .delete()
-            .eq("id", id);
+    async deletePlace(id: string, client?: any): Promise<void> {
+        const supabaseClient = client || this.supabase;
+        const { error } = await supabaseClient
+            .rpc('delete_place_securely', { p_place_id: id });
 
         if (error) throw new Error(error.message);
     }

@@ -5,11 +5,19 @@ import { ICategoryRepository } from "@/domain/interfaces/category-repository.int
 export class SupabaseCategoryRepository implements ICategoryRepository {
     private supabase = createClient();
 
-    async getAllCategories(): Promise<Category[]> {
-        const { data, error } = await this.supabase
+    async getAllCategories(options?: { isFeatured?: boolean }): Promise<Category[]> {
+        let query = this.supabase
             .from("categories")
-            .select("*")
-            .order("name");
+            .select("*");
+
+        if (options?.isFeatured) {
+            query = query.eq('is_featured', true);
+            query = query.order('sort_order', { ascending: true });
+        } else {
+            query = query.order("name");
+        }
+
+        const { data, error } = await query;
 
         if (error) throw new Error(error.message);
         return data.map(this.mapToEntity);
@@ -31,7 +39,9 @@ export class SupabaseCategoryRepository implements ICategoryRepository {
             id: row.id,
             name: row.name,
             slug: row.slug,
-            icon: row.icon
+            icon: row.icon,
+            is_featured: row.is_featured,
+            sort_order: row.sort_order
         };
     }
 }

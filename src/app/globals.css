@@ -89,7 +89,9 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
   }
 }
 
@@ -105,10 +107,11 @@
   }
   
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    @apply bg-slate-700/50 rounded-full;
+    background-color: #33415580; /* bg-slate-700/50 */
+    border-radius: 9999px;
   }
   
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    @apply bg-slate-600/80;
+    background-color: #475569cc; /* bg-slate-600/80 */
   }
 }

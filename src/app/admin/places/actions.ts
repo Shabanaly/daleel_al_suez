@@ -49,21 +49,17 @@ export async function deletePlaceAction(placeId: string) {
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
-        throw new Error('Unauthorized')
+        return { success: false, message: 'Unauthorized' }
     }
 
     try {
-        await deletePlaceUseCase.execute(placeId) // TODO: Add owner check in UseCase or Here. 
-        // Note: The RLS/Repo already handles ownership checks usually, but UseCase should enforce it too if passed context.
-        // Current implementation of deletePlaceUseCase just calls deletePlace(id).
-        // Supabase RLS will block if not owner.
-
+        await deletePlaceUseCase.execute(placeId, supabase)
         revalidatePath('/admin/places')
-    } catch (e) {
-        console.error(e)
-        throw e
+        return { success: true, message: 'تم الحذف بنجاح' }
+    } catch (e: any) {
+        console.error('SERVER ACTION ERROR:', e)
+        return { success: false, message: e.message || 'فشل الحذف' }
     }
-    redirect('/admin/places')
 }
 
 export async function updatePlaceAction(id: string, formData: FormData) {

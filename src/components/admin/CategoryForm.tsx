@@ -127,6 +127,8 @@ type CategoryFormProps = {
         name: string
         slug: string
         icon: string
+        is_featured?: boolean
+        sort_order?: number
     }
     currentUserRole?: string | null
 }
@@ -210,6 +212,39 @@ export default function CategoryForm({ initialData, currentUserRole }: CategoryF
                             </div>
                         )}
                         {state.errors?.slug && <p className="text-red-500 text-xs mt-1">{state.errors.slug[0]}</p>}
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Featured Toggle */}
+                    <div className="bg-slate-950/30 border border-slate-800 rounded-xl p-4 flex items-center justify-between">
+                        <div>
+                            <label className="block text-sm font-medium text-slate-300 mb-1">تصنيف مميز</label>
+                            <p className="text-xs text-slate-500">يظهر في الصفحة الرئيسية</p>
+                        </div>
+                        <label className="relative inline-flex items-center cursor-pointer">
+                            <input
+                                type="checkbox"
+                                name="is_featured"
+                                value="true"
+                                defaultChecked={initialData?.is_featured}
+                                className="sr-only peer"
+                            />
+                            <div className="w-11 h-6 bg-slate-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/50 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                        </label>
+                    </div>
+
+                    {/* Sort Order Input */}
+                    <div>
+                        <label className="block text-sm font-medium text-slate-300 mb-2">ترتيب الظهور</label>
+                        <input
+                            type="number"
+                            name="sort_order"
+                            defaultValue={initialData?.sort_order || 0}
+                            className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white placeholder-slate-600 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                            placeholder="0"
+                        />
+                        <p className="text-xs text-slate-500 mt-1">الأرقام الأقل تظهر أولاً</p>
                     </div>
                 </div>
             </div>
