@@ -37,17 +37,22 @@ export async function POST(req: Request) {
             value: query,
         })
 
-        // 2. Search Database
+        // 2. Search Database (Parallel)
         const supabase = await createClient()
-        const { data: documents, error } = await supabase.rpc('match_documents', {
-            query_embedding: embedding,
-            match_threshold: 0.3, // Adjust threshold as needed
-            match_count: 5
-        })
+        const [docsRes, activeEvents] = await Promise.all([
+            supabase.rpc('match_documents', {
+                query_embedding: embedding,
+                match_threshold: 0.3,
+                match_count: 5
+            }),
+            supabase.from('events').select('*').eq('status', 'active').gte('end_date', new Date().toISOString())
+        ])
 
-        if (error) {
-            console.error('Vector search error:', error)
-        }
+        const { data: documents, error: vectorError } = docsRes
+        if (vectorError) console.error('Vector search error:', vectorError)
+
+        const events = activeEvents.data || []
+        const eventsContext = events.map(e => `- **${e.title}**: ${e.description} (المكان: ${e.location}, التاريخ: ${new Date(e.start_date).toLocaleDateString('ar-EG')})`).join('\n')
 
         // 3. Construct Context
         const context = (documents || []).map((doc: any) => doc.content).join('\n---\n')
@@ -68,8 +73,11 @@ ${isGuest
 - "الرئيسية": العودة لصفحة البداية.
 - "التصنيفات": تصفح الأماكن حسب الفئة (مطاعم، كافيهات، خدمات طبية، إلخ).
 - "الأماكن": استكشاف كل الأماكن المتاحة في الدليل.
-- "الفعاليات": لمعرفة آخر الأحدث والفعاليات في السويس.
+- "الفعاليات": لمعرفة آخر الأحدث والفعاليات في السويس (رابط: /events).
 - "حسابي": الوصول لملف المستخدم، المفضلات، وتذاكر الدعم.
+
+[الفعاليات الحالية في السويس]:
+${eventsContext || 'لا توجد فعاليات قادمة مسجلة حالياً.'}
 
 [فئات المعلومات]:
 1. بيانات الأماكن: (مطاعم، فنادق، صيدليات، خدمات تجارية).

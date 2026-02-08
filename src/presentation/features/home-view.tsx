@@ -1,17 +1,20 @@
 import Link from "next/link";
 import { Place } from "@/domain/entities/place";
 import { Category } from "@/domain/entities/category";
+import { SuezEvent } from "@/domain/entities/suez-event";
 import { PlaceCard } from "../components/place-card";
 import { CategoryCard } from "../components/category-card";
+import { EventCard } from "../components/events/event-card";
 import { HeroSearchBar } from "../components/hero-search-bar";
-import { ArrowLeft, Sparkles, Grid3x3 } from "lucide-react";
+import { ArrowLeft, Sparkles, Grid3x3, Calendar } from "lucide-react";
 
 interface HomeViewProps {
     featuredPlaces: Place[];
     categories: (Category & { placesCount?: number })[];
+    events: SuezEvent[];
 }
 
-export function HomeView({ featuredPlaces, categories }: HomeViewProps) {
+export function HomeView({ featuredPlaces, categories, events }: HomeViewProps) {
     return (
         <div className="space-y-16 pb-12">
             {/* Hero Section */}
@@ -79,6 +82,35 @@ export function HomeView({ featuredPlaces, categories }: HomeViewProps) {
                         <PlaceCard key={place.id} place={place} />
                     ))}
                 </div>
+            </section>
+
+            {/* Upcoming Events */}
+            <section className="container mx-auto px-4">
+                <div className="flex justify-between items-end mb-8">
+                    <div>
+                        <div className="flex items-center gap-2 mb-2">
+                            <Calendar className="text-primary" size={24} />
+                            <h2 className="text-3xl md:text-4xl font-bold text-foreground">فعاليات قادمة</h2>
+                        </div>
+                        <p className="text-muted-foreground">اكتشف أحدث الأحداث والأنشطة في مدينة السويس</p>
+                    </div>
+                    <Link href="/events" className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-5 py-2.5 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all group">
+                        عرض كل الفعاليات
+                        <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
+                    </Link>
+                </div>
+
+                {events.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {events.slice(0, 3).map((event) => (
+                            <EventCard key={event.id} event={event} />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="text-center py-12 bg-slate-900/5 rounded-3xl border border-dashed border-slate-300 dark:border-slate-800">
+                        <p className="text-muted-foreground">لا توجد فعاليات قادمة حالياً. ترقبوا المزيد قريباً!</p>
+                    </div>
+                )}
             </section>
 
             {/* Categories Grid */}

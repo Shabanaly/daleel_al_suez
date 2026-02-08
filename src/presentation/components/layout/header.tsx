@@ -59,11 +59,11 @@ export function Header({ settings }: { settings?: Record<string, any> }) {
                     <Link href="/categories" className="text-sm font-medium hover:text-primary transition-colors">
                         التصنيفات
                     </Link>
-                    <Link href="/places" className="text-sm font-medium hover:text-primary transition-colors">
-                        الأماكن
-                    </Link>
                     <Link href="/events" className="text-sm font-medium hover:text-primary transition-colors">
                         الفعاليات
+                    </Link>
+                    <Link href="/places" className="text-sm font-medium hover:text-primary transition-colors">
+                        الأماكن
                     </Link>
                 </nav>
 

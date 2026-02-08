@@ -44,7 +44,7 @@ export function AiSyncButton() {
                 onClick={handleSync}
                 disabled={loading}
                 variant="outline"
-                className="border-purple-500/20 hover:bg-purple-500/10 hover:text-purple-400 text-slate-300 gap-2"
+                className="border-purple-500/20 bg-transparent hover:bg-purple-500/10 hover:text-purple-400 text-slate-300 gap-2"
             >
                 <RefreshCw className={loading ? 'animate-spin' : ''} size={16} />
                 {loading ? 'جاري التحديث...' : 'تحديث البيانات'}

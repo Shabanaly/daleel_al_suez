@@ -25,11 +25,20 @@ import { DeleteReviewUseCase } from "@/domain/use-cases/reviews/delete-review.us
 import { VoteReviewUseCase } from "@/domain/use-cases/reviews/vote-review.usecase";
 import { createClient } from "@/lib/supabase/client";
 
+// Events
+import { SupabaseEventRepository } from "@/data/repositories/supabase-event.repository";
+import { GetAdminEventsUseCase } from "@/domain/use-cases/admin/get-admin-events.usecase";
+import { CreateEventUseCase } from "@/domain/use-cases/admin/create-event.usecase";
+import { UpdateEventUseCase } from "@/domain/use-cases/admin/update-event.usecase";
+import { DeleteEventUseCase } from "@/domain/use-cases/admin/delete-event.usecase";
+import { GetActiveEventsUseCase } from "@/domain/use-cases/get-active-events.usecase";
+
 // 1. Repositories
 const placeRepository = new SupabasePlaceRepository();
 const categoryRepository = new SupabaseCategoryRepository();
 const settingsRepository = new SupabaseSettingsRepository();
 const reviewRepository = new SupabaseReviewRepository(createClient());
+const eventRepository = new SupabaseEventRepository();
 
 // 2. Use Cases
 export const getFeaturedPlacesUseCase = new GetFeaturedPlacesUseCase(placeRepository);
@@ -56,4 +65,11 @@ export const createReviewUseCase = new CreateReviewUseCase(reviewRepository);
 export const updateReviewUseCase = new UpdateReviewUseCase(reviewRepository);
 export const deleteReviewUseCase = new DeleteReviewUseCase(reviewRepository);
 export const voteReviewUseCase = new VoteReviewUseCase(reviewRepository);
+
+// Events Use Cases
+export const getAdminEventsUseCase = new GetAdminEventsUseCase(eventRepository);
+export const createEventUseCase = new CreateEventUseCase(eventRepository);
+export const updateEventUseCase = new UpdateEventUseCase(eventRepository);
+export const deleteEventUseCase = new DeleteEventUseCase(eventRepository);
+export const getActiveEventsUseCase = new GetActiveEventsUseCase(eventRepository);
 

@@ -35,9 +35,9 @@ export async function updateSettingsAction(updates: Record<string, string>) {
         revalidatePath('/admin/settings')
         revalidatePath('/', 'layout') // Revalidate entire site as settings affect footer/header
 
-        return { success: true, message: "Settings updated successfully" }
+        return { success: true, message: "تم حفظ الإعدادات بنجاح" }
     } catch (error: any) {
         console.error("Update Settings Error:", error)
-        return { success: false, message: error.message }
+        return { success: false, message: error.message || "فشل حفظ الإعدادات" }
     }
 }

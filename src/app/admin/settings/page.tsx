@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Save, Loader2, Settings2, Globe, Phone, List, Shield, Plus, X, Trash2 } from "lucide-react"
 import { getSettingsAction, updateSettingsAction } from "@/actions/admin/settings.actions"
 import { Setting } from "@/domain/entities/setting"
+import { toast } from 'sonner'
 
 export default function AdminSettingsPage() {
     const [settings, setSettings] = useState<Setting[]>([])
@@ -22,7 +23,7 @@ export default function AdminSettingsPage() {
         if (result.success && result.data) {
             setSettings(result.data)
         } else {
-            alert("فشل تحميل الإعدادات")
+            toast.error("فشل تحميل الإعدادات")
         }
         setLoading(false)
     }
@@ -39,10 +40,10 @@ export default function AdminSettingsPage() {
         const result = await updateSettingsAction(unsavedChanges)
 
         if (result.success) {
-            alert("تم حفظ الإعدادات بنجاح")
+            toast.success(result.message)
             setUnsavedChanges({})
         } else {
-            alert(result.message || "فشل الحفظ")
+            toast.error(result.message || "فشل الحفظ")
         }
         setSaving(false)
     }

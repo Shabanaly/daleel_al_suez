@@ -27,15 +27,16 @@ export async function POST(req: Request) {
             .from('places')
             .select(`
         id,
+        slug,
         name,
         description,
         address,
         phone,
         whatsapp,
-        workingHours,
+        website,
         rating,
-        reviewCount,
-        googleMapsUrl,
+        review_count,
+        google_maps_url,
         categories (name)
       `)
             .eq('status', 'active') // Only embed active places
@@ -62,12 +63,14 @@ export async function POST(req: Request) {
             const content = `[بيانات المكان]
 الاسم: ${place.name}
 الفئة: ${categoryName}
+الرابط (Slug): ${place.slug}
 العنوان: ${place.address}
 الهاتف: ${place.phone || 'غير متاح'}
 واتساب: ${place.whatsapp || 'غير متاح'}
-ساعات العمل: ${place.workingHours || 'غير محددة'}
-التقييم: ${place.rating || 0}/5 (${place.reviewCount || 0} تقييم)
-رابط الخريطة: ${place.googleMapsUrl || 'غير متاح'}
+الموقع الإلكتروني: ${place.website || 'غير متاح'}
+ساعات العمل: غير محددة
+التقييم: ${place.rating || 0}/5 (${place.review_count || 0} تقييم)
+رابط الخريطة: ${place.google_maps_url || 'غير متاح'}
 الوصف: ${place.description || 'لا يوجد وصف'}`.trim()
 
             try {

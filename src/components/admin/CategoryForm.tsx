@@ -7,6 +7,7 @@ import { Loader2, Folder, Home, Star, Heart, Info, MapPin, Globe, Flag, Bell, Ca
 import { translateAndSlugify } from '@/app/actions/translate'
 import { useDebounce } from 'use-debounce'
 import { getIconComponent } from '@/lib/icons'
+import { toast } from 'sonner'
 
 // Icon Categories Configuration
 const ICON_CATEGORIES = [
@@ -159,6 +160,18 @@ export default function CategoryForm({ initialData, currentUserRole }: CategoryF
     const [state, action, isPending] = useActionState(formAction, initialState)
 
     useEffect(() => {
+        if (state.success) {
+            toast.success(state.message)
+            router.push('/admin/categories')
+            router.refresh()
+        } else if (state.message) {
+            toast.error(state.message)
+        } else if (state.errors?._form) {
+            toast.error(state.errors._form[0])
+        }
+    }, [state, router])
+
+    useEffect(() => {
         const translate = async () => {
             if (!initialData && debouncedName && !slug) {
                 setIsTranslating(true)
@@ -173,7 +186,7 @@ export default function CategoryForm({ initialData, currentUserRole }: CategoryF
             }
         }
         translate()
-    }, [debouncedName, initialData]) // removed slug to avoid loops
+    }, [debouncedName, initialData])
 
     return (
         <form action={action} className="space-y-8 bg-slate-900 p-8 rounded-2xl border border-slate-800 shadow-xl">

@@ -3,7 +3,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { logAudit, generateChangesSummary } from '@/lib/audit'
 import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
 
 export type CategoryState = {
     errors?: {
@@ -13,6 +12,7 @@ export type CategoryState = {
         _form?: string[]
     }
     message?: string
+    success?: boolean
 }
 
 export async function createCategory(prevState: CategoryState, formData: FormData): Promise<CategoryState> {
@@ -24,10 +24,10 @@ export async function createCategory(prevState: CategoryState, formData: FormDat
 
     // Basic validation
     if (!name || name.length < 3) {
-        return { errors: { name: ['Name must be at least 3 characters'] } }
+        return { errors: { name: ['Name must be at least 3 characters'] }, success: false }
     }
     if (!slug) {
-        return { errors: { slug: ['Slug is required'] } }
+        return { errors: { slug: ['Slug is required'] }, success: false }
     }
 
     const supabase = await createClient()
@@ -36,7 +36,7 @@ export async function createCategory(prevState: CategoryState, formData: FormDat
         // 1. Check authentication
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) {
-            return { errors: { _form: ['Not authenticated'] } }
+            return { errors: { _form: ['Not authenticated'] }, success: false }
         }
 
         // 2. Check Super Admin role
@@ -47,7 +47,7 @@ export async function createCategory(prevState: CategoryState, formData: FormDat
             .single()
 
         if (profile?.role !== 'super_admin') {
-            return { errors: { _form: ['Access denied. Only Super Admin can manage categories.'] } }
+            return { errors: { _form: ['Access denied. Only Super Admin can manage categories.'] }, success: false }
         }
 
         // 3. Insert category (no created_by needed)
@@ -59,7 +59,7 @@ export async function createCategory(prevState: CategoryState, formData: FormDat
 
         if (error) {
             console.error('Create category error:', error)
-            return { errors: { _form: ['Failed to create category. Database error.'] } }
+            return { errors: { _form: ['Failed to create category. Database error.'] }, success: false }
         }
 
         // 4. Log audit
@@ -70,12 +70,12 @@ export async function createCategory(prevState: CategoryState, formData: FormDat
                 after: { name, slug, icon, is_featured, sort_order }
             }
         })
-    } catch (e) {
-        return { errors: { _form: ['Unexpected error occurred'] } }
-    }
 
-    revalidatePath('/admin/categories')
-    redirect('/admin/categories')
+        revalidatePath('/admin/categories')
+        return { success: true, message: 'تم إضافة التصنيف بنجاح' }
+    } catch (e) {
+        return { errors: { _form: ['Unexpected error occurred'] }, success: false }
+    }
 }
 
 export async function updateCategory(id: string, prevState: CategoryState, formData: FormData): Promise<CategoryState> {
@@ -87,10 +87,10 @@ export async function updateCategory(id: string, prevState: CategoryState, formD
 
     // Basic validation
     if (!name || name.length < 3) {
-        return { errors: { name: ['Name must be at least 3 characters'] } }
+        return { errors: { name: ['Name must be at least 3 characters'] }, success: false }
     }
     if (!slug) {
-        return { errors: { slug: ['Slug is required'] } }
+        return { errors: { slug: ['Slug is required'] }, success: false }
     }
 
     const supabase = await createClient()
@@ -99,7 +99,7 @@ export async function updateCategory(id: string, prevState: CategoryState, formD
         // 1. Check authentication
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) {
-            return { errors: { _form: ['Not authenticated'] } }
+            return { errors: { _form: ['Not authenticated'] }, success: false }
         }
 
         // 2. Check Super Admin role
@@ -110,7 +110,7 @@ export async function updateCategory(id: string, prevState: CategoryState, formD
             .single()
 
         if (profile?.role !== 'super_admin') {
-            return { errors: { _form: ['Access denied. Only Super Admin can manage categories.'] } }
+            return { errors: { _form: ['Access denied. Only Super Admin can manage categories.'] }, success: false }
         }
 
         // 3. Fetch old data first for audit comparison
@@ -128,7 +128,7 @@ export async function updateCategory(id: string, prevState: CategoryState, formD
 
         if (error) {
             console.error('Update category error:', error)
-            return { errors: { _form: ['Failed to update category.'] } }
+            return { errors: { _form: ['Failed to update category.'] }, success: false }
         }
 
         // 5. Log audit with changes
@@ -148,12 +148,12 @@ export async function updateCategory(id: string, prevState: CategoryState, formD
                 }
             })
         }
-    } catch (e) {
-        return { errors: { _form: ['Unexpected error occurred'] } }
-    }
 
-    revalidatePath('/admin/categories')
-    redirect('/admin/categories')
+        revalidatePath('/admin/categories')
+        return { success: true, message: 'تم تحديث التصنيف بنجاح' }
+    } catch (e) {
+        return { errors: { _form: ['Unexpected error occurred'] }, success: false }
+    }
 }
 
 export async function deleteCategory(formData: FormData) {
