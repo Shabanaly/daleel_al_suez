@@ -1,8 +1,8 @@
-'use client'
-
 import { Suspense } from 'react'
 import { Loader2 } from 'lucide-react'
 import { ProfileContent } from '@/presentation/components/profile/profile-content'
+
+export const dynamic = 'force-dynamic'
 
 export default function ProfilePage() {
     return (
