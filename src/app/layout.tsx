@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/presentation/components/theme-provider";
 import { VisitTracker } from '@/components/analytics/VisitTracker'
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const notoKufi = Noto_Kufi_Arabic({
@@ -44,6 +45,7 @@ export default function RootLayout({
         >
           <VisitTracker />
           {children}
+          <SpeedInsights />
         </ThemeProvider>
       </body>
     </html>
