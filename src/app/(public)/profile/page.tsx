@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { User, Loader2, LogOut, Shield, AlertTriangle, LifeBuoy, Bell, Activity } from 'lucide-react'
@@ -21,7 +21,7 @@ import {
 
 type TabType = 'overview' | 'security' | 'danger' | 'support' | 'notifications' | 'activity'
 
-export default function ProfilePage() {
+function ProfileContent() {
     const [user, setUser] = useState<any>(null)
     const [profile, setProfile] = useState<any>(null)
     const [loading, setLoading] = useState(true)
@@ -268,5 +268,17 @@ export default function ProfilePage() {
                 </div>
             )}
         </div>
+    )
+}
+
+export default function ProfilePage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-[80vh] flex items-center justify-center">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+        }>
+            <ProfileContent />
+        </Suspense>
     )
 }
