@@ -65,6 +65,8 @@ export default async function PlaceDetailsPage({
     }
 
     // JSON-LD Structured Data
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://dalil-al-suways.vercel.app';
+
     const jsonLd = {
         '@context': 'https://schema.org',
         '@type': 'LocalBusiness',
@@ -79,7 +81,7 @@ export default async function PlaceDetailsPage({
             addressCountry: 'EG'
         },
         telephone: place.phone,
-        url: `https://daleel-al-suez.vercel.app/places/${place.slug}`,
+        url: `${baseUrl}/places/${place.slug}`,
         aggregateRating: place.rating ? {
             '@type': 'AggregateRating',
             ratingValue: place.rating,

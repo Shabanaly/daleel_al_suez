@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next'
 import { createClient } from '@/lib/supabase/server'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://daleel-al-suez.com'
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://dalil-al-suways.vercel.app'
     const supabase = await createClient()
 
     // 1. Static Routes
@@ -14,6 +14,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         '/terms',
         '/login',
         '/signup',
+        '/events',
+        '/favorites',
+        '/profile',
     ].map((route) => ({
         url: `${baseUrl}${route}`,
         lastModified: new Date(),
@@ -27,7 +30,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         .select('slug, created_at')
 
     const categoryRoutes = (categories || []).map((category) => ({
-        url: `${baseUrl}/categories/${category.slug}`,
+        url: `${baseUrl}/categories/${encodeURIComponent(category.slug)}`,
         lastModified: new Date(category.created_at),
         changeFrequency: 'weekly' as const,
         priority: 0.8,
@@ -40,7 +43,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         .eq('status', 'active')
 
     const placeRoutes = (places || []).map((place) => ({
-        url: `${baseUrl}/places/${place.slug}`,
+        url: `${baseUrl}/places/${encodeURIComponent(place.slug)}`,
         lastModified: new Date(place.updated_at),
         changeFrequency: 'weekly' as const,
         priority: 0.9,
