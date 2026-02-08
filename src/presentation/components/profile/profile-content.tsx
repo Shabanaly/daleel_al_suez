@@ -212,7 +212,7 @@ export function ProfileContent() {
                     <div className="mt-8 pt-8 border-t border-border">
                         <button
                             onClick={handleSignOut}
-                            className="flex items-center justify-center gap-2 w-full p-4 text-red-600 hover:bg-red-50 dark:hover:bg-red-950/50 rounded-xl transition-colors font-medium border border-transparent hover:border-red-200 dark:hover:border-red-900"
+                            className="flex items-center justify-center gap-2 w-full p-4 text-destructive bg-card border border-border hover:bg-destructive/10 hover:border-destructive/30 rounded-xl transition-all font-medium"
                         >
                             <LogOut size={20} />
                             تسجيل الخروج
