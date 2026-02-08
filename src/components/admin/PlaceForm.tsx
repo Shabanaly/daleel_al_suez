@@ -32,6 +32,7 @@ export default function PlaceForm({ initialData, categories, areas }: PlaceFormP
     const [type, setType] = useState<'business' | 'professional'>(initialData?.type || 'business')
     const [images, setImages] = useState<string[]>(initialData?.images || [])
     const [address, setAddress] = useState(initialData?.address || '')
+    const [workingHours, setWorkingHours] = useState(initialData?.workingHours || '')
 
     // Social Links State
     const [socialLinks, setSocialLinks] = useState(initialData?.socialLinks || { facebook: '', instagram: '' })
@@ -49,7 +50,8 @@ export default function PlaceForm({ initialData, categories, areas }: PlaceFormP
             ...rawData,
             images,
             socialLinks,
-            type
+            type,
+            workingHours
         }
 
         if (initialData?.id) {
@@ -205,6 +207,47 @@ export default function PlaceForm({ initialData, categories, areas }: PlaceFormP
                             className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white outline-none focus:border-primary transition-colors"
                             placeholder="مثال:شارع الجيش، بجوار البنك الأهلي"
                         />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-slate-300 mb-2">مواعيد العمل</label>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="text-xs text-slate-400 mb-1 block">يفتح في</label>
+                                <input
+                                    type="time"
+                                    value={workingHours.split(' - ')[0] || ''}
+                                    onChange={(e) => {
+                                        const open = e.target.value;
+                                        const parts = workingHours.split(' - ');
+                                        const close = parts.length > 1 ? parts[1] : '';
+                                        if (open) {
+                                            setWorkingHours(`${open} - ${close}`);
+                                        } else {
+                                            setWorkingHours(''); // Clear if open time is removed? Or just keep close? Let's clear for now or handle better.
+                                            // Actually, let's keep it simple: always format "Open - Close"
+                                            setWorkingHours(` - ${close}`);
+                                        }
+                                    }}
+                                    className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white outline-none focus:border-primary transition-colors text-center dir-ltr"
+                                />
+                            </div>
+                            <div>
+                                <label className="text-xs text-slate-400 mb-1 block">يغلق في</label>
+                                <input
+                                    type="time"
+                                    value={workingHours.split(' - ')[1] || ''}
+                                    onChange={(e) => {
+                                        const close = e.target.value;
+                                        const parts = workingHours.split(' - ');
+                                        const open = parts.length > 0 ? parts[0] : '';
+                                        setWorkingHours(`${open} - ${close}`);
+                                    }}
+                                    className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white outline-none focus:border-primary transition-colors text-center dir-ltr"
+                                />
+                            </div>
+                        </div>
+                        <input type="hidden" name="workingHours" value={workingHours} />
                     </div>
                     <div>
                         <div className="flex justify-between items-center mb-2">

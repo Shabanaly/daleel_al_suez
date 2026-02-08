@@ -1,12 +1,14 @@
 'use client'
 
-import { useActionState, useState } from 'react'
+import { useActionState, useState, useEffect } from 'react'
 import { createEventAction, updateEventAction } from '@/actions/admin/events.actions'
 import { Place } from '@/domain/entities/place'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { Calendar, MapPin, Type, FileText, Image as ImageIcon, Link2, Save, X } from 'lucide-react'
+import { Calendar, MapPin, Type, FileText, Image as ImageIcon, Link2, Save, X, Loader2 } from 'lucide-react'
 import ImageUpload from '@/components/ui/image-upload'
+import { useDebounce } from 'use-debounce'
+import { translateAndSlugify } from '@/app/actions/translate'
 
 interface CreateEventFormProps {
     places: Place[]
@@ -17,6 +19,28 @@ export function CreateEventForm({ places, initialData }: CreateEventFormProps) {
     const router = useRouter()
     const isEdit = !!initialData
     const [images, setImages] = useState<string[]>(initialData?.image_url ? [initialData.image_url] : [])
+    const [title, setTitle] = useState(initialData?.title || '')
+    const [slug, setSlug] = useState(initialData?.slug || '')
+    const [debouncedTitle] = useDebounce(title, 1000)
+    const [isGeneratingSlug, setIsGeneratingSlug] = useState(false)
+
+    // Auto-generate slug
+    useEffect(() => {
+        const generateSlug = async () => {
+            if (debouncedTitle && !initialData?.slug && !slug) {
+                setIsGeneratingSlug(true)
+                try {
+                    const generated = await translateAndSlugify(debouncedTitle)
+                    setSlug(generated)
+                } catch (error) {
+                    console.error("Slug generation failed", error)
+                } finally {
+                    setIsGeneratingSlug(false)
+                }
+            }
+        }
+        generateSlug()
+    }, [debouncedTitle, initialData?.slug]) // Removed slug dependency to allow manual override without fighting the effect
 
     const boundAction = isEdit ? updateEventAction.bind(null, initialData.id) : (createEventAction as any)
 
@@ -45,7 +69,8 @@ export function CreateEventForm({ places, initialData }: CreateEventFormProps) {
                     <input
                         name="title"
                         required
-                        defaultValue={initialData?.title}
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
                         className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all outline-none"
                         placeholder="مثلاً: مهرجان السويس الصيفي"
                     />
@@ -55,13 +80,17 @@ export function CreateEventForm({ places, initialData }: CreateEventFormProps) {
                     <label className="text-sm font-medium text-slate-300 flex items-center gap-2">
                         <Link2 size={16} className="text-primary" /> الرابط المختصر (Slug)
                     </label>
-                    <input
-                        name="slug"
-                        required
-                        defaultValue={initialData?.slug}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all outline-none"
-                        placeholder="suez-summer-festival"
-                    />
+                    <div className="relative">
+                        <input
+                            name="slug"
+                            required
+                            value={slug}
+                            onChange={(e) => setSlug(e.target.value)}
+                            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all outline-none"
+                            placeholder="suez-summer-festival"
+                        />
+                        {isGeneratingSlug && <div className="absolute left-3 top-3"><Loader2 className="animate-spin text-primary w-5 h-5" /></div>}
+                    </div>
                 </div>
 
                 <div className="space-y-2">

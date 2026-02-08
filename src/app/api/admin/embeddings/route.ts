@@ -37,6 +37,7 @@ export async function POST(req: Request) {
         rating,
         review_count,
         google_maps_url,
+        working_hours,
         categories (name)
       `)
             .eq('status', 'active') // Only embed active places
@@ -68,7 +69,7 @@ export async function POST(req: Request) {
 الهاتف: ${place.phone || 'غير متاح'}
 واتساب: ${place.whatsapp || 'غير متاح'}
 الموقع الإلكتروني: ${place.website || 'غير متاح'}
-ساعات العمل: غير محددة
+ساعات العمل: ${place.working_hours || 'غير محددة'}
 التقييم: ${place.rating || 0}/5 (${place.review_count || 0} تقييم)
 رابط الخريطة: ${place.google_maps_url || 'غير متاح'}
 الوصف: ${place.description || 'لا يوجد وصف'}`.trim()
