@@ -24,7 +24,7 @@ export class SupabasePlaceRepository implements IPlaceRepository {
             .from("categories")
             .select("id")
             .eq("slug", categorySlug)
-            .single();
+            .maybeSingle();
 
         if (!category) return [];
 
@@ -43,7 +43,7 @@ export class SupabasePlaceRepository implements IPlaceRepository {
             .from("places")
             .select("*, categories(name), areas(name)")
             .eq("slug", slug)
-            .single();
+            .maybeSingle();
 
         if (error || !data) return null;
         return this.mapToEntity(data);
@@ -143,7 +143,7 @@ export class SupabasePlaceRepository implements IPlaceRepository {
                 status: place.status || 'pending'
             })
             .select("*, categories(name), areas(name)")
-            .single();
+            .maybeSingle();
 
         if (error) throw new Error(error.message);
         return this.mapToEntity(data);
@@ -179,9 +179,10 @@ export class SupabasePlaceRepository implements IPlaceRepository {
             .update(updates)
             .eq("id", id)
             .select()
-            .single();
+            .maybeSingle();
 
         if (error) throw new Error(error.message);
+        if (!data) throw new Error("Place not found or update failed");
 
         // Fetch related data separately if needed
         if (data.category_id || data.area_id) {
@@ -210,7 +211,7 @@ export class SupabasePlaceRepository implements IPlaceRepository {
             .from("places")
             .select("*, categories(name), areas(name)")
             .eq("id", id)
-            .single();
+            .maybeSingle();
 
         if (error) return null;
         return this.mapToEntity(data);

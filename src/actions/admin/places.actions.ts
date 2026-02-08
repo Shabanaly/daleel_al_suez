@@ -77,9 +77,9 @@ export async function updatePlaceAction(id: string, data: Partial<Place>): Promi
             .from('places')
             .select('status, created_by, name')
             .eq('id', id)
-            .single()
+            .maybeSingle()
 
-        const place = await updatePlaceUseCase.execute(id, data)
+        const place = await updatePlaceUseCase.execute(id, data, supabase)
 
         // NOTIFICATION: Check for Status Change (Pending -> Active/Closed)
         if (oldPlace && data.status && data.status !== oldPlace.status) {
@@ -121,7 +121,7 @@ export async function togglePlaceStatus(id: string, newStatus: 'active' | 'inact
             .from('places')
             .select('status, created_by, name, slug')
             .eq('id', id)
-            .single()
+            .maybeSingle()
 
         if (!oldPlace) {
             return { success: false, message: 'Place not found' }
@@ -163,7 +163,8 @@ export async function togglePlaceStatus(id: string, newStatus: 'active' | 'inact
 
 export async function deletePlaceAction(id: string) {
     try {
-        await deletePlaceUseCase.execute(id)
+        const supabase = await createClient()
+        await deletePlaceUseCase.execute(id, supabase)
         revalidatePath('/admin/places')
         return { success: true }
     } catch (error: any) {

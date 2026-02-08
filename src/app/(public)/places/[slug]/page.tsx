@@ -108,7 +108,7 @@ export default async function PlaceDetailsPage({
             .select('*')
             .eq('place_id', place.id)
             .eq('user_id', user.id)
-            .single()
+            .maybeSingle()
 
         if (existingReview) {
             userReview = {
