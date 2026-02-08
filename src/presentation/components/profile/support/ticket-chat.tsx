@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
-import { Send, Loader2, User, UserCog } from 'lucide-react'
+import { Send, Loader2, User, UserCog, MessageSquare } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -10,6 +10,13 @@ import { getTicketMessages, addTicketMessage } from '@/actions/support.actions'
 import { format } from 'date-fns'
 import { ar } from 'date-fns/locale'
 import { createClient } from '@/lib/supabase/client'
+
+const categoryMap: Record<string, string> = {
+    bug: 'مشكلة تقنية',
+    feature: 'اقتراح ميزة',
+    account: 'الحساب',
+    other: 'أخرى'
+}
 
 interface TicketChatProps {
     ticket: any
@@ -80,9 +87,9 @@ export function TicketChat({ ticket }: TicketChatProps) {
             {/* Header */}
             <div className="p-4 border-b flex justify-between items-center bg-muted/30">
                 <div>
-                    <h3 className="font-bold">{ticket.subject}</h3>
+                    <h3 className="font-bold break-words line-clamp-2 text-sm md:text-base">{ticket.subject}</h3>
                     <p className="text-sm text-muted-foreground">
-                        {ticket.category} • #{ticket.id.substring(0, 8)}
+                        {categoryMap[ticket.category] || ticket.category} • #{ticket.id.substring(0, 8)}
                     </p>
                 </div>
                 <div className="px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
@@ -98,8 +105,10 @@ export function TicketChat({ ticket }: TicketChatProps) {
                             <Loader2 className="animate-spin text-muted-foreground" />
                         </div>
                     ) : messages.length === 0 ? (
-                        <div className="text-center text-muted-foreground py-12">
-                            لا توجد رسائل بعد
+                        <div className="flex flex-col items-center justify-center h-full py-12 text-muted-foreground opacity-50">
+                            <MessageSquare className="w-12 h-12 mb-4" />
+                            <p>لا توجد رسائل بعد</p>
+                            <p className="text-xs mt-2">ابدأ المحادثة مع الدعم الفني</p>
                         </div>
                     ) : (
                         <div className="space-y-4">
@@ -111,19 +120,22 @@ export function TicketChat({ ticket }: TicketChatProps) {
                                         key={msg.id}
                                         className={`flex gap-3 ${isMe ? 'flex-row-reverse' : 'flex-row'}`}
                                     >
-                                        <Avatar className="w-8 h-8 mt-1 border">
+                                        <Avatar className="w-8 h-8 mt-1 border shadow-sm">
                                             <AvatarFallback className={isMe ? 'bg-primary/10 text-primary' : 'bg-orange-100 text-orange-600'}>
                                                 {isMe ? <User size={14} /> : <UserCog size={14} />}
                                             </AvatarFallback>
                                         </Avatar>
-                                        <div
-                                            className={`max-w-[80%] p-3 rounded-lg text-sm ${isMe
-                                                ? 'bg-primary text-primary-foreground rounded-tr-none'
-                                                : 'bg-muted rounded-tl-none'
-                                                }`}
-                                        >
-                                            <div className="whitespace-pre-wrap">{msg.message}</div>
-                                            <div className={`text-[10px] mt-1 opacity-70 ${isMe ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
+                                        <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} max-w-[80%]`}>
+                                            {!isMe && <span className="text-[10px] text-muted-foreground mb-1 mr-1">الدعم الفني</span>}
+                                            <div
+                                                className={`p-3 rounded-2xl text-sm shadow-sm ${isMe
+                                                    ? 'bg-primary text-primary-foreground rounded-tr-sm'
+                                                    : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-tl-sm'
+                                                    }`}
+                                            >
+                                                <div className="whitespace-pre-wrap leading-relaxed">{msg.message}</div>
+                                            </div>
+                                            <div className={`text-[10px] mt-1 px-1 opacity-70 text-muted-foreground`}>
                                                 {format(new Date(msg.created_at), 'p', { locale: ar })}
                                             </div>
                                         </div>
@@ -134,10 +146,10 @@ export function TicketChat({ ticket }: TicketChatProps) {
                         </div>
                     )}
                 </div>
-            </ScrollArea>
+            </ScrollArea >
 
             {/* Input Area */}
-            <div className="p-4 border-t bg-muted/30">
+            < div className="p-4 border-t bg-muted/30" >
                 <div className="flex gap-2">
                     <Textarea
                         placeholder="اكتب رسالتك هنا..."
@@ -160,7 +172,7 @@ export function TicketChat({ ticket }: TicketChatProps) {
                         {sending ? <Loader2 className="animate-spin" /> : <Send size={18} />}
                     </Button>
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     )
 }

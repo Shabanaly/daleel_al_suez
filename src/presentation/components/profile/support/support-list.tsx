@@ -9,10 +9,17 @@ import { CreateTicketDialog } from './create-ticket-dialog'
 import { TicketChat } from './ticket-chat' // Will create this next
 import { useState, useEffect } from 'react'
 
+const categoryMap: Record<string, string> = {
+    bug: 'مشكلة تقنية',
+    feature: 'اقتراح ميزة',
+    account: 'الحساب',
+    other: 'أخرى'
+}
+
 const statusMap: any = {
-    open: { label: 'مفتوحة', color: 'bg-green-500', icon: AlertCircle },
+    open: { label: 'مفتوحة', color: 'bg-blue-500', icon: AlertCircle },
     in_progress: { label: 'قيد المعالجة', color: 'bg-yellow-500', icon: Clock },
-    resolved: { label: 'تم الحل', color: 'bg-blue-500', icon: CheckCircle2 },
+    resolved: { label: 'تم الحل', color: 'bg-green-500', icon: CheckCircle2 },
     closed: { label: 'مغلقة', color: 'bg-gray-500', icon: CheckCircle2 },
 }
 
@@ -83,16 +90,16 @@ export function SupportList({ tickets, initialTicketId }: SupportListProps) {
                                 <div className="flex items-start justify-between gap-4">
                                     <div className="flex-1 space-y-1">
                                         <div className="flex items-center gap-2">
-                                            <h3 className="font-semibold text-lg">{ticket.subject}</h3>
+                                            <h3 className="font-semibold text-base md:text-lg break-words">{ticket.subject}</h3>
                                             <Badge variant="outline" className={`${status.color} bg-opacity-10 text-${status.color?.replace('bg-', '') || 'gray-500'} border-0`}>
                                                 <StatusIcon size={12} className="mr-1" />
                                                 {status.label}
                                             </Badge>
                                         </div>
-                                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs md:text-sm text-muted-foreground">
                                             <span>#{ticket.id.substring(0, 8)}</span>
                                             <span>•</span>
-                                            <span>{ticket.category}</span>
+                                            <span>{categoryMap[ticket.category] || ticket.category}</span>
                                             <span>•</span>
                                             <span dir="ltr">
                                                 {format(new Date(ticket.created_at), 'PPP p', { locale: ar })}

@@ -32,12 +32,12 @@ export function CreateTicketDialog() {
 
             setOpen(false)
             setFormData({ subject: '', category: '', message: '' })
-            // toast.success('تم إنشاء التذكرة بنجاح')
-            alert('تم إنشاء التذكرة بنجاح')
+            toast.success('تم إنشاء التذكرة بنجاح')
+            // alert('تم إنشاء التذكرة بنجاح')
             window.location.reload() // Simple refresh to show new ticket
         } catch (error: any) {
-            // toast.error(error.message || 'حدث خطأ')
-            alert(error.message || 'حدث خطأ')
+            toast.error(error.message || 'حدث خطأ')
+            // alert(error.message || 'حدث خطأ')
         } finally {
             setLoading(false)
         }

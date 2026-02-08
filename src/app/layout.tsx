@@ -5,6 +5,8 @@ import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/presentation/components/theme-provider";
 import { VisitTracker } from '@/components/analytics/VisitTracker'
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Toaster } from "@/components/ui/sonner"
+import { ChatWidget } from "@/presentation/components/ai/chat-widget"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const notoKufi = Noto_Kufi_Arabic({
@@ -46,6 +48,8 @@ export default function RootLayout({
           <VisitTracker />
           {children}
           <SpeedInsights />
+          <ChatWidget />
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

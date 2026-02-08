@@ -1,5 +1,8 @@
 import { Store, Users, Star, Activity, LayoutDashboard, AlertCircle } from 'lucide-react'
 import { getDashboardStats } from '@/actions/admin/analytics.actions'
+import { AiSyncButton } from './ai-sync-button'
+
+export const dynamic = 'force-dynamic'
 
 export default async function AdminDashboard() {
     const result = await getDashboardStats()
@@ -50,6 +53,7 @@ export default async function AdminDashboard() {
         },
     ]
 
+
     return (
         <div>
             {/* Header Card - Modern Design */}
@@ -63,6 +67,11 @@ export default async function AdminDashboard() {
                         <p className="text-slate-400 text-sm mt-1">إحصائيات ونشاط لوحة التحكم لهذا اليوم</p>
                     </div>
                 </div>
+            </div>
+
+            {/* AI Sync Button */}
+            <div className="mb-8">
+                <AiSyncButton />
             </div>
 
             {/* Stats Grid */}
