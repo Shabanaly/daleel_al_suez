@@ -2,16 +2,54 @@ import { PlacesListView } from "@/presentation/features/places-list-view";
 import { getCategoriesUseCase } from "@/di/modules";
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
+import { Metadata } from "next";
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 3600;
 
+type Props = {
+    params: Promise<{ slug: string }>
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+    const { slug } = await params;
+    const categories = await getCategoriesUseCase.execute()
+    const currentCategory = categories.find(c => c.slug === slug)
+
+    if (!currentCategory) {
+        return {
+            title: 'Category Not Found',
+        }
+    }
+
+    const title = `${currentCategory.name} | دليل السويس`;
+    const description = `أفضل أماكن ${currentCategory.name} في السويس. تصفح التقييمات والعناوين وأرقام الهواتف.`;
+
+    return {
+        title,
+        description,
+        openGraph: {
+            title,
+            description,
+            type: 'website',
+            locale: 'ar_EG',
+            siteName: 'دليل السويس',
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title,
+            description,
+        },
+        alternates: {
+            canonical: `/categories/${currentCategory.slug}`,
+        }
+    }
+}
+
 export default async function CategoryDetailsPage({
     params,
-}: {
-    params: Promise<{ slug: string }> | { slug: string };
-}) {
-    const { slug } = params instanceof Promise ? await params : params;
+}: Props) {
+    const { slug } = await params;
     const supabase = await createClient()
 
     // Get all categories for filters

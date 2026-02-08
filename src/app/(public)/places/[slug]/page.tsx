@@ -2,22 +2,89 @@ import { notFound } from "next/navigation";
 import { PlaceDetailsView } from "@/presentation/features/place-details-view";
 import { getPlaceBySlugUseCase, getPlaceReviewsUseCase, getPlaceRatingStatsUseCase } from "@/di/modules";
 import { createClient } from "@/lib/supabase/server";
+import { Metadata } from "next";
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 3600;
 
+type Props = {
+    params: Promise<{ slug: string }>
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+    const { slug } = await params;
+    const place = await getPlaceBySlugUseCase.execute(slug);
+
+    if (!place) {
+        return {
+            title: 'Place Not Found',
+        }
+    }
+
+    const title = `${place.name} | دليل السويس`;
+    const description = place.description?.substring(0, 160) || `تفاصيل ومعلومات عن ${place.name} في السويس. العنوان، رقم الهاتف، وتقييمات العملاء.`;
+    const images = place.images && place.images.length > 0 ? [place.images[0]] : [];
+
+    // Convert string-based time to ISO date string for valid OpenGraph if needed, 
+    // but for article:published_time we usually need a date. 
+    // Here we'll just stick to basic OpenGraph tags.
+
+    return {
+        title,
+        description,
+        openGraph: {
+            title,
+            description,
+            images,
+            type: 'website',
+            locale: 'ar_EG',
+            siteName: 'دليل السويس',
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title,
+            description,
+            images,
+        },
+        alternates: {
+            canonical: `/places/${place.slug}`,
+        }
+    }
+}
+
 export default async function PlaceDetailsPage({
     params,
-}: {
-    params: Promise<{ slug: string }> | { slug: string };
-}) {
-    const { slug } = params instanceof Promise ? await params : params;
+}: Props) {
+    const { slug } = await params;
 
     // 1. Get place details
     const place = await getPlaceBySlugUseCase.execute(slug);
 
     if (!place) {
         notFound();
+    }
+
+    // JSON-LD Structured Data
+    const jsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'LocalBusiness',
+        name: place.name,
+        image: place.images,
+        description: place.description,
+        address: {
+            '@type': 'PostalAddress',
+            streetAddress: place.address,
+            addressLocality: 'Suez',
+            addressRegion: 'Suez',
+            addressCountry: 'EG'
+        },
+        telephone: place.phone,
+        url: `https://daleel-al-suez.vercel.app/places/${place.slug}`,
+        aggregateRating: place.rating ? {
+            '@type': 'AggregateRating',
+            ratingValue: place.rating,
+            reviewCount: place.reviewCount || 0
+        } : undefined,
     }
 
     const supabase = await createClient()
@@ -93,13 +160,19 @@ export default async function PlaceDetailsPage({
     }))
 
     return (
-        <PlaceDetailsView
-            place={place}
-            relatedPlaces={related}
-            reviews={reviews}
-            ratingStats={ratingStats}
-            currentUserId={user?.id}
-            userReview={userReview}
-        />
+        <>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
+            <PlaceDetailsView
+                place={place}
+                relatedPlaces={related}
+                reviews={reviews}
+                ratingStats={ratingStats}
+                currentUserId={user?.id}
+                userReview={userReview}
+            />
+        </>
     );
 }
