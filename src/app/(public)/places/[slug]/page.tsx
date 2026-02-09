@@ -147,7 +147,8 @@ export default async function PlaceDetailsPage({
         website: string
         facebook: string
         instagram: string
-        map_link: string
+        map_link: string | null
+        social_links: Record<string, string> | null
         images: string[]
         category_id: string
         categories: { name: string } | null
@@ -172,9 +173,9 @@ export default async function PlaceDetailsPage({
             phone: p.phone,
             whatsapp: p.whatsapp,
             website: p.website,
-            facebook: p.facebook,
-            instagram: p.instagram,
-            mapLink: p.map_link,
+            facebook: p.social_links?.facebook || '',
+            instagram: p.social_links?.instagram || '',
+            mapLink: p.map_link || undefined,
             images: p.images || [],
             categoryId: p.category_id,
             categoryName: p.categories?.name,
