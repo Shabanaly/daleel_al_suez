@@ -36,9 +36,26 @@ export default function ImageUpload({ value = [], onChange, disabled, maxFiles =
         const newUrls: string[] = []
 
         try {
+            // Dynamic import to avoid SSR issues
+            const imageCompression = (await import('browser-image-compression')).default
+
+            const options = {
+                maxSizeMB: 1, // Max size 1MB
+                maxWidthOrHeight: 1920, // Max dimension
+                useWebWorker: true,
+                fileType: 'image/webp' // Force conversion to WebP
+            }
+
             for (const file of acceptedFiles) {
+                // Compress & Convert
+                const compressedFile = await imageCompression(file, options)
+
+                // Create a new file with .webp extension if needed
+                const newFileName = file.name.replace(/\.[^.]+$/, "") + ".webp"
+                const finalFile = new File([compressedFile], newFileName, { type: 'image/webp' })
+
                 const formData = new FormData()
-                formData.append('file', file)
+                formData.append('file', finalFile)
                 formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET)
 
                 const response = await fetch(
