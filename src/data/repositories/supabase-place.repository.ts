@@ -24,6 +24,7 @@ interface SupabasePlaceRow {
     closes_at: string | null;
     type: string | null;
     status: string | null;
+    google_place_id: string | null;
     categories?: { name: string } | null;
     areas?: { name: string } | null;
     profiles?: { full_name: string } | null;
@@ -146,8 +147,8 @@ export class SupabasePlaceRepository implements IPlaceRepository {
         return (data as SupabasePlaceRow[]).map(row => this.mapToEntity(row));
     }
 
-    async createPlace(place: Partial<Place>, userId: string, client?: unknown): Promise<Place> {
-        const supabaseClient = (client as import('@supabase/supabase-js').SupabaseClient) || this.supabase;
+    async createPlace(place: Partial<Place>, userId: string, client?: any): Promise<Place> {
+        const supabaseClient = client || this.supabase;
         const { data, error } = await supabaseClient
             .from("places")
             .insert({
@@ -167,13 +168,17 @@ export class SupabasePlaceRepository implements IPlaceRepository {
                 created_by: userId,
                 opens_at: place.opensAt,
                 closes_at: place.closesAt,
+                rating: place.rating || 0,
+                review_count: place.reviewCount || 0,
                 status: place.status || 'pending',
-                is_featured: place.isFeatured || false
+                is_featured: place.isFeatured || false,
+                google_place_id: place.google_place_id
             })
             .select("*, categories(name), areas(name)")
             .maybeSingle();
 
         if (error) throw new Error(error.message);
+        if (!data) throw new Error("Failed to create place: No data returned");
         return this.mapToEntity(data as SupabasePlaceRow);
     }
 
@@ -189,6 +194,9 @@ export class SupabasePlaceRepository implements IPlaceRepository {
         if (place.opensAt !== undefined) updates.opens_at = place.opensAt;
         if (place.closesAt !== undefined) updates.closes_at = place.closesAt;
         if (place.isFeatured !== undefined) updates.is_featured = place.isFeatured;
+        if (place.rating !== undefined) updates.rating = place.rating;
+        if (place.reviewCount !== undefined) updates.review_count = place.reviewCount;
+        if (place.google_place_id !== undefined) updates.google_place_id = place.google_place_id;
 
         // Clean up entity keys
         delete updates.categoryId;
@@ -206,6 +214,9 @@ export class SupabasePlaceRepository implements IPlaceRepository {
         delete updates.facebook;
         delete updates.instagram;
         delete updates.videoUrl;
+        delete updates.google_place_id;
+        delete updates.reviewCount;
+        delete updates.rating;
 
         const { data, error } = await supabaseClient
             .from("places")
@@ -250,6 +261,17 @@ export class SupabasePlaceRepository implements IPlaceRepository {
         return this.mapToEntity(data as SupabasePlaceRow);
     }
 
+    async getPlaceByGoogleId(googleId: string): Promise<Place | null> {
+        const { data, error } = await this.supabase
+            .from("places")
+            .select("*, categories(name), areas(name)")
+            .eq("google_place_id", googleId)
+            .maybeSingle();
+
+        if (error || !data) return null;
+        return this.mapToEntity(data as SupabasePlaceRow);
+    }
+
     private mapToEntity(row: SupabasePlaceRow): Place {
         return {
             id: row.id,
@@ -281,6 +303,7 @@ export class SupabasePlaceRepository implements IPlaceRepository {
             videoUrl: row.social_links?.videoUrl || '',
             opensAt: row.opens_at || '',
             closesAt: row.closes_at || '',
+            google_place_id: row.google_place_id || '',
             type: (row.type as 'business' | 'professional') || 'business',
             status: (row.status as 'active' | 'pending' | 'inactive') || 'pending'
         };

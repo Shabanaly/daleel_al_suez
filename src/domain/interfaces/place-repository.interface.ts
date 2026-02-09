@@ -22,4 +22,5 @@ export interface IPlaceRepository {
     deletePlace(id: string, client?: unknown): Promise<void>;
     getPlaceById(id: string): Promise<Place | null>;
     getPlaceBySlug(slug: string, client?: unknown): Promise<Place | null>;
+    getPlaceByGoogleId(googleId: string): Promise<Place | null>;
 }

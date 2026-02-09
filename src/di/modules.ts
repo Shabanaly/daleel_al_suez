@@ -43,6 +43,13 @@ import { GetAdminArticlesUseCase } from "@/domain/use-cases/admin/get-admin-arti
 import { CreateArticleUseCase } from "@/domain/use-cases/admin/create-article.usecase";
 import { UpdateArticleUseCase } from "@/domain/use-cases/admin/update-article.usecase";
 import { DeleteArticleUseCase } from "@/domain/use-cases/admin/delete-article.usecase";
+import { SupabaseImportedPlaceRepository } from "@/data/repositories/supabase-imported-place.repository";
+import { ImportGooglePlaceUseCase } from "@/domain/use-cases/admin/import-google-place.usecase";
+import { GetSuggestedPlacesUseCase } from "@/domain/use-cases/admin/get-suggested-places.usecase";
+import { ProcessSuggestedPlaceUseCase } from "@/domain/use-cases/admin/process-suggested-place.usecase";
+import { SearchGooglePlacesUseCase } from "@/domain/use-cases/admin/search-google-places.usecase";
+// Google Places
+import { SerperGoogleMapsService } from "@/data/services/serper-google-maps.service";
 
 // 1. Repositories
 const placeRepository = new SupabasePlaceRepository();
@@ -51,6 +58,7 @@ const settingsRepository = new SupabaseSettingsRepository();
 const reviewRepository = new SupabaseReviewRepository(createClient());
 const eventRepository = new SupabaseEventRepository();
 const articleRepository = new SupabaseArticleRepository();
+const importedPlaceRepository = new SupabaseImportedPlaceRepository();
 
 // 2. Use Cases
 export const getFeaturedPlacesUseCase = new GetFeaturedPlacesUseCase(placeRepository);
@@ -123,3 +131,10 @@ export const getUserLogsUseCase = new GetUserLogsUseCase(userRepository);
 
 import { UpdateUserRoleUseCase } from "@/domain/use-cases/admin/update-user-role.usecase";
 export const updateUserRoleUseCase = new UpdateUserRoleUseCase(userRepository);
+
+// Google Places Cases
+export const googlePlacesService = new SerperGoogleMapsService(process.env.SERPER_API_KEY || '');
+export const searchGooglePlacesUseCase = new SearchGooglePlacesUseCase(googlePlacesService);
+export const importGooglePlaceUseCase = new ImportGooglePlaceUseCase(googlePlacesService, placeRepository, importedPlaceRepository);
+export const getSuggestedPlacesUseCase = new GetSuggestedPlacesUseCase(importedPlaceRepository);
+export const processSuggestedPlaceUseCase = new ProcessSuggestedPlaceUseCase(importedPlaceRepository, placeRepository);

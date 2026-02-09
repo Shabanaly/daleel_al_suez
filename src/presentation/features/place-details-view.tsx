@@ -144,10 +144,13 @@ export function PlaceDetailsView({
                                 <Clock className="text-primary" size={20} />
                                 مواعيد العمل
                             </h3>
-                            {place.opensAt && place.closesAt ? (
-                                <div className="space-y-2 text-sm">
-                                    <p className="text-muted-foreground">
-                                        يومياً من {place.opensAt?.slice(0, 5)} إلى {place.closesAt?.slice(0, 5)}
+                            {place.opensAt || place.closesAt ? (
+                                <div className="space-y-2 text-sm text-foreground">
+                                    <p className="bg-primary/5 p-3 rounded-xl border border-primary/10">
+                                        {place.opensAt && place.closesAt
+                                            ? `يومياً من ${place.opensAt} إلى ${place.closesAt}`
+                                            : place.opensAt || place.closesAt
+                                        }
                                     </p>
                                 </div>
                             ) : (

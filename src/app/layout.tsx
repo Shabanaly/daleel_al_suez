@@ -16,9 +16,11 @@ const notoKufi = Noto_Kufi_Arabic({
 });
 
 import { SupabaseSettingsRepository } from "@/data/repositories/supabase-settings.repository";
+import { createClient } from "@/lib/supabase/server";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const settingsRepository = new SupabaseSettingsRepository();
+  const supabase = await createClient();
+  const settingsRepository = new SupabaseSettingsRepository(supabase);
   const settings = await settingsRepository.getPublicSettings();
 
   return {

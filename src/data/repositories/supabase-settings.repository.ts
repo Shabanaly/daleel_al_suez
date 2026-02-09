@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/client";
 import { ISettingsRepository } from "@/domain/interfaces/settings-repository.interface";
 import { Setting } from "@/domain/entities/setting";
+import { SupabaseClient } from "@supabase/supabase-js";
 
 interface SupabaseSettingRow {
     key: string;
@@ -14,7 +15,11 @@ interface SupabaseSettingRow {
 }
 
 export class SupabaseSettingsRepository implements ISettingsRepository {
-    private supabase = createClient();
+    private supabase: SupabaseClient;
+
+    constructor(client?: SupabaseClient) {
+        this.supabase = client || createClient();
+    }
 
     async getSettingsByGroup(group: string): Promise<Setting[]> {
         const { data, error } = await this.supabase

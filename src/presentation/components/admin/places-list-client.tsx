@@ -67,7 +67,7 @@ export function PlacesListClient({ places, isSuperAdmin }: PlacesListClientProps
                                         <div className="flex items-center gap-3">
                                             <div className="w-12 h-12 rounded-xl bg-slate-800 relative overflow-hidden border border-slate-700/50 hover:border-primary/20 transition-colors shrink-0">
                                                 {place.images && place.images.length > 0 ? (
-                                                    <Image src={place.images[0]} alt={place.name} fill className="object-cover" sizes="48px" />
+                                                    <Image src={place.images[0]} alt={place.name} fill className="object-cover" sizes="48px" unoptimized referrerPolicy="no-referrer" />
                                                 ) : (
                                                     <div className="w-full h-full flex items-center justify-center text-slate-600 bg-slate-800">
                                                         <MapPin size={16} />

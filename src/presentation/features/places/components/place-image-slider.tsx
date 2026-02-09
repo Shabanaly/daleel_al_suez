@@ -84,6 +84,9 @@ export function PlaceImageSlider({ images, placeName }: PlaceImageSliderProps) {
                                     fill
                                     className="object-cover"
                                     priority={index === 0}
+                                    loading={index === 0 ? "eager" : "lazy"}
+                                    unoptimized
+                                    referrerPolicy="no-referrer"
                                 />
                                 {/* Gradient Overlay */}
                                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent pointer-events-none" />
@@ -140,7 +143,13 @@ export function PlaceImageSlider({ images, placeName }: PlaceImageSliderProps) {
                                         : 'border-white/30 hover:border-white/80 opacity-70 hover:opacity-100'
                                         }`}
                                 >
-                                    <Image src={img} alt={`مصغرة ${idx + 1}`} fill className="object-cover" />
+                                    <Image
+                                        src={img}
+                                        alt={`مصغرة ${idx + 1}`}
+                                        fill
+                                        className="object-cover"
+                                        unoptimized
+                                    />
                                 </button>
                             ))}
                             {images.length > 4 && (
@@ -184,6 +193,7 @@ export function PlaceImageSlider({ images, placeName }: PlaceImageSliderProps) {
                                             fill
                                             className="object-contain"
                                             quality={100}
+                                            unoptimized
                                         />
                                     </div>
                                 </div>
@@ -220,7 +230,13 @@ export function PlaceImageSlider({ images, placeName }: PlaceImageSliderProps) {
                                     : 'border-transparent opacity-50 hover:opacity-80'
                                     }`}
                             >
-                                <Image src={img} alt="thumbnail" fill className="object-cover" />
+                                <Image
+                                    src={img}
+                                    alt="thumbnail"
+                                    fill
+                                    className="object-cover"
+                                    unoptimized
+                                />
                             </button>
                         ))}
                     </div>

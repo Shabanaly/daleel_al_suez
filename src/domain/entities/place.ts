@@ -32,4 +32,5 @@ export interface Place {
     // Status & Timestamps
     status?: 'active' | 'pending' | 'inactive';
     createdAt?: string;
+    google_place_id?: string;
 }

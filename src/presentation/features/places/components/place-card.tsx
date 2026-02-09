@@ -20,6 +20,7 @@ export function PlaceCard({ place }: PlaceCardProps) {
                         alt={place.name}
                         fill
                         className="object-cover transition-transform duration-500 group-hover:scale-110"
+                        unoptimized
                     />
                 ) : (
                     <div className="w-full h-full bg-muted flex items-center justify-center text-muted-foreground">
