@@ -6,6 +6,8 @@ import { PlaceCard } from "@/presentation/features/places/components/place-card"
 import { CategoryCard } from "@/presentation/features/categories/components/category-card";
 import { EventCard } from "@/presentation/features/events/event-card";
 import { EventHeroSlider } from "./events/event-hero-slider";
+import { HomeNewsSection } from "./news/home-news-section";
+import { Article } from "@/domain/entities/article";
 import { HeroSearchBar } from "@/presentation/features/places/components/hero-search-bar";
 import { ArrowLeft, Sparkles, Grid3x3, Calendar } from "lucide-react";
 
@@ -13,9 +15,10 @@ interface HomeViewProps {
     featuredPlaces: Place[];
     categories: (Category & { placesCount?: number })[];
     events: SuezEvent[];
+    latestArticles: Article[];
 }
 
-export function HomeView({ featuredPlaces, categories, events }: HomeViewProps) {
+export function HomeView({ featuredPlaces, categories, events, latestArticles }: HomeViewProps) {
     return (
         <div className="space-y-16 pb-12">
             {/* Hero Section - Search & Welcome */}
@@ -124,6 +127,10 @@ export function HomeView({ featuredPlaces, categories, events }: HomeViewProps) 
                     ))}
                 </div>
             </section>
+
+            <div className="pt-8">
+                <HomeNewsSection articles={latestArticles} />
+            </div>
 
             {/* Other Content can go here (e.g. SEO text, Download App, etc) */}
         </div>

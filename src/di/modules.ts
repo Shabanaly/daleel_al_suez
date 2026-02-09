@@ -34,12 +34,23 @@ import { DeleteEventUseCase } from "@/domain/use-cases/admin/delete-event.usecas
 import { GetActiveEventsUseCase } from "@/domain/use-cases/get-active-events.usecase";
 import { GetEventByIdUseCase } from "@/domain/use-cases/get-event-by-id.usecase";
 
+// Articles
+import { SupabaseArticleRepository } from "@/data/repositories/supabase-article-repository";
+import { GetArticlesUseCase } from "@/domain/use-cases/get-articles.usecase";
+import { GetArticleByIdUseCase } from "@/domain/use-cases/get-article-by-id.usecase";
+import { GetLatestArticlesUseCase } from "@/domain/use-cases/get-latest-articles.usecase";
+import { GetAdminArticlesUseCase } from "@/domain/use-cases/admin/get-admin-articles.usecase";
+import { CreateArticleUseCase } from "@/domain/use-cases/admin/create-article.usecase";
+import { UpdateArticleUseCase } from "@/domain/use-cases/admin/update-article.usecase";
+import { DeleteArticleUseCase } from "@/domain/use-cases/admin/delete-article.usecase";
+
 // 1. Repositories
 const placeRepository = new SupabasePlaceRepository();
 const categoryRepository = new SupabaseCategoryRepository();
 const settingsRepository = new SupabaseSettingsRepository();
 const reviewRepository = new SupabaseReviewRepository(createClient());
 const eventRepository = new SupabaseEventRepository();
+const articleRepository = new SupabaseArticleRepository();
 
 // 2. Use Cases
 export const getFeaturedPlacesUseCase = new GetFeaturedPlacesUseCase(placeRepository);
@@ -77,6 +88,15 @@ export const deleteEventUseCase = new DeleteEventUseCase(eventRepository);
 export const getActiveEventsUseCase = new GetActiveEventsUseCase(eventRepository);
 export const getEventByIdUseCase = new GetEventByIdUseCase(eventRepository);
 
+// Article Use Cases
+export const getArticlesUseCase = new GetArticlesUseCase(articleRepository);
+export const getArticleByIdUseCase = new GetArticleByIdUseCase(articleRepository);
+export const getLatestArticlesUseCase = new GetLatestArticlesUseCase(articleRepository);
+export const getAdminArticlesUseCase = new GetAdminArticlesUseCase(articleRepository);
+export const createArticleUseCase = new CreateArticleUseCase(articleRepository);
+export const updateArticleUseCase = new UpdateArticleUseCase(articleRepository);
+export const deleteArticleUseCase = new DeleteArticleUseCase(articleRepository);
+
 // Area Use Cases
 import { SupabaseAreaRepository } from "@/data/repositories/supabase-area.repository";
 import { GetAreasUseCase } from "@/domain/use-cases/admin/get-areas.usecase";
@@ -103,5 +123,3 @@ export const getUserLogsUseCase = new GetUserLogsUseCase(userRepository);
 
 import { UpdateUserRoleUseCase } from "@/domain/use-cases/admin/update-user-role.usecase";
 export const updateUserRoleUseCase = new UpdateUserRoleUseCase(userRepository);
-
-

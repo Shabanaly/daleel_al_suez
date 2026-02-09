@@ -76,6 +76,9 @@ export function Header({ settings }: { settings?: Record<string, unknown> }) {
                     <Link href="/places" className="text-sm font-medium hover:text-primary transition-colors">
                         الأماكن
                     </Link>
+                    <Link href="/news" className="text-sm font-medium hover:text-primary transition-colors">
+                        الأخبار والمقالات
+                    </Link>
                 </nav>
 
                 {/* Desktop Actions */}
@@ -179,6 +182,13 @@ export function Header({ settings }: { settings?: Record<string, unknown> }) {
                                     onClick={() => setIsMenuOpen(false)}
                                 >
                                     الأماكن
+                                </Link>
+                                <Link
+                                    href="/news"
+                                    className="block px-4 py-3 text-base font-medium rounded-xl hover:bg-muted transition-colors"
+                                    onClick={() => setIsMenuOpen(false)}
+                                >
+                                    الأخبار والمقالات
                                 </Link>
                                 <Link
                                     href="/events"

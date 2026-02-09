@@ -104,7 +104,7 @@ export function EventDetailView({ event }: EventDetailViewProps) {
                 </DialogContent>
 
                 {/* Back Button (Independent of DialogTrigger) */}
-                <div className="absolute top-8 right-4 md:right-8 z-20">
+                <div className="absolute top-20 right-4 md:right-8 z-20">
                     <Link
                         href="/events"
                         className="flex items-center gap-2 bg-background/60 backdrop-blur-md px-4 py-2 rounded-xl border border-border hover:bg-background/80 transition-all text-sm font-medium shadow-lg"
