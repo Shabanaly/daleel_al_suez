@@ -1,8 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import Image from 'next/image'
-import { ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, X, Maximize2 } from 'lucide-react'
+import useEmblaCarousel from 'embla-carousel-react'
+import { EmblaCarouselType } from 'embla-carousel'
 
 interface PlaceImageSliderProps {
     images: string[]
@@ -13,50 +15,96 @@ export function PlaceImageSlider({ images, placeName }: PlaceImageSliderProps) {
     const [currentIndex, setCurrentIndex] = useState(0)
     const [isModalOpen, setIsModalOpen] = useState(false)
 
+    // Main Slider
+    const [emblaRef, emblaApi] = useEmblaCarousel({
+        loop: true,
+        direction: 'rtl', // Important for Arabic
+        skipSnaps: false
+    })
+
+    // Modal Slider
+    const [modalEmblaRef, modalEmblaApi] = useEmblaCarousel({
+        loop: true,
+        direction: 'rtl'
+    })
+
+    // Update state when slide changes
+    const onSelect = useCallback((api: EmblaCarouselType) => {
+        setCurrentIndex(api.selectedScrollSnap())
+    }, [])
+
+    useEffect(() => {
+        if (!emblaApi) return
+        emblaApi.on('select', onSelect)
+        emblaApi.scrollTo(currentIndex) // Sync with external updates
+
+        return () => {
+            emblaApi.off('select', onSelect)
+        }
+    }, [emblaApi, onSelect, currentIndex])
+
+    // Sync Modal Slider when opened
+    useEffect(() => {
+        if (isModalOpen && modalEmblaApi) {
+            modalEmblaApi.scrollTo(currentIndex)
+            modalEmblaApi.on('select', (api) => setCurrentIndex(api.selectedScrollSnap()))
+        }
+    }, [isModalOpen, modalEmblaApi, currentIndex])
+
+
+    // Navigation Handlers
+    const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi])
+    const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi])
+    const scrollTo = useCallback((index: number) => emblaApi?.scrollTo(index), [emblaApi])
+
+    const modalScrollPrev = useCallback(() => modalEmblaApi?.scrollPrev(), [modalEmblaApi])
+    const modalScrollNext = useCallback(() => modalEmblaApi?.scrollNext(), [modalEmblaApi])
+
     if (!images || images.length === 0) {
         return (
-            <div className="relative h-[400px] md:h-[500px] bg-slate-900 flex items-center justify-center">
-                <span className="text-6xl">📷</span>
+            <div className="relative h-[400px] md:h-[500px] bg-slate-900 flex items-center justify-center rounded-3xl overflow-hidden">
+                <span className="text-6xl opacity-20">📷</span>
             </div>
         )
     }
 
-    const nextImage = () => {
-        setCurrentIndex((prev) => (prev + 1) % images.length)
-    }
-
-    const prevImage = () => {
-        setCurrentIndex((prev) => (prev - 1 + images.length) % images.length)
-    }
-
     return (
         <>
-            {/* Main Slider */}
-            <div className="relative h-[400px] md:h-[500px] group">
-                <Image
-                    src={images[currentIndex]}
-                    alt={`${placeName} - صورة ${currentIndex + 1}`}
-                    fill
-                    className="object-cover"
-                    priority
-                />
+            {/* Main Slider Container */}
+            <div className="relative h-[400px] md:h-[500px] group rounded-3xl overflow-hidden bg-slate-950">
 
-                {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/50 to-transparent" />
+                {/* Embla Viewport */}
+                <div className="overflow-hidden h-full" ref={emblaRef}>
+                    <div className="flex touch-pan-y rtl:flex-row-reverse h-full">
+                        {images.map((src, index) => (
+                            <div className="relative flex-[0_0_100%] min-w-0 h-full" key={index}>
+                                <Image
+                                    src={src}
+                                    alt={`${placeName} - صورة ${index + 1}`}
+                                    fill
+                                    className="object-cover"
+                                    priority={index === 0}
+                                />
+                                {/* Gradient Overlay */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent pointer-events-none" />
+                            </div>
+                        ))}
+                    </div>
+                </div>
 
                 {/* Navigation Arrows */}
                 {images.length > 1 && (
                     <>
                         <button
-                            onClick={prevImage}
-                            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white p-3 rounded-full transition-all opacity-0 group-hover:opacity-100"
+                            onClick={scrollPrev}
+                            className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 backdrop-blur-md text-white p-3 rounded-full transition-all opacity-0 group-hover:opacity-100 z-10"
                             aria-label="الصورة السابقة"
                         >
                             <ChevronRight size={24} />
                         </button>
                         <button
-                            onClick={nextImage}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white p-3 rounded-full transition-all opacity-0 group-hover:opacity-100"
+                            onClick={scrollNext}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 backdrop-blur-md text-white p-3 rounded-full transition-all opacity-0 group-hover:opacity-100 z-10"
                             aria-label="الصورة التالية"
                         >
                             <ChevronLeft size={24} />
@@ -65,85 +113,117 @@ export function PlaceImageSlider({ images, placeName }: PlaceImageSliderProps) {
                 )}
 
                 {/* Image Counter */}
-                {images.length > 1 && (
-                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm">
-                        {currentIndex + 1} / {images.length}
-                    </div>
-                )}
+                <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md text-white px-4 py-2 rounded-full text-xs font-bold pointer-events-none z-10">
+                    {currentIndex + 1} / {images.length}
+                </div>
 
-                {/* Thumbnail Preview */}
-                {images.length > 1 && (
-                    <div className="absolute bottom-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        {images.slice(0, 4).map((img, idx) => (
-                            <button
-                                key={idx}
-                                onClick={() => setCurrentIndex(idx)}
-                                className={`relative w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${idx === currentIndex ? 'border-primary scale-110' : 'border-white/50 hover:border-white'
-                                    }`}
-                            >
-                                <Image src={img} alt={`صورة مصغرة ${idx + 1}`} fill className="object-cover" />
-                            </button>
-                        ))}
-                        {images.length > 4 && (
-                            <button
-                                onClick={() => setIsModalOpen(true)}
-                                className="w-16 h-16 rounded-lg bg-black/60 backdrop-blur-sm text-white flex items-center justify-center text-xs font-bold hover:bg-black/80 transition-colors border-2 border-white/50"
-                            >
-                                +{images.length - 4}
-                            </button>
-                        )}
-                    </div>
-                )}
+                {/* Bottom Controls Area */}
+                <div className="absolute bottom-0 left-0 right-0 p-6 flex items-end justify-between z-10">
 
-                {/* View All Button */}
-                <button
-                    onClick={() => setIsModalOpen(true)}
-                    className="absolute top-4 left-4 bg-black/60 hover:bg-black/70 backdrop-blur-md text-white px-4 py-2.5 rounded-full text-sm font-semibold transition-colors border border-white/20 shadow-lg"
-                >
-                    عرض جميع الصور ({images.length})
-                </button>
-            </div>
-
-            {/* Fullscreen Modal */}
-            {isModalOpen && (
-                <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4">
+                    {/* View All / Expand Button */}
                     <button
-                        onClick={() => setIsModalOpen(false)}
-                        className="absolute top-4 right-4 bg-white/10 hover:bg-white/20 text-white p-2 rounded-full transition-colors"
+                        onClick={() => setIsModalOpen(true)}
+                        className="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors border border-white/10 flex items-center gap-2"
                     >
-                        <X size={24} />
+                        <Maximize2 size={16} />
+                        <span>عرض الكل</span>
                     </button>
 
-                    <div className="relative w-full max-w-4xl h-[80vh]">
-                        <Image
-                            src={images[currentIndex]}
-                            alt={`${placeName} - صورة ${currentIndex + 1}`}
-                            fill
-                            className="object-contain"
-                        />
+                    {/* Thumbnails (Desktop Only) */}
+                    {images.length > 1 && (
+                        <div className="hidden md:flex gap-2">
+                            {images.slice(0, 4).map((img, idx) => (
+                                <button
+                                    key={idx}
+                                    onClick={() => scrollTo(idx)}
+                                    className={`relative w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${idx === currentIndex
+                                            ? 'border-primary ring-2 ring-primary/20 scale-105'
+                                            : 'border-white/30 hover:border-white/80 opacity-70 hover:opacity-100'
+                                        }`}
+                                >
+                                    <Image src={img} alt={`مصغرة ${idx + 1}`} fill className="object-cover" />
+                                </button>
+                            ))}
+                            {images.length > 4 && (
+                                <button
+                                    onClick={() => setIsModalOpen(true)}
+                                    className="w-16 h-16 rounded-lg bg-black/60 backdrop-blur-sm text-white flex items-center justify-center text-xs font-bold hover:bg-black/80 transition-colors border-2 border-white/30"
+                                >
+                                    +{images.length - 4}
+                                </button>
+                            )}
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* Fullscreen Modal with Slider */}
+            {isModalOpen && (
+                <div className="fixed inset-0 z-[100] bg-black/95 flex flex-col animate-in fade-in duration-200">
+                    {/* Modal Header */}
+                    <div className="flex items-center justify-between p-4 z-50">
+                        <div className="text-white/80 text-sm">
+                            {currentIndex + 1} / {images.length}
+                        </div>
+                        <button
+                            onClick={() => setIsModalOpen(false)}
+                            className="bg-white/10 hover:bg-white/20 text-white p-2 rounded-full transition-colors"
+                        >
+                            <X size={24} />
+                        </button>
+                    </div>
+
+                    {/* Modal Embla Slider */}
+                    <div className="flex-1 overflow-hidden" ref={modalEmblaRef}>
+                        <div className="flex touch-pan-y rtl:flex-row-reverse h-full">
+                            {images.map((src, index) => (
+                                <div className="relative flex-[0_0_100%] min-w-0 h-full flex items-center justify-center" key={index}>
+                                    <div className="relative w-full h-full max-w-5xl max-h-[85vh]">
+                                        <Image
+                                            src={src}
+                                            alt={`${placeName} - تكبير ${index + 1}`}
+                                            fill
+                                            className="object-contain"
+                                            quality={100}
+                                        />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
 
                     {/* Modal Navigation */}
                     {images.length > 1 && (
                         <>
                             <button
-                                onClick={prevImage}
-                                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white p-3 rounded-full transition-colors"
+                                onClick={modalScrollPrev}
+                                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white p-4 rounded-full transition-colors z-50"
                             >
                                 <ChevronRight size={32} />
                             </button>
                             <button
-                                onClick={nextImage}
-                                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white p-3 rounded-full transition-colors"
+                                onClick={modalScrollNext}
+                                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white p-4 rounded-full transition-colors z-50"
                             >
                                 <ChevronLeft size={32} />
                             </button>
                         </>
                     )}
 
-                    {/* Modal Counter */}
-                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-sm text-white px-6 py-3 rounded-full text-lg font-medium">
-                        {currentIndex + 1} / {images.length}
+                    {/* Modal Thumbnails Strip */}
+                    <div className="h-20 bg-black/50 backdrop-blur-sm p-2 flex items-center justify-center gap-2 overflow-x-auto">
+                        {images.map((img, idx) => (
+                            <button
+                                key={idx}
+                                onClick={() => modalEmblaApi?.scrollTo(idx)}
+                                className={`relative flex-shrink-0 w-12 h-12 rounded-md overflow-hidden border transition-all ${idx === currentIndex
+                                        ? 'border-primary opacity-100'
+                                        : 'border-transparent opacity-50 hover:opacity-80'
+                                    }`}
+                            >
+                                <Image src={img} alt="thumbnail" fill className="object-cover" />
+                            </button>
+                        ))}
                     </div>
                 </div>
             )}
