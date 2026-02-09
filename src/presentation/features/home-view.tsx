@@ -5,6 +5,7 @@ import { SuezEvent } from "@/domain/entities/suez-event";
 import { PlaceCard } from "@/presentation/features/places/components/place-card";
 import { CategoryCard } from "@/presentation/features/categories/components/category-card";
 import { EventCard } from "@/presentation/features/events/event-card";
+import { EventHeroSlider } from "./events/event-hero-slider";
 import { HeroSearchBar } from "@/presentation/features/places/components/hero-search-bar";
 import { ArrowLeft, Sparkles, Grid3x3, Calendar } from "lucide-react";
 
@@ -17,7 +18,7 @@ interface HomeViewProps {
 export function HomeView({ featuredPlaces, categories, events }: HomeViewProps) {
     return (
         <div className="space-y-16 pb-12">
-            {/* Hero Section */}
+            {/* Hero Section - Search & Welcome */}
             <section className="relative h-[600px] flex items-center justify-center bg-gradient-to-br from-primary to-blue-600 dark:from-slate-950 dark:to-slate-900 text-white overflow-hidden">
                 {/* Background Pattern */}
                 <div className="absolute inset-0 bg-[url('/images/hero-bg.png')] bg-cover bg-center opacity-70"></div>
@@ -44,10 +45,12 @@ export function HomeView({ featuredPlaces, categories, events }: HomeViewProps) 
                     </p>
 
                     {/* Search Bar */}
-                    <HeroSearchBar />
+                    <div className="max-w-2xl mx-auto">
+                        <HeroSearchBar />
+                    </div>
 
                     {/* Quick Stats */}
-                    <div className="flex items-center justify-center gap-8 mt-12 text-sm">
+                    <div className="flex items-center justify-center gap-8 mt-12 text-sm text-white/80">
                         <div className="flex items-center gap-2">
                             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                             <span>{featuredPlaces.length}+ مكان مميز</span>
@@ -61,75 +64,34 @@ export function HomeView({ featuredPlaces, categories, events }: HomeViewProps) 
                 </div>
             </section>
 
-            {/* Featured Places */}
-            <section className="container mx-auto px-4">
-                <div className="flex justify-between items-end mb-8">
-                    <div>
-                        <div className="flex items-center gap-2 mb-2">
-                            <Sparkles className="text-primary" size={24} />
-                            <h2 className="text-3xl md:text-4xl font-bold text-foreground">أماكن مميزة</h2>
-                        </div>
-                        <p className="text-muted-foreground">مختارات خاصة لك من أفضل أماكن السويس</p>
+            {/* Premium Events Slider */}
+            <div className="pt-8">
+                <div className="container mx-auto px-4 mb-8">
+                    <div className="flex items-center gap-2">
+                        <Calendar className="text-primary" size={24} />
+                        <h2 className="text-2xl md:text-3xl font-bold text-foreground">فاعليات السويس</h2>
                     </div>
-                    <Link href="/places" className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-5 py-2.5 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all group">
-                        عرض الكل
-                        <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-                    </Link>
                 </div>
+                <EventHeroSlider events={events} />
+            </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {featuredPlaces.map((place) => (
-                        <PlaceCard key={place.id} place={place} />
-                    ))}
-                </div>
-            </section>
-
-            {/* Upcoming Events */}
-            <section className="container mx-auto px-4">
-                <div className="flex justify-between items-end mb-8">
-                    <div>
-                        <div className="flex items-center gap-2 mb-2">
-                            <Calendar className="text-primary" size={24} />
-                            <h2 className="text-3xl md:text-4xl font-bold text-foreground">فعاليات قادمة</h2>
-                        </div>
-                        <p className="text-muted-foreground">اكتشف أحدث الأحداث والأنشطة في مدينة السويس</p>
-                    </div>
-                    <Link href="/events" className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-5 py-2.5 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all group">
-                        عرض كل الفعاليات
-                        <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-                    </Link>
-                </div>
-
-                {events.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {events.slice(0, 3).map((event) => (
-                            <EventCard key={event.id} event={event} />
-                        ))}
-                    </div>
-                ) : (
-                    <div className="text-center py-12 bg-slate-900/5 rounded-3xl border border-dashed border-slate-300 dark:border-slate-800">
-                        <p className="text-muted-foreground">لا توجد فعاليات قادمة حالياً. ترقبوا المزيد قريباً!</p>
-                    </div>
-                )}
-            </section>
-
-            {/* Categories Grid */}
+            {/* Categories Grid - Quick Exploration */}
             <section className="container mx-auto px-4">
                 <div className="flex justify-between items-end mb-8">
                     <div>
                         <div className="flex items-center gap-2 mb-2">
                             <Grid3x3 className="text-primary" size={24} />
-                            <h2 className="text-3xl md:text-4xl font-bold text-foreground">استكشف التصنيفات</h2>
+                            <h2 className="text-2xl md:text-4xl font-bold text-foreground">استكشف التصنيفات</h2>
                         </div>
-                        <p className="text-muted-foreground">تصفح الأماكن حسب الفئة المناسبة لك</p>
+                        <p className="text-muted-foreground text-sm">تصفح أفضل أماكن السويس حسب الفئة</p>
                     </div>
-                    <Link href="/categories" className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-5 py-2.5 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all group">
+                    <Link href="/categories" className="inline-flex items-center gap-2 text-primary font-bold hover:underline transition-all group">
                         كل التصنيفات
                         <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
                     </Link>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
                     {categories.map((category) => (
                         <CategoryCard
                             key={category.id}
@@ -139,6 +101,31 @@ export function HomeView({ featuredPlaces, categories, events }: HomeViewProps) 
                     ))}
                 </div>
             </section>
+
+            {/* Featured Places */}
+            <section className="container mx-auto px-4">
+                <div className="flex justify-between items-end mb-8">
+                    <div>
+                        <div className="flex items-center gap-2 mb-2">
+                            <Sparkles className="text-primary" size={24} />
+                            <h2 className="text-2xl md:text-3xl font-bold text-foreground">أماكن مميزة</h2>
+                        </div>
+                        <p className="text-muted-foreground text-sm">مختارات خاصة لك من أفضل أماكن السويس</p>
+                    </div>
+                    <Link href="/places" className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-5 py-2 rounded-xl font-semibold shadow-md transition-all group">
+                        عرض الكل
+                        <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
+                    </Link>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {featuredPlaces.slice(0, 8).map((place) => (
+                        <PlaceCard key={place.id} place={place} />
+                    ))}
+                </div>
+            </section>
+
+            {/* Other Content can go here (e.g. SEO text, Download App, etc) */}
         </div>
     );
 }

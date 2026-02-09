@@ -1,7 +1,7 @@
 import { SuezEvent } from '@/domain/entities/suez-event'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Calendar, MapPin, Clock } from 'lucide-react'
+import { Calendar, MapPin, Clock, ArrowLeft } from 'lucide-react'
 import { format } from 'date-fns'
 import { ar } from 'date-fns/locale'
 
@@ -13,7 +13,7 @@ export function EventCard({ event }: EventCardProps) {
     const isPlaceHosted = event.type === 'place_hosted' && event.placeId
 
     return (
-        <div className="group bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden hover:border-primary/30 transition-all duration-300 shadow-xl flex flex-col h-full" dir="rtl">
+        <div className="group bg-card rounded-3xl border border-border overflow-hidden hover:border-primary/30 transition-all duration-300 shadow-xl flex flex-col h-full" dir="rtl">
             {/* Image Section */}
             <div className="relative aspect-[16/10] overflow-hidden">
                 {event.imageUrl ? (
@@ -36,41 +36,48 @@ export function EventCard({ event }: EventCardProps) {
             {/* Content Section */}
             <div className="p-6 space-y-4 flex-1 flex flex-col text-right">
                 <div className="space-y-2">
-                    <h3 className="text-xl font-bold text-white group-hover:text-primary transition-colors leading-tight">
+                    <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors leading-tight">
                         {event.title}
                     </h3>
-                    <p className="text-slate-400 text-sm line-clamp-2 leading-relaxed">
+                    <p className="text-muted-foreground text-sm line-clamp-2 leading-relaxed">
                         {event.description}
                     </p>
                 </div>
 
                 <div className="space-y-3 pt-2">
-                    <div className="flex items-center gap-2 text-slate-300 text-sm">
+                    <div className="flex items-center gap-2 text-muted-foreground text-sm">
                         <Calendar size={16} className="text-primary shrink-0" />
                         <span>{format(new Date(event.startDate), 'dd MMMM yyyy', { locale: ar })}</span>
                     </div>
 
-                    <div className="flex items-center gap-2 text-slate-300 text-sm">
+                    <div className="flex items-center gap-2 text-muted-foreground text-sm">
                         <Clock size={16} className="text-primary shrink-0" />
                         <span>{format(new Date(event.startDate), 'hh:mm a')}</span>
                     </div>
 
-                    <div className="flex items-center gap-2 text-slate-300 text-sm">
+                    <div className="flex items-center gap-2 text-muted-foreground text-sm">
                         <MapPin size={16} className="text-primary shrink-0" />
                         <span className="truncate">{event.location || 'السويس'}</span>
                     </div>
                 </div>
 
-                <div className="pt-4 mt-auto">
-                    {isPlaceHosted ? (
-                        <Link href={`/places/${event.placeId}`} className="flex items-center justify-between w-full px-4 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-2xl transition-all border border-slate-700/50">
-                            <span className="text-sm font-medium">عرض المكان: {event.placeName}</span>
-                            <div className="p-1 bg-primary rounded-lg">
-                                <Plus size={14} className="text-white" />
-                            </div>
+                <div className="pt-4 mt-auto flex gap-3">
+                    <Link
+                        href={`/events/${event.id}`}
+                        className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-2xl transition-all shadow-lg shadow-primary/20 font-bold"
+                    >
+                        <span>تفاصيل الفعالية</span>
+                        <ArrowLeft size={18} />
+                    </Link>
+
+                    {isPlaceHosted && (
+                        <Link
+                            href={`/places/${event.placeId}`}
+                            className="aspect-square flex items-center justify-center w-12 bg-slate-800 hover:bg-slate-700 text-white rounded-2xl transition-all border border-slate-700/50"
+                            title={`عرض المكان: ${event.placeName}`}
+                        >
+                            <MapPin size={20} className="text-primary" />
                         </Link>
-                    ) : (
-                        <div className="h-11 invisible" /> /* Spacer */
                     )}
                 </div>
             </div>

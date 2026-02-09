@@ -8,7 +8,7 @@ export default async function EventsPage() {
     const events = await getActiveEventsUseCase.execute()
 
     return (
-        <main className="min-h-screen bg-slate-950 pb-20 pt-24 px-4">
+        <main className="min-h-screen bg-background pb-20 pt-24 px-4">
             <div className="max-w-7xl mx-auto space-y-12">
                 {/* Header Section */}
                 <div className="text-center space-y-4">
@@ -16,8 +16,8 @@ export default async function EventsPage() {
                         <Calendar size={16} />
                         <span>فعاليات السويس</span>
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight">استكشف أحداث المدينة</h1>
-                    <p className="text-slate-400 max-w-2xl mx-auto">
+                    <h1 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight">استكشف أحداث المدينة</h1>
+                    <p className="text-muted-foreground max-w-2xl mx-auto">
                         كن على اطلاع دائم بأحدث المهرجانات، العروض الفنية، والأنشطة الترفيهية في قلب السويس.
                     </p>
                 </div>

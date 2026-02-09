@@ -32,6 +32,7 @@ import { CreateEventUseCase } from "@/domain/use-cases/admin/create-event.usecas
 import { UpdateEventUseCase } from "@/domain/use-cases/admin/update-event.usecase";
 import { DeleteEventUseCase } from "@/domain/use-cases/admin/delete-event.usecase";
 import { GetActiveEventsUseCase } from "@/domain/use-cases/get-active-events.usecase";
+import { GetEventByIdUseCase } from "@/domain/use-cases/get-event-by-id.usecase";
 
 // 1. Repositories
 const placeRepository = new SupabasePlaceRepository();
@@ -74,6 +75,7 @@ export const createEventUseCase = new CreateEventUseCase(eventRepository);
 export const updateEventUseCase = new UpdateEventUseCase(eventRepository);
 export const deleteEventUseCase = new DeleteEventUseCase(eventRepository);
 export const getActiveEventsUseCase = new GetActiveEventsUseCase(eventRepository);
+export const getEventByIdUseCase = new GetEventByIdUseCase(eventRepository);
 
 // Area Use Cases
 import { SupabaseAreaRepository } from "@/data/repositories/supabase-area.repository";
