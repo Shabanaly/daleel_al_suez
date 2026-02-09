@@ -1,297 +1,261 @@
--- Enable UUID extension
-create extension if not exists "uuid-ossp";
+-- WARNING: This schema is for context only and is not meant to be run.
+-- Table order and constraints may not be valid for execution.
 
--- ---------------------------------------------------------
--- 1. PROFILES (Users & Roles)
--- ---------------------------------------------------------
-create table if not exists public.profiles (
-  id uuid not null,
-  email text unique,
-  full_name text,
-  avatar_url text,
-  role text default 'user'::text check (role = any (array['user'::text, 'admin'::text, 'super_admin'::text])),
-  created_at timestamp with time zone not null default timezone('utc'::text, now()),
-  updated_at timestamp with time zone not null default timezone('utc'::text, now()),
-  constraint profiles_pkey primary key (id),
-  constraint profiles_id_fkey foreign key (id) references auth.users(id) on delete cascade
+CREATE TABLE public.areas (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  name text NOT NULL,
+  slug text NOT NULL UNIQUE,
+  created_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
+  CONSTRAINT areas_pkey PRIMARY KEY (id)
 );
-
--- Ensure columns exist (Idempotent)
-alter table public.profiles add column if not exists role text default 'user'::text check (role = any (array['user'::text, 'admin'::text, 'super_admin'::text]));
-alter table public.profiles add column if not exists full_name text;
-alter table public.profiles add column if not exists updated_at timestamp with time zone not null default timezone('utc'::text, now());
-
--- Secure Profiles: Enable RLS
-alter table public.profiles enable row level security;
-
--- Drop old policies to ensure updates
-drop policy if exists "Public profiles are viewable by everyone." on profiles;
-drop policy if exists "Users can insert their own profile." on profiles;
-drop policy if exists "Users can update their own profile." on profiles;
-
--- Recreate Policies
-create policy "Public profiles are viewable by everyone." on profiles for select using (true);
-create policy "Users can insert their own profile." on profiles for insert with check (auth.uid() = id);
-create policy "Users can update their own profile." on profiles for update using (auth.uid() = id);
-
--- Trigger to create profile on Signup
-create or replace function public.handle_new_user() 
-returns trigger as $$
-begin
-  insert into public.profiles (id, email, full_name, role)
-  values (new.id, new.email, new.raw_user_meta_data->>'full_name', 'user')
-  on conflict (id) do nothing;
-  return new;
-end;
-$$ language plpgsql security definer;
-
--- Drop trigger if exists to recreate
-drop trigger if exists on_auth_user_created on auth.users;
-create trigger on_auth_user_created
-  after insert on auth.users
-  for each row execute procedure public.handle_new_user();
-
-
--- ---------------------------------------------------------
--- 2. CATEGORIES
--- ---------------------------------------------------------
-create table if not exists public.categories (
-  id uuid not null default gen_random_uuid(),
-  name text not null,
-  slug text not null unique,
+CREATE TABLE public.articles (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  title text NOT NULL,
+  excerpt text,
+  content text,
+  cover_image_url text,
+  author_id uuid,
+  category text DEFAULT 'News'::text,
+  is_published boolean DEFAULT false,
+  created_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
+  updated_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
+  CONSTRAINT articles_pkey PRIMARY KEY (id),
+  CONSTRAINT articles_author_id_fkey FOREIGN KEY (author_id) REFERENCES auth.users(id)
+);
+CREATE TABLE public.audit_logs (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  actor_id uuid,
+  action text NOT NULL,
+  target_id uuid,
+  details jsonb,
+  created_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
+  CONSTRAINT audit_logs_pkey PRIMARY KEY (id),
+  CONSTRAINT audit_logs_actor_id_fkey FOREIGN KEY (actor_id) REFERENCES public.profiles(id)
+);
+CREATE TABLE public.categories (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  name text NOT NULL,
+  slug text NOT NULL UNIQUE,
   icon text,
-  created_at timestamp with time zone not null default timezone('utc'::text, now()),
-  updated_at timestamp with time zone not null default timezone('utc'::text, now()),
-  constraint categories_pkey primary key (id)
+  created_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
+  updated_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
+  is_featured boolean DEFAULT false,
+  sort_order integer DEFAULT 0,
+  CONSTRAINT categories_pkey PRIMARY KEY (id)
 );
-
--- Drop legacy policies that might depend on columns we want to remove
-drop policy if exists "admins_insert_categories" on categories;
-drop policy if exists "categories_visibility" on categories;
-drop policy if exists "admins_create_categories" on categories;
-drop policy if exists "admins_update_categories" on categories;
-drop policy if exists "admins_delete_categories" on categories;
-
--- Remove image and created_by columns if they exist (migration)
-alter table public.categories drop column if exists image cascade;
-alter table public.categories drop column if exists created_by cascade;
-
-alter table public.categories enable row level security;
-
--- ================================================================
--- RLS POLICIES: Categories - Super Admin Only Management
--- ================================================================
--- Strategy:
---   1. Everyone (public + authenticated): Can VIEW all categories
---   2. Super Admin ONLY: Can CREATE/UPDATE/DELETE categories
--- ================================================================
-
--- Drop all existing policies to ensure clean state
-drop policy if exists "Categories are viewable by everyone" on categories;
-drop policy if exists "Admins can manage categories" on categories;
-drop policy if exists "admins_own_categories" on categories;
-drop policy if exists "admins_own_categories_select" on categories;
-drop policy if exists "admins_insert_own_categories" on categories;
-drop policy if exists "admins_update_own_categories" on categories;
-drop policy if exists "admins_delete_own_categories" on categories;
-drop policy if exists "categories_select_policy" on categories;
-drop policy if exists "public_can_view_categories" on categories;
-drop policy if exists "categories_visibility" on categories;
-drop policy if exists "admins_create_categories" on categories;
-drop policy if exists "admins_update_categories" on categories;
-drop policy if exists "admins_delete_categories" on categories;
-
--- SELECT: Everyone can view all categories
-drop policy if exists "everyone_view_categories" on categories;
-create policy "everyone_view_categories" on categories
-  for select using (true);
-
--- INSERT/UPDATE/DELETE: Only Super Admin
-create policy "super_admin_manage_categories" on categories
-  for all using (
-    exists (
-      select 1 from public.profiles 
-      where id = auth.uid() 
-      and role = 'super_admin'
-    )
-  );
-
-
-
--- ---------------------------------------------------------
--- 3. AREAS (Regions)
--- ---------------------------------------------------------
-create table if not exists public.areas (
-  id uuid not null default gen_random_uuid(),
-  name text not null,
-  slug text not null unique,
-  created_at timestamp with time zone not null default timezone('utc'::text, now()),
-  constraint areas_pkey primary key (id)
+CREATE TABLE public.documents (
+  id bigint NOT NULL DEFAULT nextval('documents_id_seq'::regclass),
+  content text,
+  metadata jsonb,
+  embedding USER-DEFINED,
+  CONSTRAINT documents_pkey PRIMARY KEY (id)
 );
-
-alter table public.areas enable row level security;
-
--- Policies for areas
-drop policy if exists "Everyone can view areas" on areas;
-create policy "Everyone can view areas" on areas for select using (true);
--- Only Super Admins can manage areas (for now)
-create policy "Super Admins can manage areas" on areas
-  for all using (
-    exists (
-      select 1 from public.profiles 
-      where id = auth.uid() 
-      and role = 'super_admin'
-    )
-  );
-
--- ---------------------------------------------------------
--- 4. PLACES (With Ownership & Enhanced Fields)
--- ---------------------------------------------------------
-create table if not exists public.places (
-  id uuid not null default gen_random_uuid(),
-  slug text not null unique,
-  name text not null,
+CREATE TABLE public.events (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  title character varying NOT NULL,
+  slug character varying NOT NULL UNIQUE,
   description text,
-  address text, -- Can be null for professionals
+  image_url text,
+  start_date timestamp with time zone NOT NULL,
+  end_date timestamp with time zone NOT NULL,
+  location text,
+  place_id uuid,
+  type USER-DEFINED DEFAULT 'general'::event_type,
+  status USER-DEFINED DEFAULT 'draft'::event_status,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT events_pkey PRIMARY KEY (id),
+  CONSTRAINT events_place_id_fkey FOREIGN KEY (place_id) REFERENCES public.places(id)
+);
+CREATE TABLE public.favorites (
+  user_id uuid NOT NULL,
+  place_id uuid NOT NULL,
+  created_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
+  CONSTRAINT favorites_pkey PRIMARY KEY (user_id, place_id),
+  CONSTRAINT favorites_place_id_fkey FOREIGN KEY (place_id) REFERENCES public.places(id),
+  CONSTRAINT favorites_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
+);
+CREATE TABLE public.google_types_map (
+  google_type text NOT NULL,
+  local_category_id uuid,
+  created_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
+  CONSTRAINT google_types_map_pkey PRIMARY KEY (google_type),
+  CONSTRAINT google_types_map_local_category_id_fkey FOREIGN KEY (local_category_id) REFERENCES public.categories(id)
+);
+CREATE TABLE public.imported_places (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  google_place_id text NOT NULL UNIQUE,
+  name text NOT NULL,
+  description text,
+  address text,
+  phone text,
+  website text,
+  google_maps_url text,
+  rating double precision,
+  review_count integer,
+  images ARRAY,
+  google_types ARRAY,
+  local_category_id uuid,
+  area_id uuid,
+  status text DEFAULT 'pending'::text CHECK (status = ANY (ARRAY['pending'::text, 'auto_pending'::text, 'approved'::text, 'rejected'::text])),
+  source text DEFAULT 'google'::text,
+  confidence_score double precision DEFAULT 0,
+  raw_data jsonb,
+  created_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
+  updated_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
+  opens_at text,
+  closes_at text,
+  CONSTRAINT imported_places_pkey PRIMARY KEY (id),
+  CONSTRAINT imported_places_local_category_id_fkey FOREIGN KEY (local_category_id) REFERENCES public.categories(id),
+  CONSTRAINT imported_places_area_id_fkey FOREIGN KEY (area_id) REFERENCES public.areas(id)
+);
+CREATE TABLE public.notification_preferences (
+  user_id uuid NOT NULL,
+  email_notifications boolean DEFAULT true,
+  push_notifications boolean DEFAULT true,
+  notify_new_reviews boolean DEFAULT true,
+  notify_review_replies boolean DEFAULT true,
+  notify_favorite_updates boolean DEFAULT true,
+  notify_account_changes boolean DEFAULT true,
+  notify_marketing boolean DEFAULT false,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT notification_preferences_pkey PRIMARY KEY (user_id),
+  CONSTRAINT notification_preferences_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
+);
+CREATE TABLE public.notifications (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL,
+  type text NOT NULL,
+  title text NOT NULL,
+  message text,
+  link text,
+  is_read boolean DEFAULT false,
+  created_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
+  CONSTRAINT notifications_pkey PRIMARY KEY (id),
+  CONSTRAINT notifications_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
+);
+CREATE TABLE public.places (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  slug text NOT NULL UNIQUE,
+  name text NOT NULL,
+  description text,
+  address text NOT NULL,
   phone text,
   whatsapp text,
   website text,
   google_maps_url text,
-  images text[],
-  is_featured boolean default false,
-  rating double precision default 0,
-  review_count integer default 0,
+  images ARRAY,
+  is_featured boolean DEFAULT false,
+  rating double precision DEFAULT 0,
+  review_count integer DEFAULT 0,
   category_id uuid,
-  area_id uuid,
   owner_id uuid,
-  created_by uuid default auth.uid(),
-  
-  -- New Columns with NO default value issues on existing tables
-  type text default 'business' check (type in ('business', 'professional')),
-  social_links jsonb default '{}'::jsonb,
-
-  status text default 'active'::text check (status = any (array['active'::text, 'pending'::text, 'closed'::text])),
-  created_at timestamp with time zone not null default timezone('utc'::text, now()),
-  updated_at timestamp with time zone not null default timezone('utc'::text, now()),
-  constraint places_pkey primary key (id),
-  constraint places_category_id_fkey foreign key (category_id) references public.categories(id),
-  constraint places_area_id_fkey foreign key (area_id) references public.areas(id),
-  constraint places_owner_id_fkey foreign key (owner_id) references auth.users(id),
-  constraint places_created_by_fkey foreign key (created_by) references public.profiles(id)
+  created_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
+  updated_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
+  created_by uuid DEFAULT auth.uid(),
+  status text DEFAULT 'active'::text CHECK (status = ANY (ARRAY['active'::text, 'pending'::text, 'inactive'::text])),
+  type text DEFAULT 'business'::text CHECK (type = ANY (ARRAY['business'::text, 'professional'::text])),
+  social_links jsonb DEFAULT '{}'::jsonb,
+  area_id uuid,
+  opens_at text,
+  closes_at text,
+  google_place_id text UNIQUE,
+  CONSTRAINT places_pkey PRIMARY KEY (id),
+  CONSTRAINT places_category_id_fkey FOREIGN KEY (category_id) REFERENCES public.categories(id),
+  CONSTRAINT places_created_by_fkey FOREIGN KEY (created_by) REFERENCES public.profiles(id),
+  CONSTRAINT places_area_id_fkey FOREIGN KEY (area_id) REFERENCES public.areas(id),
+  CONSTRAINT places_owner_id_fkey FOREIGN KEY (owner_id) REFERENCES auth.users(id)
 );
-
--- Note: Alter table commands below are kept for migration safety if running on existing DB
-alter table public.places add column if not exists type text default 'business' check (type in ('business', 'professional'));
-alter table public.places add column if not exists social_links jsonb default '{}'::jsonb;
-alter table public.places add column if not exists area_id uuid references public.areas(id);
-alter table public.places add column if not exists status text default 'active' check (status in ('active', 'pending', 'closed'));
-alter table public.places add column if not exists is_featured boolean default false;
-alter table public.places add column if not exists rating double precision default 0;
-alter table public.places add column if not exists review_count integer default 0;
-alter table public.places add column if not exists website text;
-alter table public.places add column if not exists google_maps_url text;
-alter table public.places add column if not exists owner_id uuid references auth.users(id);
-alter table public.places add column if not exists updated_at timestamp with time zone not null default timezone('utc'::text, now());
-
-alter table public.places enable row level security;
-
--- Policies
-drop policy if exists "Public can view places" on places;
-drop policy if exists "Admins can insert places" on places;
-drop policy if exists "Admins can update own places or SuperAdmin all" on places;
-drop policy if exists "Admins can delete own places or SuperAdmin all" on places;
-
-create policy "Public can view places" on places for select using (true);
-
-create policy "Admins can insert places" on places
-  for insert with check (
-    exists (select 1 from public.profiles where id = auth.uid() and role in ('admin', 'super_admin'))
-  );
-
-create policy "Admins can update own places or SuperAdmin all" on places
-  for update using (
-    exists (
-      select 1 from public.profiles 
-      where id = auth.uid() 
-      and (role = 'super_admin' or (role = 'admin' and places.created_by = auth.uid()))
-    )
-  );
-
-create policy "Admins can delete own places or SuperAdmin all" on places
-  for delete using (
-    exists (
-      select 1 from public.profiles 
-      where id = auth.uid() 
-      and (role = 'super_admin' or (role = 'admin' and places.created_by = auth.uid()))
-    )
-  );
-
-
--- ---------------------------------------------------------
--- 4. REVIEWS
--- ---------------------------------------------------------
-create table if not exists public.reviews (
-  id uuid not null default gen_random_uuid(),
-  rating integer not null check (rating >= 1 and rating <= 5),
+CREATE TABLE public.profiles (
+  id uuid NOT NULL,
+  email text UNIQUE,
+  full_name text,
+  avatar_url text,
+  role text DEFAULT 'user'::text CHECK (role = ANY (ARRAY['user'::text, 'admin'::text, 'super_admin'::text])),
+  created_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
+  updated_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
+  CONSTRAINT profiles_pkey PRIMARY KEY (id),
+  CONSTRAINT profiles_id_fkey FOREIGN KEY (id) REFERENCES auth.users(id)
+);
+CREATE TABLE public.review_votes (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  review_id uuid NOT NULL,
+  user_id uuid NOT NULL,
+  is_helpful boolean NOT NULL,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT review_votes_pkey PRIMARY KEY (id),
+  CONSTRAINT review_votes_review_id_fkey FOREIGN KEY (review_id) REFERENCES public.reviews(id),
+  CONSTRAINT review_votes_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
+);
+CREATE TABLE public.reviews (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  rating integer NOT NULL CHECK (rating >= 1 AND rating <= 5),
   comment text,
-  user_id uuid not null,
-  place_id uuid not null,
-  created_at timestamp with time zone not null default timezone('utc'::text, now()),
-  updated_at timestamp with time zone not null default timezone('utc'::text, now()),
-  constraint reviews_pkey primary key (id),
-  constraint reviews_user_id_fkey foreign key (user_id) references auth.users(id),
-  constraint reviews_place_id_fkey foreign key (place_id) references public.places(id) on delete cascade
+  user_id uuid NOT NULL,
+  place_id uuid NOT NULL,
+  created_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
+  updated_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
+  title character varying,
+  helpful_count integer DEFAULT 0,
+  status character varying DEFAULT 'approved'::character varying CHECK (status::text = ANY (ARRAY['pending'::character varying, 'approved'::character varying, 'rejected'::character varying]::text[])),
+  is_anonymous boolean DEFAULT false,
+  user_name text,
+  user_avatar text,
+  CONSTRAINT reviews_pkey PRIMARY KEY (id),
+  CONSTRAINT reviews_place_id_fkey FOREIGN KEY (place_id) REFERENCES public.places(id),
+  CONSTRAINT reviews_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
 );
-
-alter table public.reviews enable row level security;
-
-drop policy if exists "Everyone can view reviews" on reviews;
-drop policy if exists "Authenticated users can create reviews" on reviews;
-drop policy if exists "Users can delete own reviews" on reviews;
-
-create policy "Everyone can view reviews" on reviews for select using (true);
-create policy "Authenticated users can create reviews" on reviews for insert with check (auth.role() = 'authenticated');
-create policy "Users can delete own reviews" on reviews for delete using (auth.uid() = user_id);
-
-
--- ---------------------------------------------------------
--- 5. AUDIT LOGS (Security)
--- ---------------------------------------------------------
-create table if not exists public.audit_logs (
-  id uuid not null default uuid_generate_v4(),
-  actor_id uuid,
-  action text not null,
-  target_id uuid,
-  details jsonb,
-  created_at timestamp with time zone not null default timezone('utc'::text, now()),
-  constraint audit_logs_pkey primary key (id),
-  constraint audit_logs_actor_id_fkey foreign key (actor_id) references public.profiles(id)
+CREATE TABLE public.settings (
+  key text NOT NULL,
+  value text,
+  group text NOT NULL DEFAULT 'general'::text,
+  type text NOT NULL DEFAULT 'text'::text,
+  label text,
+  description text,
+  is_public boolean DEFAULT true,
+  created_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
+  updated_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
+  CONSTRAINT settings_pkey PRIMARY KEY (key)
 );
-
-alter table public.audit_logs enable row level security;
-
--- Drop old policies
-drop policy if exists "Super Admins can view audit logs" on audit_logs;
-drop policy if exists "Admins can insert log entries" on audit_logs;
-drop policy if exists "audit_logs_visibility" on audit_logs;
-drop policy if exists "admins_insert_audit_logs" on audit_logs;
-
--- SELECT: Super Admins see all, Admins see only their own actions
-create policy "audit_logs_visibility" on audit_logs
-  for select using (
-    -- Super Admins see ALL logs
-    exists (
-      select 1 from public.profiles 
-      where id = auth.uid() 
-      and role = 'super_admin'
-    )
-    or
-    -- Regular Admins see only logs where they are the actor
-    actor_id = auth.uid()
-  );
-
--- INSERT: All authenticated users can create log entries
-create policy "admins_insert_audit_logs" on audit_logs 
-  for insert with check (
-    auth.role() = 'authenticated'
-  );
+CREATE TABLE public.site_analytics (
+  date date NOT NULL DEFAULT CURRENT_DATE,
+  count integer DEFAULT 0,
+  CONSTRAINT site_analytics_pkey PRIMARY KEY (date)
+);
+CREATE TABLE public.support_messages (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  ticket_id uuid,
+  sender_id uuid,
+  is_admin boolean DEFAULT false,
+  message text NOT NULL,
+  attachments jsonb,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT support_messages_pkey PRIMARY KEY (id),
+  CONSTRAINT support_messages_ticket_id_fkey FOREIGN KEY (ticket_id) REFERENCES public.support_tickets(id),
+  CONSTRAINT support_messages_sender_id_fkey FOREIGN KEY (sender_id) REFERENCES auth.users(id)
+);
+CREATE TABLE public.support_tickets (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  user_id uuid,
+  subject character varying NOT NULL,
+  category character varying NOT NULL,
+  priority character varying DEFAULT 'normal'::character varying,
+  status character varying DEFAULT 'open'::character varying,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT support_tickets_pkey PRIMARY KEY (id),
+  CONSTRAINT support_tickets_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id),
+  CONSTRAINT fk_support_tickets_profiles FOREIGN KEY (user_id) REFERENCES public.profiles(id)
+);
+CREATE TABLE public.verification_codes (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  user_id uuid NOT NULL,
+  code text NOT NULL,
+  purpose text NOT NULL,
+  expires_at timestamp without time zone NOT NULL,
+  used boolean DEFAULT false,
+  created_at timestamp without time zone DEFAULT now(),
+  CONSTRAINT verification_codes_pkey PRIMARY KEY (id),
+  CONSTRAINT verification_codes_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
+);
