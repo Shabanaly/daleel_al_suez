@@ -10,5 +10,5 @@
 /Users/shaban/Documents/daleel_al_suez/scripts/list-google-models.ts
   25:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
-✖ 3 problems (3 errors, 0 warnings)
+✖ 03 problems (3 errors, 0 warnings)
 
