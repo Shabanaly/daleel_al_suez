@@ -75,7 +75,7 @@ export function PlaceImageSlider({ images, placeName }: PlaceImageSliderProps) {
 
                 {/* Embla Viewport */}
                 <div className="overflow-hidden h-full" ref={emblaRef}>
-                    <div className="flex touch-pan-y rtl:flex-row-reverse h-full">
+                    <div className="flex touch-pan-y h-full">
                         {images.map((src, index) => (
                             <div className="relative flex-[0_0_100%] min-w-0 h-full" key={index}>
                                 <Image
@@ -113,22 +113,21 @@ export function PlaceImageSlider({ images, placeName }: PlaceImageSliderProps) {
                 )}
 
                 {/* Image Counter */}
-                <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md text-white px-4 py-2 rounded-full text-xs font-bold pointer-events-none z-10">
+                <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/60 backdrop-blur-md text-white px-4 py-2 rounded-full text-xs font-bold pointer-events-none z-10">
                     {currentIndex + 1} / {images.length}
                 </div>
 
+                {/* View All / Expand Button */}
+                <button
+                    onClick={() => setIsModalOpen(true)}
+                    className="absolute top-4 left-4 z-10 bg-black/60 hover:bg-black/70 backdrop-blur-md text-white px-4 py-2 rounded-full text-xs font-bold transition-all border border-white/20 flex items-center gap-2 shadow-lg"
+                >
+                    <Maximize2 size={14} />
+                    <span>عرض الكل</span>
+                </button>
+
                 {/* Bottom Controls Area */}
-                <div className="absolute bottom-0 left-0 right-0 p-6 flex items-end justify-between z-10">
-
-                    {/* View All / Expand Button */}
-                    <button
-                        onClick={() => setIsModalOpen(true)}
-                        className="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors border border-white/10 flex items-center gap-2"
-                    >
-                        <Maximize2 size={16} />
-                        <span>عرض الكل</span>
-                    </button>
-
+                <div className="absolute bottom-0 left-0 right-0 p-6 flex items-end justify-end z-10">
                     {/* Thumbnails (Desktop Only) */}
                     {images.length > 1 && (
                         <div className="hidden md:flex gap-2">
@@ -137,8 +136,8 @@ export function PlaceImageSlider({ images, placeName }: PlaceImageSliderProps) {
                                     key={idx}
                                     onClick={() => scrollTo(idx)}
                                     className={`relative w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${idx === currentIndex
-                                            ? 'border-primary ring-2 ring-primary/20 scale-105'
-                                            : 'border-white/30 hover:border-white/80 opacity-70 hover:opacity-100'
+                                        ? 'border-primary ring-2 ring-primary/20 scale-105'
+                                        : 'border-white/30 hover:border-white/80 opacity-70 hover:opacity-100'
                                         }`}
                                 >
                                     <Image src={img} alt={`مصغرة ${idx + 1}`} fill className="object-cover" />
@@ -175,7 +174,7 @@ export function PlaceImageSlider({ images, placeName }: PlaceImageSliderProps) {
 
                     {/* Modal Embla Slider */}
                     <div className="flex-1 overflow-hidden" ref={modalEmblaRef}>
-                        <div className="flex touch-pan-y rtl:flex-row-reverse h-full">
+                        <div className="flex touch-pan-y h-full">
                             {images.map((src, index) => (
                                 <div className="relative flex-[0_0_100%] min-w-0 h-full flex items-center justify-center" key={index}>
                                     <div className="relative w-full h-full max-w-5xl max-h-[85vh]">
@@ -217,8 +216,8 @@ export function PlaceImageSlider({ images, placeName }: PlaceImageSliderProps) {
                                 key={idx}
                                 onClick={() => modalEmblaApi?.scrollTo(idx)}
                                 className={`relative flex-shrink-0 w-12 h-12 rounded-md overflow-hidden border transition-all ${idx === currentIndex
-                                        ? 'border-primary opacity-100'
-                                        : 'border-transparent opacity-50 hover:opacity-80'
+                                    ? 'border-primary opacity-100'
+                                    : 'border-transparent opacity-50 hover:opacity-80'
                                     }`}
                             >
                                 <Image src={img} alt="thumbnail" fill className="object-cover" />
