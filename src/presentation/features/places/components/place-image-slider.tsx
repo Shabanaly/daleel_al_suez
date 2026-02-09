@@ -62,7 +62,7 @@ export function PlaceImageSlider({ images, placeName }: PlaceImageSliderProps) {
 
     if (!images || images.length === 0) {
         return (
-            <div className="relative h-[400px] md:h-[500px] bg-slate-900 flex items-center justify-center rounded-3xl overflow-hidden">
+            <div className="relative h-[400px] md:h-[500px] bg-slate-900 flex items-center justify-center overflow-hidden">
                 <span className="text-6xl opacity-20">📷</span>
             </div>
         )
@@ -71,7 +71,7 @@ export function PlaceImageSlider({ images, placeName }: PlaceImageSliderProps) {
     return (
         <>
             {/* Main Slider Container */}
-            <div className="relative h-[400px] md:h-[500px] group rounded-3xl overflow-hidden bg-slate-950">
+            <div className="relative h-[400px] md:h-[500px] group overflow-hidden bg-slate-950">
 
                 {/* Embla Viewport */}
                 <div className="overflow-hidden h-full" ref={emblaRef}>
@@ -135,7 +135,7 @@ export function PlaceImageSlider({ images, placeName }: PlaceImageSliderProps) {
                                 <button
                                     key={idx}
                                     onClick={() => scrollTo(idx)}
-                                    className={`relative w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${idx === currentIndex
+                                    className={`relative w-16 h-16 overflow-hidden border-2 transition-all ${idx === currentIndex
                                         ? 'border-primary ring-2 ring-primary/20 scale-105'
                                         : 'border-white/30 hover:border-white/80 opacity-70 hover:opacity-100'
                                         }`}
@@ -146,7 +146,7 @@ export function PlaceImageSlider({ images, placeName }: PlaceImageSliderProps) {
                             {images.length > 4 && (
                                 <button
                                     onClick={() => setIsModalOpen(true)}
-                                    className="w-16 h-16 rounded-lg bg-black/60 backdrop-blur-sm text-white flex items-center justify-center text-xs font-bold hover:bg-black/80 transition-colors border-2 border-white/30"
+                                    className="w-16 h-16 bg-black/60 backdrop-blur-sm text-white flex items-center justify-center text-xs font-bold hover:bg-black/80 transition-colors border-2 border-white/30"
                                 >
                                     +{images.length - 4}
                                 </button>
@@ -215,7 +215,7 @@ export function PlaceImageSlider({ images, placeName }: PlaceImageSliderProps) {
                             <button
                                 key={idx}
                                 onClick={() => modalEmblaApi?.scrollTo(idx)}
-                                className={`relative flex-shrink-0 w-12 h-12 rounded-md overflow-hidden border transition-all ${idx === currentIndex
+                                className={`relative flex-shrink-0 w-12 h-12 overflow-hidden border transition-all ${idx === currentIndex
                                     ? 'border-primary opacity-100'
                                     : 'border-transparent opacity-50 hover:opacity-80'
                                     }`}
