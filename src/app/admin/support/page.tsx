@@ -47,9 +47,8 @@ export default async function AdminSupportPage() {
 
     const getPriorityColor = (priority: string) => {
         switch (priority) {
-            case 'urgent': return 'text-red-500 bg-red-500/10'
-            case 'high': return 'text-orange-500 bg-orange-500/10'
-            case 'normal': return 'text-blue-500 bg-blue-500/10'
+            case 'high': return 'text-red-500 bg-red-500/10'
+            case 'medium': return 'text-orange-500 bg-orange-500/10'
             case 'low': return 'text-slate-500 bg-slate-500/10'
             default: return 'text-slate-500'
         }
@@ -90,7 +89,7 @@ export default async function AdminSupportPage() {
                                                     {getStatusLabel(ticket.status)}
                                                 </Badge>
                                                 <Badge variant="secondary" className={cn("shrink-0", getPriorityColor(ticket.priority))}>
-                                                    {ticket.priority}
+                                                    {ticket.priority === 'high' ? 'عالية' : ticket.priority === 'medium' ? 'متوسطة' : 'منخفضة'}
                                                 </Badge>
                                             </div>
                                             <div className="flex items-center gap-4 text-sm text-slate-400 flex-wrap">

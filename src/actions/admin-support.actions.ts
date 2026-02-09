@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { sendNotification } from '@/actions/admin/notifications.actions'
 
 export async function getAllTickets(filters?: { status?: string, priority?: string }) {
     const supabase = await createClient()
@@ -92,6 +93,22 @@ export async function replyAsAdmin(ticketId: string, message: string) {
         })
 
     if (error) throw error
+
+    const { data: ticket } = await supabase
+        .from('support_tickets')
+        .select('user_id, subject')
+        .eq('id', ticketId)
+        .single()
+
+    if (ticket?.user_id) {
+        await sendNotification(
+            ticket.user_id,
+            'رد جديد على تذكرتك',
+            `قام الدعم الفني بالرد على تذكرة: ${ticket.subject}`,
+            'support',
+            `/profile?tab=support&ticketId=${ticketId}`
+        )
+    }
 
     // Update ticket updated_at and potentially status to 'in_progress' if it was 'open'
     await supabase

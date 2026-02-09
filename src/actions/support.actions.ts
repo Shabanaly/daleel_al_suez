@@ -2,15 +2,18 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { notifySuperAdmins } from '@/actions/admin/notifications.actions'
 
 export async function createSupportTicket({
     subject,
     category,
+    priority = 'medium',
     message,
     attachments
 }: {
     subject: string
     category: string
+    priority?: string
     message: string
     attachments?: string[]
 }) {
@@ -22,7 +25,7 @@ export async function createSupportTicket({
     // Create ticket
     const { data: ticket, error: ticketError } = await supabase
         .from('support_tickets')
-        .insert({ user_id: user.id, subject, category })
+        .insert({ user_id: user.id, subject, category, priority })
         .select()
         .single()
 
@@ -39,6 +42,14 @@ export async function createSupportTicket({
         })
 
     if (msgError) throw msgError
+
+    // Notify Admins
+    await notifySuperAdmins(
+        'تذكرة دعم جديدة',
+        `قام ${user.email} بفتح تذكرة جديدة باسم: ${subject}`,
+        'support',
+        `/admin/support/${ticket.id}`
+    )
 
     revalidatePath('/profile/support')
     return { success: true, ticketId: ticket.id }

@@ -46,11 +46,20 @@ export function TicketChat({ ticket }: TicketChatProps) {
     const [loading, setLoading] = useState(true)
     const [sending, setSending] = useState(false)
     const [userId, setUserId] = useState<string | null>(null)
+    const viewportRef = useRef<HTMLDivElement>(null)
     const messagesEndRef = useRef<HTMLDivElement>(null)
 
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-    }
+    const scrollToBottom = useCallback((behavior: ScrollBehavior = "smooth") => {
+        if (viewportRef.current) {
+            const scrollContainer = viewportRef.current.parentElement; // The Radix Viewport
+            if (scrollContainer) {
+                scrollContainer.scrollTo({
+                    top: scrollContainer.scrollHeight,
+                    behavior
+                });
+            }
+        }
+    }, [])
 
     useEffect(() => {
         const getUser = async () => {
@@ -74,10 +83,32 @@ export function TicketChat({ ticket }: TicketChatProps) {
 
     useEffect(() => {
         fetchMessages()
-        // Real-time subscription could be added here
-        const interval = setInterval(fetchMessages, 10000)
-        return () => clearInterval(interval)
-    }, [fetchMessages])
+
+        const supabase = createClient()
+        const channel = supabase
+            .channel(`ticket_${ticket.id}`)
+            .on(
+                'postgres_changes',
+                {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'support_messages',
+                    filter: `ticket_id=eq.${ticket.id}`
+                },
+                (payload) => {
+                    const newMsg = payload.new as Message
+                    setMessages(prev => {
+                        if (prev.find(m => m.id === newMsg.id)) return prev
+                        return [...prev, newMsg]
+                    })
+                }
+            )
+            .subscribe()
+
+        return () => {
+            supabase.removeChannel(channel)
+        }
+    }, [ticket.id, fetchMessages])
 
     // Scroll to bottom when messages change
     useEffect(() => {
@@ -110,14 +141,19 @@ export function TicketChat({ ticket }: TicketChatProps) {
                         {categoryMap[ticket.category] || ticket.category} • #{ticket.id.substring(0, 8)}
                     </p>
                 </div>
-                <div className="px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
-                    {ticket.status}
+                <div className={`px-3 py-1 rounded-full text-xs font-medium border ${ticket.status === 'closed' || ticket.status === 'resolved'
+                    ? 'bg-slate-100 text-slate-500 border-slate-200'
+                    : 'bg-primary/10 text-primary border-primary/20'
+                    }`}>
+                    {ticket.status === 'open' ? 'مفتوح' :
+                        ticket.status === 'in_progress' ? 'قيد المعالجة' :
+                            ticket.status === 'resolved' ? 'تم الحل' : 'مغلق'}
                 </div>
             </div>
 
             {/* Messages Area */}
             <ScrollArea className="flex-1">
-                <div className="p-4">
+                <div ref={viewportRef} className="p-4">
                     {loading ? (
                         <div className="flex justify-center items-center h-full py-12">
                             <Loader2 className="animate-spin text-muted-foreground" />
@@ -168,28 +204,34 @@ export function TicketChat({ ticket }: TicketChatProps) {
 
             {/* Input Area */}
             < div className="p-4 border-t bg-muted/30" >
-                <div className="flex gap-2">
-                    <Textarea
-                        placeholder="اكتب رسالتك هنا..."
-                        value={newMessage}
-                        onChange={e => setNewMessage(e.target.value)}
-                        className="min-h-[50px] max-h-[120px] resize-none"
-                        onKeyDown={e => {
-                            if (e.key === 'Enter' && !e.shiftKey) {
-                                e.preventDefault()
-                                handleSend()
-                            }
-                        }}
-                    />
-                    <Button
-                        onClick={handleSend}
-                        disabled={sending || !newMessage.trim()}
-                        size="icon"
-                        className="h-auto w-12"
-                    >
-                        {sending ? <Loader2 className="animate-spin" /> : <Send size={18} />}
-                    </Button>
-                </div>
+                {ticket.status === 'closed' || ticket.status === 'resolved' ? (
+                    <div className="text-center py-2 text-sm text-muted-foreground bg-slate-50 rounded-lg border border-dashed">
+                        هذه التذكرة مغلقة. لا يمكنك إرسال مزيد من الرسائل.
+                    </div>
+                ) : (
+                    <div className="flex gap-2">
+                        <Textarea
+                            placeholder="اكتب رسالتك هنا..."
+                            value={newMessage}
+                            onChange={e => setNewMessage(e.target.value)}
+                            className="min-h-[50px] max-h-[120px] resize-none"
+                            onKeyDown={e => {
+                                if (e.key === 'Enter' && !e.shiftKey) {
+                                    e.preventDefault()
+                                    handleSend()
+                                }
+                            }}
+                        />
+                        <Button
+                            onClick={handleSend}
+                            disabled={sending || !newMessage.trim()}
+                            size="icon"
+                            className="h-auto w-12"
+                        >
+                            {sending ? <Loader2 className="animate-spin" /> : <Send size={18} />}
+                        </Button>
+                    </div>
+                )}
             </div >
         </div >
     )

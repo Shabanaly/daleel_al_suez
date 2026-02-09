@@ -16,6 +16,7 @@ export function CreateTicketDialog() {
     const [formData, setFormData] = useState({
         subject: '',
         category: '',
+        priority: 'medium',
         message: ''
     })
 
@@ -27,11 +28,12 @@ export function CreateTicketDialog() {
             await createSupportTicket({
                 subject: formData.subject,
                 category: formData.category,
+                priority: formData.priority,
                 message: formData.message
             })
 
             setOpen(false)
-            setFormData({ subject: '', category: '', message: '' })
+            setFormData({ subject: '', category: '', priority: 'medium', message: '' })
             toast.success('تم إنشاء التذكرة بنجاح')
             // alert('تم إنشاء التذكرة بنجاح')
             window.location.reload() // Simple refresh to show new ticket
@@ -80,6 +82,23 @@ export function CreateTicketDialog() {
                                 <SelectItem value="feature">اقتراح ميزة</SelectItem>
                                 <SelectItem value="account">الحساب</SelectItem>
                                 <SelectItem value="other">أخرى</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium">الأولوية</label>
+                        <Select
+                            defaultValue="medium"
+                            onValueChange={(value: string) => setFormData({ ...formData, priority: value })}
+                        >
+                            <SelectTrigger>
+                                <SelectValue placeholder="اختر الأولوية" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="low">منخفضة</SelectItem>
+                                <SelectItem value="medium">متوسطة</SelectItem>
+                                <SelectItem value="high">عالية</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
