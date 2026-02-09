@@ -38,7 +38,14 @@ export default function PlaceForm({ initialData, categories, areas }: PlaceFormP
     const [isFeatured, setIsFeatured] = useState(initialData?.isFeatured || false)
 
     // Social Links State
-    const [socialLinks, setSocialLinks] = useState(initialData?.socialLinks || { facebook: '', instagram: '', videoUrl: '' })
+    const [socialLinks, setSocialLinks] = useState(() => {
+        const links = initialData?.socialLinks || { facebook: '', instagram: '', videoUrl: '' }
+        return {
+            facebook: links.facebook || initialData?.facebook || '',
+            instagram: links.instagram || initialData?.instagram || '',
+            videoUrl: links.videoUrl || initialData?.videoUrl || ''
+        }
+    })
 
     const [debouncedName] = useDebounce(name, 1000)
     const [isGeneratingSlug, setIsGeneratingSlug] = useState(false)
