@@ -16,6 +16,22 @@ export async function POST(req: Request) {
             return new Response('Invalid messages format', { status: 400 })
         }
 
+        // [SECURITY] Guest Check & Rate Limiting Stub
+        // For now, we restrict guests to verify they are real (e.g. by checking a header or just a planned rate limit)
+        // Ideally, we would use a library like `upstash/ratelimit` here.
+        if (isGuest) {
+            // Optional: Log guest access for monitoring
+            console.log('Gemini: Guest access detected');
+        } else {
+            // Verify User Session if not guest
+            const supabase = await createClient()
+            const { data: { user } } = await supabase.auth.getUser()
+            if (!user) {
+                // Claimed not guest but no session? Suspicious.
+                return new Response('Unauthorized: Invalid Session', { status: 401 })
+            }
+        }
+
         const lastMessage = messages[messages.length - 1] as { content?: string; parts?: { type: string; text: string }[] }
         const query = typeof lastMessage.content === 'string' && lastMessage.content
             ? lastMessage.content

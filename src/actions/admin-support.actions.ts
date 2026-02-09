@@ -83,6 +83,17 @@ export async function replyAsAdmin(ticketId: string, message: string) {
 
     if (!user) throw new Error('Unauthorized')
 
+    // [SECURITY] Verify Admin Role
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single()
+
+    if (!profile || (profile.role !== 'admin' && profile.role !== 'super_admin')) {
+        throw new Error('Access denied. Admins only.')
+    }
+
     const { error } = await supabase
         .from('support_messages')
         .insert({
