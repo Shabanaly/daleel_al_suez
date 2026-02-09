@@ -25,7 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: (settings.site_name as string) || "دليل السويس | كل ما تحتاجه في مكان واحد",
     description: (settings.site_description as string) || "الدليل الشامل لمدينة السويس. اكتشف أفضل المطاعم، الكافيهات، الخدمات، والفعاليات في السويس.",
     verification: {
-      google: "nCp3t2Ck8dUCPc6Jv9YMyoCYPeIvOmNNRFEfZ-ttH98",
+      google: "XLm7_2RXf6w84cJIoQ7xNNS-X-A6zVEgOOELIJCqchQ",
     },
   };
 }
