@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Bell, Check, Clock, ExternalLink } from 'lucide-react'
 import {
     getUnreadNotificationsCountAction,
@@ -126,8 +126,26 @@ export function NotificationBell() {
         setLoading(false)
     }
 
+    const menuRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+                setIsOpen(false)
+            }
+        }
+
+        if (isOpen) {
+            document.addEventListener('mousedown', handleClickOutside)
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside)
+        }
+    }, [isOpen])
+
     return (
-        <div className="relative">
+        <div className="relative" ref={menuRef}>
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="relative p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-full transition-all"
@@ -142,94 +160,88 @@ export function NotificationBell() {
             </button>
 
             {isOpen && (
-                <>
-                    <div
-                        className="fixed inset-0 z-30"
-                        onClick={() => setIsOpen(false)}
-                    />
-                    <div className="absolute left-0 mt-3 w-80 bg-card border border-border rounded-2xl shadow-2xl z-40 animate-in fade-in zoom-in-95 duration-200 origin-top-left overflow-hidden">
-                        <div className="p-4 border-b border-border flex items-center justify-between bg-muted/30">
-                            <h3 className="font-bold text-sm">الإشعارات</h3>
-                            {unreadCount > 0 && (
-                                <button
-                                    onClick={handleMarkAllRead}
-                                    disabled={loading}
-                                    className="text-xs text-primary hover:underline font-medium disabled:opacity-50"
-                                >
-                                    تحديد الكل كمقروء
-                                </button>
-                            )}
-                        </div>
-
-                        <div className="max-h-[400px] overflow-y-auto">
-                            {notifications.length === 0 ? (
-                                <div className="p-10 text-center text-muted-foreground">
-                                    <Bell size={32} className="mx-auto mb-3 opacity-20" />
-                                    <p className="text-sm">لا توجد إشعارات حالياً</p>
-                                </div>
-                            ) : (
-                                notifications.map((notif) => (
-                                    <div
-                                        key={notif.id}
-                                        className={cn(
-                                            "p-4 border-b border-border last:border-0 hover:bg-muted/50 transition-colors relative flex gap-3",
-                                            !notif.is_read && "bg-primary/5"
-                                        )}
-                                    >
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex items-center justify-between mb-1">
-                                                <h4 className={cn("text-sm font-bold truncate", !notif.is_read && "text-primary")}>
-                                                    {notif.title}
-                                                </h4>
-                                                {!notif.is_read && (
-                                                    <button
-                                                        onClick={(e) => handleMarkAsRead(e, notif.id)}
-                                                        className="text-primary hover:bg-primary/10 p-1 rounded-md transition-colors"
-                                                        title="تحديد كمقروء"
-                                                    >
-                                                        <Check size={14} />
-                                                    </button>
-                                                )}
-                                            </div>
-                                            <p className="text-xs text-muted-foreground line-clamp-2 mb-2">
-                                                {notif.message}
-                                            </p>
-                                            <div className="flex items-center justify-between text-[10px] text-muted-foreground">
-                                                <span className="flex items-center gap-1">
-                                                    <Clock size={10} />
-                                                    {formatDistanceToNow(new Date(notif.created_at), { addSuffix: true, locale: ar })}
-                                                </span>
-                                                {(notif.link || notif.place_slug) && (
-                                                    <Link
-                                                        href={getNotificationLink(notif)}
-                                                        onClick={() => setIsOpen(false)}
-                                                        className="text-primary flex items-center gap-1 font-bold hover:underline"
-                                                    >
-                                                        عرض
-                                                        <ExternalLink size={10} />
-                                                    </Link>
-                                                )}
-                                            </div>
-                                        </div>
-                                        {!notif.is_read && (
-                                            <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
-                                        )}
-                                    </div>
-                                ))
-                            )}
-                        </div>
-
-                        {notifications.length > 0 && (
-                            <Link
-                                href="/profile"
-                                onClick={() => setIsOpen(false)}
-                                className="block p-3 text-center text-xs font-bold text-muted-foreground hover:bg-muted bg-muted/10 transition-colors border-t border-border"
+                <div className="fixed inset-x-4 top-16 mt-2 md:absolute md:inset-x-auto md:left-0 md:mt-3 md:w-80 bg-card border border-border rounded-2xl shadow-2xl z-40 animate-in fade-in zoom-in-95 duration-200 origin-top md:origin-top-left overflow-hidden">
+                    <div className="p-4 border-b border-border flex items-center justify-between bg-muted/30">
+                        <h3 className="font-bold text-sm">الإشعارات</h3>
+                        {unreadCount > 0 && (
+                            <button
+                                onClick={handleMarkAllRead}
+                                disabled={loading}
+                                className="text-xs text-primary hover:underline font-medium disabled:opacity-50"
                             >
-                                عرض كل النشاطات
-                            </Link>
+                                تحديد الكل كمقروء
+                            </button>
                         )}
                     </div>
-                </>
+
+                    <div className="max-h-[400px] overflow-y-auto">
+                        {notifications.length === 0 ? (
+                            <div className="p-10 text-center text-muted-foreground">
+                                <Bell size={32} className="mx-auto mb-3 opacity-20" />
+                                <p className="text-sm">لا توجد إشعارات حالياً</p>
+                            </div>
+                        ) : (
+                            notifications.map((notif) => (
+                                <div
+                                    key={notif.id}
+                                    className={cn(
+                                        "p-4 border-b border-border last:border-0 hover:bg-muted/50 transition-colors relative flex gap-3",
+                                        !notif.is_read && "bg-primary/5"
+                                    )}
+                                >
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center justify-between mb-1">
+                                            <h4 className={cn("text-sm font-bold truncate", !notif.is_read && "text-primary")}>
+                                                {notif.title}
+                                            </h4>
+                                            {!notif.is_read && (
+                                                <button
+                                                    onClick={(e) => handleMarkAsRead(e, notif.id)}
+                                                    className="text-primary hover:bg-primary/10 p-1 rounded-md transition-colors"
+                                                    title="تحديد كمقروء"
+                                                >
+                                                    <Check size={14} />
+                                                </button>
+                                            )}
+                                        </div>
+                                        <p className="text-xs text-muted-foreground line-clamp-2 mb-2">
+                                            {notif.message}
+                                        </p>
+                                        <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+                                            <span className="flex items-center gap-1">
+                                                <Clock size={10} />
+                                                {formatDistanceToNow(new Date(notif.created_at), { addSuffix: true, locale: ar })}
+                                            </span>
+                                            {(notif.link || notif.place_slug) && (
+                                                <Link
+                                                    href={getNotificationLink(notif)}
+                                                    onClick={() => setIsOpen(false)}
+                                                    className="text-primary flex items-center gap-1 font-bold hover:underline"
+                                                >
+                                                    عرض
+                                                    <ExternalLink size={10} />
+                                                </Link>
+                                            )}
+                                        </div>
+                                    </div>
+                                    {!notif.is_read && (
+                                        <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
+                                    )}
+                                </div>
+                            ))
+                        )}
+                    </div>
+
+                    {notifications.length > 0 && (
+                        <Link
+                            href="/profile"
+                            onClick={() => setIsOpen(false)}
+                            className="block p-3 text-center text-xs font-bold text-muted-foreground hover:bg-muted bg-muted/10 transition-colors border-t border-border"
+                        >
+                            عرض كل النشاطات
+                        </Link>
+                    )}
+                </div>
             )}
         </div>
     )

@@ -82,9 +82,6 @@ export function Header({ settings }: { settings?: Record<string, unknown> }) {
                 <div className="hidden md:flex items-center gap-4">
                     <ThemeToggle />
                     {user && <NotificationBell />}
-                    <button className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors">
-                        <Search size={20} className="text-slate-600 dark:text-slate-300" />
-                    </button>
                     {user ? (
                         <Link
                             href="/profile"
