@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 import { createPlaceAction, updatePlaceAction, PlaceState } from '@/actions/admin/places.actions'
 import { translateAndSlugify } from '@/app/actions/translate'
 import { useDebounce } from 'use-debounce'
-import { Loader2, Store, User, MapPin, Globe, Phone, Facebook, Instagram, Sparkles } from 'lucide-react'
+import { Loader2, Store, User, MapPin, Globe, Phone, Facebook, Instagram, Sparkles, Youtube } from 'lucide-react'
 import ImageUpload from '@/presentation/ui/image-upload'
 import { Place } from '@/domain/entities/place'
 import { Area } from '@/domain/entities/area'
@@ -38,7 +38,7 @@ export default function PlaceForm({ initialData, categories, areas }: PlaceFormP
     const [isFeatured, setIsFeatured] = useState(initialData?.isFeatured || false)
 
     // Social Links State
-    const [socialLinks, setSocialLinks] = useState(initialData?.socialLinks || { facebook: '', instagram: '' })
+    const [socialLinks, setSocialLinks] = useState(initialData?.socialLinks || { facebook: '', instagram: '', videoUrl: '' })
 
     const [debouncedName] = useDebounce(name, 1000)
     const [isGeneratingSlug, setIsGeneratingSlug] = useState(false)
@@ -367,6 +367,19 @@ export default function PlaceForm({ initialData, categories, areas }: PlaceFormP
                                     defaultValue={initialData?.website || ''}
                                     className="w-full pr-10 pl-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white outline-none focus:border-primary transition-colors ltr:text-left"
                                     placeholder="https://example.com"
+                                />
+                            </div>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-slate-300 mb-2">رابط فيديو (يوتيوب / فيسبوك / انستجرام)</label>
+                            <div className="relative">
+                                <Youtube className="absolute right-3 top-3.5 text-red-500 w-5 h-5" />
+                                <input
+                                    type="url"
+                                    value={socialLinks.videoUrl || ''}
+                                    onChange={e => setSocialLinks({ ...socialLinks, videoUrl: e.target.value })}
+                                    className="w-full pr-10 pl-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white outline-none focus:border-primary transition-colors ltr:text-left"
+                                    placeholder="https://www.youtube.com/watch?v=..."
                                 />
                             </div>
                         </div>

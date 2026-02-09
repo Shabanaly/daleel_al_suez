@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, MapPin, Star, Clock, Tag } from "lucide-react";
+import { ArrowRight, MapPin, Star, Clock, Tag, Youtube } from "lucide-react";
 import { Place } from "@/domain/entities/place";
 import { Review, RatingStats } from "@/domain/entities/review";
 import { PlaceImageSlider } from "@/presentation/features/places/components/place-image-slider";
@@ -7,6 +7,7 @@ import { PlaceActionButtons } from "@/presentation/features/places/components/pl
 import { GoogleMapEmbed } from "@/presentation/features/places/components/google-map-embed";
 import { PlaceCard } from "@/presentation/features/places/components/place-card";
 import { ReviewsSectionWrapper } from "@/presentation/features/reviews/components/reviews-section-wrapper";
+import { VideoEmbed } from "@/presentation/components/shared/video-embed";
 
 interface PlaceDetailsViewProps {
     place: Place;
@@ -81,6 +82,17 @@ export function PlaceDetailsView({
                                 {place.description || "لا يوجد وصف متاح لهذا المكان حالياً."}
                             </p>
                         </div>
+
+                        {/* Video Section */}
+                        {place.videoUrl && (
+                            <div className="bg-card rounded-2xl p-6 shadow-sm border border-border">
+                                <h2 className="text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
+                                    <Youtube className="text-red-600" size={24} />
+                                    عرض فيديو
+                                </h2>
+                                <VideoEmbed url={place.videoUrl} />
+                            </div>
+                        )}
 
                         {/* Reviews Section Placeholder */}
                         <div className="bg-card rounded-2xl p-6 shadow-sm border border-border">

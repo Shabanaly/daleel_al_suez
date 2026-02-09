@@ -205,6 +205,7 @@ export class SupabasePlaceRepository implements IPlaceRepository {
         delete updates.id;
         delete updates.facebook;
         delete updates.instagram;
+        delete updates.videoUrl;
 
         const { data, error } = await supabaseClient
             .from("places")
@@ -277,6 +278,7 @@ export class SupabasePlaceRepository implements IPlaceRepository {
             socialLinks: row.social_links || {},
             facebook: row.social_links?.facebook || '',
             instagram: row.social_links?.instagram || '',
+            videoUrl: row.social_links?.videoUrl || '',
             opensAt: row.opens_at || '',
             closesAt: row.closes_at || '',
             type: (row.type as 'business' | 'professional') || 'business',

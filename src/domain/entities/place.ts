@@ -19,6 +19,7 @@ export interface Place {
     instagram?: string;
     opensAt?: string | null;
     closesAt?: string | null;
+    videoUrl?: string;
 
     // New Fields
     type: 'business' | 'professional';
