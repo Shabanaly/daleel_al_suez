@@ -1,5 +1,7 @@
 'use client'
 
+import { toast } from 'sonner'
+
 import { useState, useEffect, useActionState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createPlaceAction, updatePlaceAction, PlaceState } from '@/actions/admin/places.actions'
@@ -68,6 +70,15 @@ export default function PlaceForm({ initialData, categories, areas }: PlaceFormP
     const [state, action, isPending] = useActionState(handleSubmit, initialState)
 
     // --- Effects ---
+    useEffect(() => {
+        if (state.success) {
+            toast.success(state.message || (initialData?.id ? 'تم تحديث المكان بنجاح' : 'تم إضافة المكان بنجاح'))
+            router.push('/admin/places')
+        } else if (state.message) {
+            toast.error(state.message)
+        }
+    }, [state, router, initialData?.id])
+
     // Auto-generate slug from Arabic Name (Translated)
     useEffect(() => {
         const generateSlug = async () => {

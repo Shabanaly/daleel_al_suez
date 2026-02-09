@@ -52,12 +52,14 @@ export function CreateEventForm({ places, initialData }: CreateEventFormProps) {
         success: false
     } as EventState)
 
-    if (state.success) {
-        toast.success(state.message)
-        router.push('/admin/events')
-    } else if (state.message && !state.success) {
-        toast.error(state.message)
-    }
+    useEffect(() => {
+        if (state.success) {
+            toast.success(state.message)
+            router.push('/admin/events')
+        } else if (state.message && !state.success) {
+            toast.error(state.message)
+        }
+    }, [state, router])
 
     return (
         <form action={action} className="space-y-8 bg-slate-900 p-8 rounded-3xl border border-slate-800 shadow-xl" dir="rtl">
