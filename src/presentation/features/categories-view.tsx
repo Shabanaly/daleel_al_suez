@@ -1,5 +1,5 @@
 import { Category } from '@/domain/entities/category'
-import { CategoryCard } from '../components/category-card'
+import { CategoryCard } from '@/presentation/features/categories/components/category-card'
 import { Grid3x3, Sparkles } from 'lucide-react'
 
 interface CategoriesViewProps {

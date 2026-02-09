@@ -41,47 +41,6 @@ export function AdminSidebar({ currentUserRole }: AdminSidebarProps) {
         router.refresh()
     }
 
-    const SidebarContent = () => (
-        <>
-            <div className="flex h-16 shrink-0 items-center px-6">
-                <Link href="/" title="زيارة الموقع" className="hover:opacity-80 transition-opacity">
-                    <h1 className="text-lg font-bold text-white">إدارة دليل السويس</h1>
-                </Link>
-            </div>
-            <nav className="flex flex-1 flex-col px-4 py-4 gap-y-1">
-                {navigation.map((item) => {
-                    const isActive = pathname === item.href
-                    return (
-                        <Link
-                            key={item.name}
-                            href={item.href}
-                            onClick={() => setIsOpen(false)}
-                            className={cn(
-                                "group flex gap-x-3 rounded-xl p-3 text-sm font-semibold leading-6 transition-colors",
-                                isActive
-                                    ? "bg-primary text-white"
-                                    : "text-slate-400 hover:text-white hover:bg-slate-800"
-                            )}
-                        >
-                            <item.icon className="h-6 w-6 shrink-0" aria-hidden="true" />
-                            {item.name}
-                        </Link>
-                    )
-                })}
-
-                <div className="mt-auto border-t border-slate-800 pt-4">
-                    <button
-                        onClick={handleLogout}
-                        className="group flex w-full gap-x-3 rounded-xl p-3 text-sm font-semibold leading-6 text-slate-400 hover:text-red-400 hover:bg-slate-800 transition-colors"
-                    >
-                        <LogOut className="h-6 w-6 shrink-0" aria-hidden="true" />
-                        تسجيل خروج
-                    </button>
-                </div>
-            </nav>
-        </>
-    )
-
     return (
         <>
             {/* Mobile Menu Button */}
@@ -111,7 +70,42 @@ export function AdminSidebar({ currentUserRole }: AdminSidebarProps) {
                 "fixed top-0 right-0 h-full",
                 isOpen ? "translate-x-0" : "translate-x-full"
             )}>
-                <SidebarContent />
+                <div className="flex h-16 shrink-0 items-center px-6">
+                    <Link href="/" title="زيارة الموقع" className="hover:opacity-80 transition-opacity">
+                        <h1 className="text-lg font-bold text-white">إدارة دليل السويس</h1>
+                    </Link>
+                </div>
+                <nav className="flex flex-1 flex-col px-4 py-4 gap-y-1">
+                    {navigation.map((item) => {
+                        const isActive = pathname === item.href
+                        return (
+                            <Link
+                                key={item.name}
+                                href={item.href}
+                                onClick={() => setIsOpen(false)}
+                                className={cn(
+                                    "group flex gap-x-3 rounded-xl p-3 text-sm font-semibold leading-6 transition-colors",
+                                    isActive
+                                        ? "bg-primary text-white"
+                                        : "text-slate-400 hover:text-white hover:bg-slate-800"
+                                )}
+                            >
+                                <item.icon className="h-6 w-6 shrink-0" aria-hidden="true" />
+                                {item.name}
+                            </Link>
+                        )
+                    })}
+
+                    <div className="mt-auto border-t border-slate-800 pt-4">
+                        <button
+                            onClick={handleLogout}
+                            className="group flex w-full gap-x-3 rounded-xl p-3 text-sm font-semibold leading-6 text-slate-400 hover:text-red-400 hover:bg-slate-800 transition-colors"
+                        >
+                            <LogOut className="h-6 w-6 shrink-0" aria-hidden="true" />
+                            تسجيل خروج
+                        </button>
+                    </div>
+                </nav>
             </div>
         </>
     )

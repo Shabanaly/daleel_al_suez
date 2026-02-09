@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { getAdminEventsUseCase, getAdminPlacesUseCase } from '@/di/modules'
-import { AdminEventsListView } from '@/presentation/admin/events-list-view'
+import { AdminEventsListView } from '@/presentation/components/admin/events-list-view'
 
 export default async function AdminEventsPage() {
     const supabase = await createClient()

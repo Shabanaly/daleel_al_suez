@@ -9,9 +9,9 @@ export async function getSettingsAction(group?: string) {
         // Settings are usually public read, but let's assume we use the server client for consistency
         const settings = await getSettingsUseCase.execute(group)
         return { success: true, data: settings }
-    } catch (error: any) {
+    } catch (error) {
         console.error("Get Settings Error:", error)
-        return { success: false, error: error.message }
+        return { success: false, error: error instanceof Error ? error.message : "An unknown error occurred" }
     }
 }
 
@@ -36,8 +36,8 @@ export async function updateSettingsAction(updates: Record<string, string>) {
         revalidatePath('/', 'layout') // Revalidate entire site as settings affect footer/header
 
         return { success: true, message: "تم حفظ الإعدادات بنجاح" }
-    } catch (error: any) {
+    } catch (error) {
         console.error("Update Settings Error:", error)
-        return { success: false, message: error.message || "فشل حفظ الإعدادات" }
+        return { success: false, message: error instanceof Error ? error.message : "فشل حفظ الإعدادات" }
     }
 }

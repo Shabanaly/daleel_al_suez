@@ -2,10 +2,10 @@ import Link from "next/link";
 import { Place } from "@/domain/entities/place";
 import { Category } from "@/domain/entities/category";
 import { SuezEvent } from "@/domain/entities/suez-event";
-import { PlaceCard } from "../components/place-card";
-import { CategoryCard } from "../components/category-card";
-import { EventCard } from "../components/events/event-card";
-import { HeroSearchBar } from "../components/hero-search-bar";
+import { PlaceCard } from "@/presentation/features/places/components/place-card";
+import { CategoryCard } from "@/presentation/features/categories/components/category-card";
+import { EventCard } from "@/presentation/features/events/event-card";
+import { HeroSearchBar } from "@/presentation/features/places/components/hero-search-bar";
 import { ArrowLeft, Sparkles, Grid3x3, Calendar } from "lucide-react";
 
 interface HomeViewProps {

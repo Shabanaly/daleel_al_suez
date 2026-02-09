@@ -7,7 +7,7 @@ export class CreateEventUseCase {
     async execute(
         role: string,
         eventData: Omit<SuezEvent, 'id' | 'createdAt' | 'updatedAt' | 'placeName'>,
-        client?: any
+        client?: unknown
     ): Promise<SuezEvent> {
         if (role !== 'super_admin') {
             throw new Error("Unauthorized: Only super_admin can create events.");

@@ -73,7 +73,8 @@ export async function createCategory(prevState: CategoryState, formData: FormDat
 
         revalidatePath('/admin/categories')
         return { success: true, message: 'تم إضافة التصنيف بنجاح' }
-    } catch (e) {
+    } catch (_e) {
+        console.error('Create category error:', _e)
         return { errors: { _form: ['Unexpected error occurred'] }, success: false }
     }
 }
@@ -151,7 +152,8 @@ export async function updateCategory(id: string, prevState: CategoryState, formD
 
         revalidatePath('/admin/categories')
         return { success: true, message: 'تم تحديث التصنيف بنجاح' }
-    } catch (e) {
+    } catch (_e) {
+        console.error('Update category error:', _e)
         return { errors: { _form: ['Unexpected error occurred'] }, success: false }
     }
 }

@@ -43,6 +43,8 @@ const eventRepository = new SupabaseEventRepository();
 // 2. Use Cases
 export const getFeaturedPlacesUseCase = new GetFeaturedPlacesUseCase(placeRepository);
 export const getCategoriesUseCase = new GetCategoriesUseCase(categoryRepository);
+import { GetCategoryByIdUseCase } from "@/domain/use-cases/admin/get-category-by-id.usecase";
+export const getCategoryByIdUseCase = new GetCategoryByIdUseCase(categoryRepository);
 export const getPlacesByCategoryUseCase = new GetPlacesByCategoryUseCase(placeRepository);
 export const getPlaceBySlugUseCase = new GetPlaceBySlugUseCase(placeRepository);
 export const searchPlacesUseCase = new SearchPlacesUseCase(placeRepository);
@@ -72,4 +74,32 @@ export const createEventUseCase = new CreateEventUseCase(eventRepository);
 export const updateEventUseCase = new UpdateEventUseCase(eventRepository);
 export const deleteEventUseCase = new DeleteEventUseCase(eventRepository);
 export const getActiveEventsUseCase = new GetActiveEventsUseCase(eventRepository);
+
+// Area Use Cases
+import { SupabaseAreaRepository } from "@/data/repositories/supabase-area.repository";
+import { GetAreasUseCase } from "@/domain/use-cases/admin/get-areas.usecase";
+
+const areaRepository = new SupabaseAreaRepository();
+export const getAreasUseCase = new GetAreasUseCase(areaRepository);
+
+// User/Auth Use Cases
+import { SupabaseUserRepository } from "@/data/repositories/supabase-user.repository";
+import { GetCurrentUserUseCase } from "@/domain/use-cases/auth/get-current-user.usecase";
+import { GetUserRoleUseCase } from "../domain/use-cases/auth/get-user-role.usecase";
+
+const userRepository = new SupabaseUserRepository();
+export const getCurrentUserUseCase = new GetCurrentUserUseCase(userRepository);
+export const getUserRoleUseCase = new GetUserRoleUseCase(userRepository);
+
+import { GetUsersUseCase } from "@/domain/use-cases/admin/get-users.usecase";
+import { GetUserStatsUseCase } from "@/domain/use-cases/admin/get-user-stats.usecase";
+import { GetUserLogsUseCase } from "@/domain/use-cases/admin/get-user-logs.usecase";
+
+export const getUsersUseCase = new GetUsersUseCase(userRepository);
+export const getUserStatsUseCase = new GetUserStatsUseCase(userRepository);
+export const getUserLogsUseCase = new GetUserLogsUseCase(userRepository);
+
+import { UpdateUserRoleUseCase } from "@/domain/use-cases/admin/update-user-role.usecase";
+export const updateUserRoleUseCase = new UpdateUserRoleUseCase(userRepository);
+
 

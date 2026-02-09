@@ -22,12 +22,20 @@ export async function toggleFavoriteAction(placeId: string, isFavorite: boolean)
         }
     } else {
         // Remove
-        const { error } = await supabase
+        const { data, error } = await supabase
             .from('favorites')
             .delete()
-            .match({ user_id: user.id, place_id: placeId })
+            .eq('user_id', user.id)
+            .eq('place_id', placeId)
+            .select()
 
-        if (error) throw new Error(error.message)
+        if (error) {
+            throw new Error(error.message)
+        }
+
+        if (!data || data.length === 0) {
+            throw new Error('لم يتم العثور على العنصر في المفضلة')
+        }
     }
 
     revalidatePath('/favorites')
@@ -41,11 +49,16 @@ export async function checkIsFavoriteAction(placeId: string) {
 
     if (!user) return false
 
-    const { data } = await supabase
+    const { data, error } = await supabase
         .from('favorites')
         .select('place_id')
-        .match({ user_id: user.id, place_id: placeId })
-        .single()
+        .eq('user_id', user.id)
+        .eq('place_id', placeId)
+        .maybeSingle()
+
+    if (error) {
+        return false
+    }
 
     return !!data
 }

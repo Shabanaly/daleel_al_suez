@@ -2,41 +2,31 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import {
+    updateUserRoleUseCase,
+    getUserStatsUseCase,
+    getUserLogsUseCase,
+    getCurrentUserUseCase
+} from '@/di/modules'
 
 export async function updateUserRole(userId: string, newRole: string) {
     const supabase = await createClient()
 
     try {
-        // 1. Check authentication
-        const { data: { user } } = await supabase.auth.getUser()
-        if (!user) {
-            return { success: false, error: 'Not authenticated' }
-        }
-
-        // 2. Check Super Admin role
-        const { data: profile } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', user.id)
-            .single()
-
-        if (profile?.role !== 'super_admin') {
+        // 1. Check permissions (Super Admin only)
+        const currentUser = await getCurrentUserUseCase.execute(supabase)
+        if (!currentUser || currentUser.role !== 'super_admin') {
             return { success: false, error: 'Access denied. Only Super Admin can manage users.' }
         }
 
-        // 3. Update user role via RPC
-        const { error } = await supabase.rpc('update_user_role', {
-            target_user_id: userId,
-            new_role: newRole
-        })
-
-        if (error) throw error
+        // 2. Update role via Use Case
+        await updateUserRoleUseCase.execute(userId, newRole, supabase)
 
         revalidatePath('/admin/users')
         return { success: true }
-    } catch (error: any) {
+    } catch (error) {
         console.error('Update role error:', error)
-        return { success: false, error: error.message }
+        return { success: false, error: error instanceof Error ? error.message : "An unknown error occurred" }
     }
 }
 
@@ -44,52 +34,21 @@ export async function getUserDetails(userId: string) {
     const supabase = await createClient()
 
     try {
-        // 1. Check authentication
-        const { data: { user } } = await supabase.auth.getUser()
-        if (!user) {
-            throw new Error('Not authenticated')
-        }
-
-        // 2. Check Super Admin role
-        const { data: profile } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', user.id)
-            .single()
-
-        if (profile?.role !== 'super_admin') {
+        // 1. Check permissions (Super Admin only)
+        const currentUser = await getCurrentUserUseCase.execute(supabase)
+        if (!currentUser || currentUser.role !== 'super_admin') {
             throw new Error('Access denied. Only Super Admin can view user details.')
         }
 
-        // 3. Fetch Stats
-        const { count: placesCount } = await supabase
-            .from('places')
-            .select('*', { count: 'exact', head: true })
-            .eq('created_by', userId)
-
-        const { count: reviewsCount } = await supabase
-            .from('reviews')
-            .select('*', { count: 'exact', head: true })
-            .eq('user_id', userId)
-
-        // 4. Fetch Logs
-        const { data: logs, error: logsError } = await supabase
-            .from('audit_logs')
-            .select('*')
-            .eq('actor_id', userId)
-            .order('created_at', { ascending: false })
-            .limit(50)
-
-        if (logsError) {
-            console.error('Error fetching logs:', logsError)
-        }
+        // 2. Fetch Stats & Logs using Use Cases
+        const [stats, logs] = await Promise.all([
+            getUserStatsUseCase.execute(userId, supabase),
+            getUserLogsUseCase.execute(userId, supabase)
+        ])
 
         return {
-            stats: {
-                placesCount: placesCount || 0,
-                reviewsCount: reviewsCount || 0
-            },
-            logs: logs || []
+            stats,
+            logs
         }
     } catch (error) {
         console.error('Error in getUserDetails:', error)

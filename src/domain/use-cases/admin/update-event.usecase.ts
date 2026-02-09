@@ -8,7 +8,7 @@ export class UpdateEventUseCase {
         id: string,
         role: string,
         eventData: Partial<SuezEvent>,
-        client?: any
+        client?: unknown
     ): Promise<SuezEvent> {
         if (role !== 'super_admin') {
             throw new Error("Unauthorized: Only super_admin can update events.");

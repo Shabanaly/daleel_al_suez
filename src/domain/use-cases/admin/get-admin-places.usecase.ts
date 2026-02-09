@@ -15,7 +15,7 @@ export class GetAdminPlacesUseCase {
             creatorId?: string; // Super admin can filter by creator
         } = {}
     ): Promise<Place[]> {
-        const queryFilters: any = { ...filters };
+        const queryFilters: Record<string, string | undefined> = { ...filters };
 
         // RBAC Logic:
         // If NOT Super Admin, enforce 'userId' filter to be their own ID.

@@ -29,13 +29,14 @@ export async function getNotificationPreferences() {
     return data
 }
 
-export async function updateNotificationPreferences(preferences: any) {
+export async function updateNotificationPreferences(preferences: Record<string, unknown>) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) throw new Error('غير مصرح')
 
     // Remove immutable fields if present
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { id, user_id, created_at, updated_at, ...updates } = preferences
 
     const { error } = await supabase

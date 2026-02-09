@@ -12,7 +12,7 @@ import { VoteReviewUseCase } from '@/domain/use-cases/reviews/vote-review.usecas
 // Helper to create use cases with authenticated client
 async function getAuthenticatedUseCases() {
     const supabase = await createClient()
-    const { data: { user }, error } = await supabase.auth.getUser()
+    const { data: { user } } = await supabase.auth.getUser()
 
     // Create fresh instances with the request-scoped client
     const reviewRepository = new SupabaseReviewRepository(supabase)
@@ -51,9 +51,9 @@ export async function createReviewAction(placeId: string, placeSlug: string, dat
         revalidatePath('/places')
 
         return { success: true }
-    } catch (error: any) {
+    } catch (error) {
         console.error('Create Review Error:', error)
-        throw new Error(error.message || 'فشل إنشاء التقييم')
+        throw new Error(error instanceof Error ? error.message : 'فشل إنشاء التقييم')
     }
 }
 
@@ -70,8 +70,8 @@ export async function updateReviewAction(reviewId: string, placeSlug: string, da
         revalidatePath(`/places/${placeSlug}`)
 
         return { success: true }
-    } catch (error: any) {
-        throw new Error(error.message || 'فشل تحديث التقييم')
+    } catch (error) {
+        throw new Error(error instanceof Error ? error.message : 'فشل تحديث التقييم')
     }
 }
 
@@ -89,8 +89,8 @@ export async function deleteReviewAction(reviewId: string, placeSlug: string) {
         revalidatePath('/places')
 
         return { success: true }
-    } catch (error: any) {
-        throw new Error(error.message || 'فشل حذف التقييم')
+    } catch (error) {
+        throw new Error(error instanceof Error ? error.message : 'فشل حذف التقييم')
     }
 }
 
@@ -107,7 +107,7 @@ export async function voteReviewAction(reviewId: string, placeSlug: string, isHe
         revalidatePath(`/places/${placeSlug}`)
 
         return { success: true }
-    } catch (error: any) {
-        throw new Error(error.message || 'فشل التصويت')
+    } catch (error) {
+        throw new Error(error instanceof Error ? error.message : 'فشل التصويت')
     }
 }

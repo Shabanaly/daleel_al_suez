@@ -2,6 +2,17 @@ import { createClient } from "@/lib/supabase/client";
 import { ISettingsRepository } from "@/domain/interfaces/settings-repository.interface";
 import { Setting } from "@/domain/entities/setting";
 
+interface SupabaseSettingRow {
+    key: string;
+    value: string;
+    group: 'general' | 'contact' | 'menus' | 'system' | 'appearance';
+    type: 'text' | 'boolean' | 'json' | 'image';
+    label: string;
+    description: string | null;
+    is_public: boolean;
+    updated_at: string;
+}
+
 export class SupabaseSettingsRepository implements ISettingsRepository {
     private supabase = createClient();
 
@@ -13,7 +24,7 @@ export class SupabaseSettingsRepository implements ISettingsRepository {
             .order('key');
 
         if (error) throw new Error(error.message);
-        return data.map(this.mapToEntity);
+        return (data as SupabaseSettingRow[]).map(row => this.mapToEntity(row));
     }
 
     async getAllSettings(): Promise<Setting[]> {
@@ -23,10 +34,10 @@ export class SupabaseSettingsRepository implements ISettingsRepository {
             .order('group');
 
         if (error) throw new Error(error.message);
-        return data.map(this.mapToEntity);
+        return (data as SupabaseSettingRow[]).map(row => this.mapToEntity(row));
     }
 
-    async getPublicSettings(): Promise<Record<string, any>> {
+    async getPublicSettings(): Promise<Record<string, unknown>> {
         const { data, error } = await this.supabase
             .from('settings')
             .select('*')
@@ -37,22 +48,28 @@ export class SupabaseSettingsRepository implements ISettingsRepository {
             return {};
         }
 
+        const rows = data as SupabaseSettingRow[];
+
         // Convert to Key-Value map with parsed types
-        const settingsMap: Record<string, any> = {};
-        data.forEach(item => {
-            let parsedValue = item.value;
+        const settingsMap: Record<string, unknown> = {};
+        rows.forEach(item => {
+            let parsedValue: unknown = item.value;
             if (item.type === 'boolean') parsedValue = item.value === 'true';
             if (item.type === 'json') {
-                try { parsedValue = JSON.parse(item.value); } catch (e) { console.error(`Failed to parse scalar setting ${item.key}`); }
+                try {
+                    parsedValue = JSON.parse(item.value);
+                } catch (e) {
+                    console.error(`Failed to parse scalar setting ${item.key}`, e);
+                }
             }
             settingsMap[item.key] = parsedValue;
         });
         return settingsMap;
     }
 
-    async updateSetting(key: string, value: string, client?: any): Promise<void> {
+    async updateSetting(key: string, value: string, client?: unknown): Promise<void> {
         // Use injected client (for server actions) or default (browser)
-        const supabaseClient = client || this.supabase;
+        const supabaseClient = (client as import('@supabase/supabase-js').SupabaseClient) || this.supabase;
 
         const { error } = await supabaseClient
             .from('settings')
@@ -62,14 +79,14 @@ export class SupabaseSettingsRepository implements ISettingsRepository {
         if (error) throw new Error(error.message);
     }
 
-    private mapToEntity(data: any): Setting {
+    private mapToEntity(data: SupabaseSettingRow): Setting {
         return {
             key: data.key,
             value: data.value,
             group: data.group,
             type: data.type,
             label: data.label,
-            description: data.description,
+            description: data.description || '',
             isPublic: data.is_public,
             updatedAt: new Date(data.updated_at)
         };

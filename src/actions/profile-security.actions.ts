@@ -1,8 +1,8 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
-import { revalidatePath } from 'next/cache'
-import { sendEmail } from '@/lib/email'
+// import { revalidatePath } from 'next/cache' // Currently unused
+// import { sendEmail } from '@/lib/email' // Currently unused
 
 /**
  * Generate a random 6-digit verification code
@@ -217,14 +217,14 @@ export async function deleteAccountPermanently({
         await supabase.auth.signOut()
 
         return { success: true }
-    } catch (error: any) {
+    } catch (error) {
         console.error('💥 Account deletion error:', error)
-        console.error('Error stack:', error.stack)
         // Re-throw with more context
-        if (error.message?.includes('فشل حذف الحساب')) {
-            throw error // Already formatted
+        const message = error instanceof Error ? error.message : String(error);
+        if (message.includes('فشل حذف الحساب')) {
+            throw error // Re-throw the Error object if it's already ours
         }
-        throw new Error(`خطأ غير متوقع: ${error.message}`)
+        throw new Error(`خطأ غير متوقع: ${message}`)
     }
 }
 

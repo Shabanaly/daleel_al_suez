@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { Inter, Noto_Kufi_Arabic } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-import { ThemeProvider } from "@/presentation/components/theme-provider";
-import { VisitTracker } from '@/components/analytics/VisitTracker'
+import { ThemeProvider } from "@/presentation/components/shared/theme-provider";
+import { VisitTracker } from '@/presentation/components/shared/analytics/VisitTracker'
 import { SpeedInsights } from "@vercel/speed-insights/next"
-import { Toaster } from "@/components/ui/sonner"
-import { ChatWidget } from "@/presentation/components/ai/chat-widget"
+import { Toaster } from "@/presentation/ui/sonner"
+import { ChatWidget } from "@/presentation/features/ai/chat-widget"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const notoKufi = Noto_Kufi_Arabic({
@@ -22,8 +22,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const settings = await settingsRepository.getPublicSettings();
 
   return {
-    title: settings.site_name || "دليل السويس | كل ما تحتاجه في مكان واحد",
-    description: settings.site_description || "الدليل الشامل لمدينة السويس. اكتشف أفضل المطاعم، الكافيهات، الخدمات، والفعاليات في السويس.",
+    title: (settings.site_name as string) || "دليل السويس | كل ما تحتاجه في مكان واحد",
+    description: (settings.site_description as string) || "الدليل الشامل لمدينة السويس. اكتشف أفضل المطاعم، الكافيهات، الخدمات، والفعاليات في السويس.",
     verification: {
       google: "nCp3t2Ck8dUCPc6Jv9YMyoCYPeIvOmNNRFEfZ-ttH98",
     },

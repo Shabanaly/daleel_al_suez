@@ -2,6 +2,33 @@ import { createClient } from "@/lib/supabase/client";
 import { Place } from "@/domain/entities/place";
 import { IPlaceRepository } from "@/domain/interfaces/place-repository.interface";
 
+interface SupabasePlaceRow {
+    id: string;
+    slug: string;
+    name: string;
+    description: string | null;
+    address: string | null;
+    images: string[] | null;
+    rating: number | null;
+    review_count: number | null;
+    is_featured: boolean | null;
+    category_id: string | null;
+    area_id: string | null;
+    created_by: string | null;
+    phone: string | null;
+    whatsapp: string | null;
+    google_maps_url: string | null;
+    website: string | null;
+    social_links: Record<string, string> | null;
+    opens_at: string | null;
+    closes_at: string | null;
+    type: string | null;
+    status: string | null;
+    categories?: { name: string } | null;
+    areas?: { name: string } | null;
+    profiles?: { full_name: string } | null;
+}
+
 export class SupabasePlaceRepository implements IPlaceRepository {
     private supabase = createClient();
 
@@ -15,7 +42,7 @@ export class SupabasePlaceRepository implements IPlaceRepository {
 
         if (error) throw new Error(error.message);
 
-        return data.map(this.mapToEntity);
+        return (data as SupabasePlaceRow[]).map(row => this.mapToEntity(row));
     }
 
     async getPlacesByCategory(categorySlug: string): Promise<Place[]> {
@@ -35,7 +62,7 @@ export class SupabasePlaceRepository implements IPlaceRepository {
             .eq("category_id", category.id);
 
         if (error) throw new Error(error.message);
-        return data.map(this.mapToEntity);
+        return (data as SupabasePlaceRow[]).map(row => this.mapToEntity(row));
     }
 
     async getPlaceBySlug(slug: string): Promise<Place | null> {
@@ -46,7 +73,7 @@ export class SupabasePlaceRepository implements IPlaceRepository {
             .maybeSingle();
 
         if (error || !data) return null;
-        return this.mapToEntity(data);
+        return this.mapToEntity(data as SupabasePlaceRow);
     }
 
     async searchPlaces(query: string): Promise<Place[]> {
@@ -57,7 +84,7 @@ export class SupabasePlaceRepository implements IPlaceRepository {
             .ilike("name", `%${query}%`);
 
         if (error) return [];
-        return data.map(this.mapToEntity);
+        return (data as SupabasePlaceRow[]).map(row => this.mapToEntity(row));
     }
 
     async getAdminPlaces(filters: {
@@ -95,7 +122,7 @@ export class SupabasePlaceRepository implements IPlaceRepository {
         const { data, error } = await query;
 
         if (error) throw new Error(error.message);
-        return data.map(this.mapToEntity);
+        return (data as SupabasePlaceRow[]).map(row => this.mapToEntity(row));
     }
 
     async getPlacesByOwner(userId: string): Promise<Place[]> {
@@ -106,7 +133,7 @@ export class SupabasePlaceRepository implements IPlaceRepository {
             .order("created_at", { ascending: false });
 
         if (error) throw new Error(error.message);
-        return data.map(this.mapToEntity);
+        return (data as SupabasePlaceRow[]).map(row => this.mapToEntity(row));
     }
 
     async getAllPlaces(): Promise<Place[]> {
@@ -116,11 +143,11 @@ export class SupabasePlaceRepository implements IPlaceRepository {
             .order("created_at", { ascending: false });
 
         if (error) throw new Error(error.message);
-        return data.map(this.mapToEntity);
+        return (data as SupabasePlaceRow[]).map(row => this.mapToEntity(row));
     }
 
-    async createPlace(place: Partial<Place>, userId: string, client?: any): Promise<Place> {
-        const supabaseClient = client || this.supabase;
+    async createPlace(place: Partial<Place>, userId: string, client?: unknown): Promise<Place> {
+        const supabaseClient = (client as import('@supabase/supabase-js').SupabaseClient) || this.supabase;
         const { data, error } = await supabaseClient
             .from("places")
             .insert({
@@ -146,12 +173,12 @@ export class SupabasePlaceRepository implements IPlaceRepository {
             .maybeSingle();
 
         if (error) throw new Error(error.message);
-        return this.mapToEntity(data);
+        return this.mapToEntity(data as SupabasePlaceRow);
     }
 
-    async updatePlace(id: string, place: Partial<Place>, client?: any): Promise<Place> {
-        const supabaseClient = client || this.supabase;
-        const updates: any = { ...place };
+    async updatePlace(id: string, place: Partial<Place>, client?: unknown): Promise<Place> {
+        const supabaseClient = (client as import('@supabase/supabase-js').SupabaseClient) || this.supabase;
+        const updates: Record<string, unknown> = { ...place };
 
         // Map DTO keys to DB (manual mapping because we don't have a mapper yet)
         if (place.categoryId) updates.category_id = place.categoryId;
@@ -192,14 +219,14 @@ export class SupabasePlaceRepository implements IPlaceRepository {
                 .eq("id", id)
                 .single();
 
-            return this.mapToEntity(fullData || data);
+            return this.mapToEntity((fullData || data) as SupabasePlaceRow);
         }
 
-        return this.mapToEntity(data);
+        return this.mapToEntity(data as SupabasePlaceRow);
     }
 
-    async deletePlace(id: string, client?: any): Promise<void> {
-        const supabaseClient = client || this.supabase;
+    async deletePlace(id: string, client?: unknown): Promise<void> {
+        const supabaseClient = (client as import('@supabase/supabase-js').SupabaseClient) || this.supabase;
         const { error } = await supabaseClient
             .rpc('delete_place_securely', { p_place_id: id });
 
@@ -214,39 +241,39 @@ export class SupabasePlaceRepository implements IPlaceRepository {
             .maybeSingle();
 
         if (error) return null;
-        return this.mapToEntity(data);
+        return this.mapToEntity(data as SupabasePlaceRow);
     }
 
-    private mapToEntity(row: any): Place {
+    private mapToEntity(row: SupabasePlaceRow): Place {
         return {
             id: row.id,
             slug: row.slug,
             name: row.name,
-            description: row.description,
-            address: row.address,
+            description: row.description || '',
+            address: row.address || '',
             images: row.images || [],
-            rating: row.rating,
-            reviewCount: row.review_count,
-            isFeatured: row.is_featured,
+            rating: row.rating || 0,
+            reviewCount: row.review_count || 0,
+            isFeatured: row.is_featured || false,
 
             // Relations
             categoryName: row.categories?.name,
-            categoryId: row.category_id,
+            categoryId: row.category_id || '',
             areaName: row.areas?.name,
-            areaId: row.area_id,
+            areaId: row.area_id || '',
             createdByName: row.profiles?.full_name,
-            createdBy: row.created_by,
+            createdBy: row.created_by || '',
 
             // Contact & Details
-            phone: row.phone,
-            whatsapp: row.whatsapp,
-            googleMapsUrl: row.google_maps_url,
-            website: row.website,
+            phone: row.phone || '',
+            whatsapp: row.whatsapp || '',
+            googleMapsUrl: row.google_maps_url || '',
+            website: row.website || '',
             socialLinks: row.social_links || {},
-            opensAt: row.opens_at,
-            closesAt: row.closes_at,
-            type: row.type || 'business',
-            status: row.status
+            opensAt: row.opens_at || '',
+            closesAt: row.closes_at || '',
+            type: (row.type as 'business' | 'professional') || 'business',
+            status: (row.status as 'active' | 'pending' | 'inactive') || 'pending'
         };
     }
 }

@@ -6,4 +6,5 @@ export interface Category {
     description?: string;
     is_featured?: boolean;
     sort_order?: number;
+    createdAt?: string; // Add createdAt to match DB and service
 }

@@ -14,29 +14,31 @@ export default async function AdminTicketPage({
 }) {
     const { id } = await params
 
+    let ticket;
+    let messages;
+
     try {
-        const ticket = await getTicketDetails(id)
+        ticket = await getTicketDetails(id)
         if (!ticket) return notFound()
-
-        const messages = await getAdminTicketMessages(id)
-
-        return (
-            <div className="w-full max-w-7xl mx-auto space-y-6">
-                <div className="flex items-center justify-between">
-                    <div>
-                        <Link href="/admin/support" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-2 transition-colors">
-                            <ChevronRight className="w-4 h-4 ml-1" />
-                            العودة للتذاكر
-                        </Link>
-                        <h1 className="text-2xl font-bold">محادثة الدعم</h1>
-                    </div>
-                </div>
-
-                <AdminTicketChat ticket={ticket} initialMessages={messages || []} />
-            </div>
-        )
+        messages = await getAdminTicketMessages(id)
     } catch (error) {
         console.error('Error loading ticket:', error)
         return notFound()
     }
+
+    return (
+        <div className="w-full max-w-7xl mx-auto space-y-6">
+            <div className="flex items-center justify-between">
+                <div>
+                    <Link href="/admin/support" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-2 transition-colors">
+                        <ChevronRight className="w-4 h-4 ml-1" />
+                        العودة للتذاكر
+                    </Link>
+                    <h1 className="text-2xl font-bold">محادثة الدعم</h1>
+                </div>
+            </div>
+
+            <AdminTicketChat ticket={ticket} initialMessages={messages || []} />
+        </div>
+    )
 }

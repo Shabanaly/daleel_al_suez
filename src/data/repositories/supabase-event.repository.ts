@@ -1,12 +1,29 @@
 import { createClient } from "@/lib/supabase/client";
-import { SuezEvent, EventStatus } from "@/domain/entities/suez-event";
+import { SuezEvent, EventStatus, EventType } from "@/domain/entities/suez-event";
 import { IEventRepository } from "@/domain/interfaces/event-repository.interface";
+
+interface SupabaseEventRow {
+    id: string;
+    title: string;
+    slug: string;
+    description: string | null;
+    image_url: string | null;
+    start_date: string;
+    end_date: string;
+    location: string | null;
+    place_id: string | null;
+    type: string;
+    status: EventStatus;
+    created_at: string;
+    updated_at: string;
+    places?: { name: string } | null;
+}
 
 export class SupabaseEventRepository implements IEventRepository {
     private supabase = createClient();
 
-    async getEvents(options?: { status?: EventStatus; limit?: number; placeId?: string }, client?: any): Promise<SuezEvent[]> {
-        const supabaseClient = client || this.supabase;
+    async getEvents(options?: { status?: EventStatus; limit?: number; placeId?: string }, client?: unknown): Promise<SuezEvent[]> {
+        const supabaseClient = (client as import('@supabase/supabase-js').SupabaseClient) || this.supabase;
         let query = supabaseClient.from('events').select(`
             *,
             places (name)
@@ -28,7 +45,7 @@ export class SupabaseEventRepository implements IEventRepository {
 
         if (error) throw error;
 
-        return data.map(this.mapToEntity);
+        return (data as SupabaseEventRow[]).map(row => this.mapToEntity(row));
     }
 
     async getEventById(id: string): Promise<SuezEvent | null> {
@@ -36,10 +53,10 @@ export class SupabaseEventRepository implements IEventRepository {
             .from('events')
             .select('*, places(name)')
             .eq('id', id)
-            .single();
+            .maybeSingle();
 
-        if (error) return null;
-        return this.mapToEntity(data);
+        if (error || !data) return null;
+        return this.mapToEntity(data as SupabaseEventRow);
     }
 
     async getEventBySlug(slug: string): Promise<SuezEvent | null> {
@@ -47,14 +64,14 @@ export class SupabaseEventRepository implements IEventRepository {
             .from('events')
             .select('*, places(name)')
             .eq('slug', slug)
-            .single();
+            .maybeSingle();
 
-        if (error) return null;
-        return this.mapToEntity(data);
+        if (error || !data) return null;
+        return this.mapToEntity(data as SupabaseEventRow);
     }
 
-    async createEvent(event: Omit<SuezEvent, 'id' | 'createdAt' | 'updatedAt' | 'placeName'>, client?: any): Promise<SuezEvent> {
-        const supabaseClient = client || this.supabase;
+    async createEvent(event: Omit<SuezEvent, 'id' | 'createdAt' | 'updatedAt' | 'placeName'>, client?: unknown): Promise<SuezEvent> {
+        const supabaseClient = (client as import('@supabase/supabase-js').SupabaseClient) || this.supabase;
         const { data, error } = await supabaseClient
             .from('events')
             .insert(this.mapToDb(event))
@@ -62,11 +79,11 @@ export class SupabaseEventRepository implements IEventRepository {
             .single();
 
         if (error) throw error;
-        return this.mapToEntity(data);
+        return this.mapToEntity(data as SupabaseEventRow);
     }
 
-    async updateEvent(id: string, event: Partial<SuezEvent>, client?: any): Promise<SuezEvent> {
-        const supabaseClient = client || this.supabase;
+    async updateEvent(id: string, event: Partial<SuezEvent>, client?: unknown): Promise<SuezEvent> {
+        const supabaseClient = (client as import('@supabase/supabase-js').SupabaseClient) || this.supabase;
         const { data, error } = await supabaseClient
             .from('events')
             .update(this.mapToDb(event))
@@ -75,36 +92,36 @@ export class SupabaseEventRepository implements IEventRepository {
             .single();
 
         if (error) throw error;
-        return this.mapToEntity(data);
+        return this.mapToEntity(data as SupabaseEventRow);
     }
 
-    async deleteEvent(id: string, client?: any): Promise<void> {
-        const supabaseClient = client || this.supabase;
+    async deleteEvent(id: string, client?: unknown): Promise<void> {
+        const supabaseClient = (client as import('@supabase/supabase-js').SupabaseClient) || this.supabase;
         const { error } = await supabaseClient.from('events').delete().eq('id', id);
         if (error) throw error;
     }
 
-    private mapToEntity(data: any): SuezEvent {
+    private mapToEntity(data: SupabaseEventRow): SuezEvent {
         return {
             id: data.id,
             title: data.title,
             slug: data.slug,
-            description: data.description,
-            imageUrl: data.image_url,
+            description: data.description || '',
+            imageUrl: data.image_url || '',
             startDate: new Date(data.start_date),
             endDate: new Date(data.end_date),
-            location: data.location,
-            placeId: data.place_id,
+            location: data.location || '',
+            placeId: data.place_id || '',
             placeName: data.places?.name,
-            type: data.type,
+            type: data.type as EventType,
             status: data.status,
             createdAt: new Date(data.created_at),
             updatedAt: new Date(data.updated_at),
         };
     }
 
-    private mapToDb(event: Partial<SuezEvent>): any {
-        const db: any = {};
+    private mapToDb(event: Partial<SuezEvent>): Record<string, unknown> {
+        const db: Record<string, unknown> = {};
         if (event.title !== undefined) db.title = event.title;
         if (event.slug !== undefined) db.slug = event.slug;
         if (event.description !== undefined) db.description = event.description;

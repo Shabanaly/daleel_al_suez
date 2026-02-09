@@ -1,17 +1,29 @@
 import { getAllTickets } from '@/actions/admin-support.actions'
-import { Badge } from '@/components/ui/badge'
-import { Card } from '@/components/ui/card'
+import { Badge } from '@/presentation/ui/badge'
+import { Card } from '@/presentation/ui/card'
 import { formatDistanceToNow } from 'date-fns'
 import { ar } from 'date-fns/locale'
 import Link from 'next/link'
-import { MessageSquare, Clock, CheckCircle2, AlertCircle } from 'lucide-react'
+import { MessageSquare, Clock } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 // Force dynamic rendering to ensure fresh data
 export const dynamic = 'force-dynamic'
 
+interface AdminTicketList {
+    id: string
+    subject: string
+    status: string
+    priority: string
+    category: string
+    created_at: string
+    profiles: { full_name: string } | null
+    messages: { count: number }[]
+    [key: string]: unknown
+}
+
 export default async function AdminSupportPage() {
-    const tickets = await getAllTickets()
+    const tickets = await getAllTickets() as AdminTicketList[]
 
     const getStatusColor = (status: string) => {
         switch (status) {
@@ -61,7 +73,7 @@ export default async function AdminSupportPage() {
                         لا توجد تذاكر دعم فني حالياً
                     </div>
                 ) : (
-                    tickets?.map((ticket: any) => (
+                    tickets?.map((ticket) => (
                         <Link key={ticket.id} href={`/admin/support/${ticket.id}`} className="block group">
                             <Card className="p-4 bg-slate-900 border-slate-800 hover:border-primary/50 transition-colors relative overflow-hidden group-hover:shadow-md">
                                 <div className="flex items-start justify-between gap-4">

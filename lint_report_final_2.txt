@@ -1,0 +1,63 @@
+
+> daleel_al_suez@0.1.0 lint
+> eslint
+
+
+/Users/shaban/Documents/daleel_al_suez/scripts/list-google-models.js
+  2:7   warning  'fs' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  2:12  error    A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+  3:16  error    A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+/Users/shaban/Documents/daleel_al_suez/scripts/list-google-models.ts
+  25:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/actions/admin/categories.actions.ts
+   76:14  warning  'e' is defined but never used  @typescript-eslint/no-unused-vars
+  154:14  warning  'e' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/shaban/Documents/daleel_al_suez/src/app/admin/events/[id]/edit/page.tsx
+  2:33  warning  'getAdminEventsUseCase' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/shaban/Documents/daleel_al_suez/src/app/admin/header.tsx
+   1:25  warning  'User' is defined but never used                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+  33:29  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/Users/shaban/Documents/daleel_al_suez/src/app/admin/places/actions.ts
+  6:10  warning  'redirect' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/shaban/Documents/daleel_al_suez/src/app/admin/settings/page.tsx
+  4:70  warning  'X' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/shaban/Documents/daleel_al_suez/src/app/admin/support/admin-ticket-chat.tsx
+  4:31  warning  'CheckCheck' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/shaban/Documents/daleel_al_suez/src/app/admin/support/page.tsx
+  7:10  warning  'Search' is defined but never used        @typescript-eslint/no-unused-vars
+  7:18  warning  'ChevronRight' is defined but never used  @typescript-eslint/no-unused-vars
+  7:54  warning  'Filter' is defined but never used        @typescript-eslint/no-unused-vars
+  7:62  warning  'CheckCircle2' is defined but never used  @typescript-eslint/no-unused-vars
+  7:76  warning  'AlertCircle' is defined but never used   @typescript-eslint/no-unused-vars
+
+/Users/shaban/Documents/daleel_al_suez/src/app/admin/users/page.tsx
+  2:15  warning  'User' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/shaban/Documents/daleel_al_suez/src/app/api/admin/embeddings/route.ts
+  6:28  warning  'req' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/shaban/Documents/daleel_al_suez/src/lib/supabase/middleware.ts
+  18:58  warning  'options' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/shaban/Documents/daleel_al_suez/src/lib/supabase/server.ts
+  1:35  warning  'CookieOptions' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/components/admin/CategoryForm.tsx
+  142:53  warning  'currentUserRole' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/components/admin/PlaceForm.tsx
+  8:75  warning  'Share2' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/components/admin/create-event-form.tsx
+  46:8  warning  React Hook useEffect has a missing dependency: 'slug'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+✖ 24 problems (3 errors, 21 warnings)
+

@@ -13,10 +13,10 @@ export interface AuditLogData {
     action: AuditAction
     targetId?: string
     details?: {
-        before?: any
-        after?: any
+        before?: unknown
+        after?: unknown
         changes?: string[]
-        metadata?: Record<string, any>
+        metadata?: Record<string, unknown>
     }
 }
 
@@ -61,7 +61,7 @@ export async function logAudit(data: AuditLogData) {
 /**
  * Generate a human-readable change summary
  */
-export function generateChangesSummary(before: any, after: any): string[] {
+export function generateChangesSummary(before: Record<string, unknown> | null, after: Record<string, unknown> | null): string[] {
     const changes: string[] = []
 
     const allKeys = new Set([...Object.keys(before || {}), ...Object.keys(after || {})])

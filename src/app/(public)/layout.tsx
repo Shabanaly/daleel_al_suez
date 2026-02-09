@@ -1,5 +1,5 @@
-import { Header } from "@/presentation/components/layout/header";
-import { Footer } from "@/presentation/components/layout/footer";
+import { Header } from "@/presentation/components/shared/layout/header";
+import { Footer } from "@/presentation/components/shared/layout/footer";
 import { SupabaseSettingsRepository } from "@/data/repositories/supabase-settings.repository";
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {

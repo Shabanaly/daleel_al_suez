@@ -22,6 +22,7 @@ async function listModels() {
 
         console.log('Available Models:');
         if (data.models) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             data.models.forEach((m: any) => {
                 if (m.name.includes('embedding')) {
                     console.log(`- ${m.name} (Supported methods: ${m.supportedGenerationMethods})`);

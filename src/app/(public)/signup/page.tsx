@@ -44,8 +44,8 @@ export default function SignUpPage() {
                 router.push('/login')
             }, 3000)
 
-        } catch (error: any) {
-            setMessage({ text: error.message, type: 'error' })
+        } catch (error) {
+            setMessage({ text: error instanceof Error ? error.message : 'حدث خطأ', type: 'error' })
         } finally {
             setLoading(false)
         }

@@ -1,5 +1,5 @@
-import { getCategories } from '@/services/admin/categories.service'
-import CategoriesClient from '@/components/admin/CategoriesClient'
+import { getCategoriesUseCase } from '@/di/modules'
+import CategoriesClient from '@/presentation/components/admin/CategoriesClient'
 import { createClient } from '@/lib/supabase/server'
 
 export default async function CategoriesPage() {
@@ -13,7 +13,9 @@ export default async function CategoriesPage() {
         .eq('id', user?.id)
         .single()
 
-    const categories = await getCategories()
+    // Use Case automatically orders by created_at if we ask for it, or we can just get default
+    // Service was ordering by created_at descending.
+    const categories = await getCategoriesUseCase.execute({ orderBy: 'created_at' })
 
     return <CategoriesClient
         initialCategories={categories}

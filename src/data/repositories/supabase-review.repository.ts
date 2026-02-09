@@ -2,6 +2,35 @@ import { SupabaseClient } from '@supabase/supabase-js'
 import { IReviewRepository } from '@/domain/repositories/review.repository'
 import { Review, RatingStats } from '@/domain/entities/review'
 
+interface SupabaseReviewRow {
+    id: string;
+    place_id: string;
+    user_id: string;
+    rating: number;
+    title: string | null;
+    comment: string;
+    helpful_count: number | null;
+    status: 'pending' | 'approved' | 'rejected';
+    is_anonymous: boolean | null;
+    user_name: string | null;
+    user_avatar: string | null;
+    created_at: string;
+    updated_at: string;
+    users?: {
+        raw_user_meta_data?: {
+            full_name?: string;
+            avatar_url?: string;
+        };
+        email?: string;
+    } | null;
+}
+
+interface SupabaseVoteRow {
+    id?: string; // id is present when selecting existing votes
+    review_id: string;
+    is_helpful: boolean;
+}
+
 export class SupabaseReviewRepository implements IReviewRepository {
     constructor(private supabase: SupabaseClient) { }
 
@@ -15,7 +44,7 @@ export class SupabaseReviewRepository implements IReviewRepository {
 
         if (error) throw new Error(error.message)
 
-        const reviews = (data || []).map(this.mapToEntity)
+        const reviews = (data as SupabaseReviewRow[] || []).map(row => this.mapToEntity(row))
 
         if (userId && reviews.length > 0) {
             const reviewIds = reviews.map(r => r.id)
@@ -25,8 +54,8 @@ export class SupabaseReviewRepository implements IReviewRepository {
                 .eq('user_id', userId)
                 .in('review_id', reviewIds)
 
-            if (votes && votes.length > 0) {
-                const voteMap = new Map(votes.map((v: any) => [v.review_id, v.is_helpful]))
+            if (votes && (votes as SupabaseVoteRow[]).length > 0) {
+                const voteMap = new Map((votes as SupabaseVoteRow[]).map((v) => [v.review_id, v.is_helpful]))
                 reviews.forEach(r => {
                     r.currentUserVote = voteMap.get(r.id) ?? null
                 })
@@ -41,14 +70,15 @@ export class SupabaseReviewRepository implements IReviewRepository {
             .from('reviews')
             .select('*')
             .eq('id', id)
-            .single()
+            .maybeSingle()
 
         if (error) {
-            if (error.code === 'PGRST116') return null
             throw new Error(error.message)
         }
 
-        return this.mapToEntity(data)
+        if (!data) return null
+
+        return this.mapToEntity(data as SupabaseReviewRow)
     }
 
     async getUserReviewForPlace(userId: string, placeId: string): Promise<Review | null> {
@@ -57,14 +87,15 @@ export class SupabaseReviewRepository implements IReviewRepository {
             .select('*')
             .eq('user_id', userId)
             .eq('place_id', placeId)
-            .single()
+            .maybeSingle()
 
         if (error) {
-            if (error.code === 'PGRST116') return null
             throw new Error(error.message)
         }
 
-        return this.mapToEntity(data)
+        if (!data) return null
+
+        return this.mapToEntity(data as SupabaseReviewRow)
     }
 
     async createReview(review: {
@@ -78,7 +109,7 @@ export class SupabaseReviewRepository implements IReviewRepository {
         userAvatar?: string
     }): Promise<Review> {
         // Use RPC function to bypass RLS and handle stats update atomically
-        const { data: reviewId, error: rpcError } = await this.supabase
+        const { data: rpcResult, error: rpcError } = await this.supabase
             .rpc('submit_review', {
                 p_place_id: review.placeId,
                 p_rating: review.rating,
@@ -91,20 +122,19 @@ export class SupabaseReviewRepository implements IReviewRepository {
 
         if (rpcError) throw new Error(rpcError.message)
 
+        // RPC returns the id of the created review
+        const reviewId = (rpcResult as { id: string }).id
+
         // Fetch the created review to return it
         const { data, error } = await this.supabase
             .from('reviews')
             .select('*')
-            .eq('id', reviewId.id) // RPC returns an object with ID
+            .eq('id', reviewId)
             .single()
 
         if (error) throw new Error(error.message)
-        return this.mapToEntity(data)
+        return this.mapToEntity(data as SupabaseReviewRow)
     }
-
-    // ... (unchanged methods)
-
-
 
     async updateReview(id: string, updateData: {
         rating?: number
@@ -126,7 +156,7 @@ export class SupabaseReviewRepository implements IReviewRepository {
             .single()
 
         if (error) throw new Error(error.message)
-        return this.mapToEntity(data)
+        return this.mapToEntity(data as SupabaseReviewRow)
     }
 
     async deleteReview(id: string): Promise<void> {
@@ -147,7 +177,7 @@ export class SupabaseReviewRepository implements IReviewRepository {
 
         if (error) throw new Error(error.message)
 
-        const reviews = data || []
+        const reviews = (data as { rating: number }[]) || []
         const totalReviews = reviews.length
 
         if (totalReviews === 0) {
@@ -162,7 +192,8 @@ export class SupabaseReviewRepository implements IReviewRepository {
         const averageRating = sum / totalReviews
 
         const distribution = reviews.reduce((acc, r) => {
-            acc[r.rating as keyof typeof acc] = (acc[r.rating as keyof typeof acc] || 0) + 1
+            const rating = r.rating as 1 | 2 | 3 | 4 | 5
+            acc[rating] = (acc[rating] || 0) + 1
             return acc
         }, { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 })
 
@@ -176,16 +207,16 @@ export class SupabaseReviewRepository implements IReviewRepository {
     async voteReview(reviewId: string, userId: string, isHelpful: boolean): Promise<void> {
         const { data: existingVote } = await this.supabase
             .from('review_votes')
-            .select('id, is_helpful')
+            .select('id')
             .eq('review_id', reviewId)
             .eq('user_id', userId)
-            .single()
+            .maybeSingle()
 
         if (existingVote) {
             const { error } = await this.supabase
                 .from('review_votes')
                 .update({ is_helpful: isHelpful })
-                .eq('id', existingVote.id)
+                .eq('id', (existingVote as { id: string }).id)
 
             if (error) throw new Error(error.message)
         } else {
@@ -221,14 +252,13 @@ export class SupabaseReviewRepository implements IReviewRepository {
             .select('is_helpful')
             .eq('review_id', reviewId)
             .eq('user_id', userId)
-            .single()
+            .maybeSingle()
 
         if (error) {
-            if (error.code === 'PGRST116') return null
             throw new Error(error.message)
         }
 
-        return data.is_helpful
+        return (data as SupabaseVoteRow | null)?.is_helpful ?? null
     }
 
     private async updateHelpfulCount(reviewId: string): Promise<void> {
@@ -239,7 +269,7 @@ export class SupabaseReviewRepository implements IReviewRepository {
 
         if (error) throw new Error(error.message)
 
-        const helpfulCount = (data || []).filter(v => v.is_helpful).length
+        const helpfulCount = (data as SupabaseVoteRow[] || []).filter(v => v.is_helpful).length
 
         await this.supabase
             .from('reviews')
@@ -247,7 +277,7 @@ export class SupabaseReviewRepository implements IReviewRepository {
             .eq('id', reviewId)
     }
 
-    private mapToEntity(data: any): Review {
+    private mapToEntity(data: SupabaseReviewRow): Review {
         const isAnonymous = data.is_anonymous || false;
 
         return {
@@ -262,7 +292,7 @@ export class SupabaseReviewRepository implements IReviewRepository {
                 ? undefined
                 : (data.user_avatar || data.users?.raw_user_meta_data?.avatar_url),
             rating: data.rating,
-            title: data.title,
+            title: data.title || undefined,
             comment: data.comment,
             helpfulCount: data.helpful_count || 0,
             status: data.status,

@@ -92,9 +92,9 @@ export async function getDashboardStats(): Promise<{ success: boolean, data?: Da
             }
         }
 
-    } catch (error: any) {
+    } catch (error) {
         console.error("Dashboard Stats Error:", error)
-        return { success: false, message: error.message }
+        return { success: false, message: error instanceof Error ? error.message : "An unknown error occurred" }
     }
 }
 

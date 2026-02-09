@@ -1,5 +1,5 @@
 import { getActiveEventsUseCase } from '@/di/modules'
-import { EventCard } from '@/presentation/components/events/event-card'
+import { EventCard } from '@/presentation/features/events/event-card'
 import { Calendar } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'

@@ -1,6 +1,6 @@
-import PlaceForm from "@/components/admin/PlaceForm";
+import PlaceForm from "@/presentation/components/admin/PlaceForm";
 import { getCategoriesUseCase, getPlaceByIdUseCase } from "@/di/modules";
-import { getAreas } from "@/services/admin/areas.service";
+import { getAreasUseCase } from "@/di/modules";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Edit } from "lucide-react";
 import Link from "next/link";
@@ -16,7 +16,7 @@ export default async function EditPlacePage({ params }: Props) {
     // 1. Fetch Data
     const [categories, areas, place] = await Promise.all([
         getCategoriesUseCase.execute(),
-        getAreas(),
+        getAreasUseCase.execute(),
         getPlaceByIdUseCase.execute(id)
     ])
 

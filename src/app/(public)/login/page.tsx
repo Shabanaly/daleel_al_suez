@@ -4,8 +4,7 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Loader2, Mail, Lock, ArrowRight, User, Compass } from 'lucide-react'
-import Image from 'next/image'
+import { Loader2, Mail, Lock, ArrowRight, Compass } from 'lucide-react'
 
 export default function LoginPage() {
     const [email, setEmail] = useState('')
@@ -37,8 +36,8 @@ export default function LoginPage() {
                 router.push('/')
                 router.refresh()
             }
-        } catch (error: any) {
-            setMessage({ text: error.message, type: 'error' })
+        } catch (error) {
+            setMessage({ text: error instanceof Error ? error.message : 'حدث خطأ', type: 'error' })
         } finally {
             setLoading(false)
         }
@@ -53,8 +52,8 @@ export default function LoginPage() {
                 },
             })
             if (error) throw error
-        } catch (error: any) {
-            setMessage({ text: error.message, type: 'error' })
+        } catch (error) {
+            setMessage({ text: error instanceof Error ? error.message : 'حدث خطأ', type: 'error' })
         }
     }
 

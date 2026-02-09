@@ -60,14 +60,16 @@ export async function getCategoryBreakdown() {
     if (error) throw error
 
     // Process and group by category
-    const breakdown = data.reduce((acc: any, review: any) => {
-        // Handle array or single category if structure differs, assuming single for now or taking first found
-        // Adjust based on actual data structure. 
-        // If categories is an object:
-        const categoryName = review.places?.categories?.name || 'غير مصنف'
+    const breakdown = (data as unknown[]).reduce((acc: Record<string, number>, review: unknown) => {
+        const rev = review as { places: { categories: { name: string }[] | { name: string } }[] | { categories: { name: string }[] | { name: string } } };
+        // Handle Supabase join structure which can return arrays for joins
+        const places = Array.isArray(rev.places) ? rev.places[0] : rev.places;
+        const categories = places && Array.isArray(places.categories) ? places.categories[0] : places?.categories;
+        const categoryName = (categories as { name: string })?.name || 'غير مصنف'
+
         acc[categoryName] = (acc[categoryName] || 0) + 1
         return acc
-    }, {})
+    }, {} as Record<string, number>)
 
     return Object.entries(breakdown).map(([name, count]) => ({
         name,

@@ -1,0 +1,525 @@
+
+> daleel_al_suez@0.1.0 lint
+> eslint --max-warnings 0
+
+
+/Users/shaban/Documents/daleel_al_suez/scripts/list-google-models.js
+  2:7   warning  'fs' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  2:12  error    A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+  3:16  error    A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+/Users/shaban/Documents/daleel_al_suez/scripts/list-google-models.ts
+  25:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/actions/admin/analytics.actions.ts
+  95:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/actions/admin/areas.actions.ts
+  11:79  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/actions/admin/categories.actions.ts
+   76:14  warning  'e' is defined but never used  @typescript-eslint/no-unused-vars
+  154:14  warning  'e' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/shaban/Documents/daleel_al_suez/src/actions/admin/events.actions.ts
+   15:16  warning  'getAdminRole' is defined but never used  @typescript-eslint/no-unused-vars
+   50:46  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   51:42  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   70:21  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   97:76  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   98:70  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  105:21  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  128:21  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  151:21  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/actions/admin/notifications.actions.ts
+   34:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   51:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   85:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  106:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/actions/admin/places.actions.ts
+   61:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  108:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  158:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  170:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/actions/admin/settings.actions.ts
+  12:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  39:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/actions/admin/users.actions.ts
+  27:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/actions/notification-preferences.actions.ts
+  32:66  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  39:13  warning  'id' is assigned a value but never used          @typescript-eslint/no-unused-vars
+  39:17  warning  'user_id' is assigned a value but never used     @typescript-eslint/no-unused-vars
+  39:26  warning  'created_at' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  39:38  warning  'updated_at' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/shaban/Documents/daleel_al_suez/src/actions/profile-security.actions.ts
+    4:10  warning  'revalidatePath' is defined but never used  @typescript-eslint/no-unused-vars
+    5:10  warning  'sendEmail' is defined but never used       @typescript-eslint/no-unused-vars
+  220:21  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/actions/profile.actions.ts
+  14:20  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/actions/reviews.actions.ts
+   15:29  warning  'error' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   54:21  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+   73:21  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+   92:21  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  110:21  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/actions/support.actions.ts
+  15:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/actions/user-stats.actions.ts
+  63:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  63:54  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/app/(public)/categories/[slug]/page.tsx
+  81:47  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/app/(public)/favorites/page.tsx
+  51:21  error  Do not use an `<a>` element to navigate to `/places/`. Use `<Link />` from `next/link` instead. See: https://nextjs.org/docs/messages/no-html-link-for-pages  @next/next/no-html-link-for-pages
+
+/Users/shaban/Documents/daleel_al_suez/src/app/(public)/forgot-password/page.tsx
+  31:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/app/(public)/login/page.tsx
+   7:43  warning  'User' is defined but never used          @typescript-eslint/no-unused-vars
+   8:8   warning  'Image' is defined but never used         @typescript-eslint/no-unused-vars
+  40:25  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  56:25  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/app/(public)/places/[slug]/page.tsx
+  139:51  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/app/(public)/places/page.tsx
+  72:47  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/app/(public)/profile/reset-password/page.tsx
+  62:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/app/(public)/signup/page.tsx
+  47:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/app/admin/ai-sync-button.tsx
+  24:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/app/admin/events/[id]/edit/page.tsx
+  2:33  warning  'getAdminEventsUseCase' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/shaban/Documents/daleel_al_suez/src/app/admin/header.tsx
+   1:25  warning  'User' is defined but never used                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+  33:29  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/Users/shaban/Documents/daleel_al_suez/src/app/admin/places/actions.ts
+    6:10  warning  'redirect' is defined but never used      @typescript-eslint/no-unused-vars
+   53:17  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   89:17  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  107:17  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/app/admin/settings/page.tsx
+    4:70  warning  'X' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-unused-vars
+   28:9   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/shaban/Documents/daleel_al_suez/src/app/admin/settings/page.tsx:28:9
+  26 |
+  27 |     useEffect(() => {
+> 28 |         loadSettings()
+     |         ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  29 |     }, [])
+  30 |
+  31 |     const handleChange = (key: string, value: string) => {                                                                                                                                react-hooks/set-state-in-effect
+  220:40  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-explicit-any
+  235:17  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/shaban/Documents/daleel_al_suez/src/app/admin/settings/page.tsx:235:17
+  233 |             const currentJson = JSON.stringify(items)
+  234 |             if (JSON.stringify(parsed) !== currentJson) {
+> 235 |                 setItems(Array.isArray(parsed) ? parsed : [])
+      |                 ^^^^^^^^ Avoid calling setState() directly within an effect
+  236 |             }
+  237 |         } catch {
+  238 |             // ignore  react-hooks/set-state-in-effect
+  242:35  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/app/admin/support/admin-ticket-chat.tsx
+    4:31  warning  'CheckCheck' is defined but never used    @typescript-eslint/no-unused-vars
+   15:13  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   16:22  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  145:41  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/app/admin/support/page.tsx
+   7:32  warning  'CheckCircle2' is defined but never used  @typescript-eslint/no-unused-vars
+   7:46  warning  'AlertCircle' is defined but never used   @typescript-eslint/no-unused-vars
+  64:43  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/app/admin/users/page.tsx
+  2:15  warning  'User' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/shaban/Documents/daleel_al_suez/src/app/api/admin/embeddings/route.ts
+    6:28  warning  'req' is defined but never used                    @typescript-eslint/no-unused-vars
+   57:13  error    'errors' is never reassigned. Use 'const' instead  prefer-const
+   63:53  error    Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+  113:27  error    Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+  125:21  error    Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/app/api/chat/route.ts
+   22:43  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   58:53  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  101:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  102:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  104:57  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  132:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/data/repositories/notifications.repository.ts
+  18:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/data/repositories/supabase-area.repository.ts
+   6:29  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  19:32  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/data/repositories/supabase-category.repository.ts
+   8:106  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  29:52   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  41:48   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  53:30   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/data/repositories/supabase-event.repository.ts
+    8:100  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   56:104  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   68:71   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   81:44   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   87:31   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  106:49   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  107:19   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/data/repositories/supabase-favorites.repository.ts
+   5:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   7:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  39:53  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  47:32  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/data/repositories/supabase-place.repository.ts
+  122:71  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  152:67  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  154:24  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  201:44  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  220:30  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/data/repositories/supabase-review.repository.ts
+   29:55  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  250:31  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/data/repositories/supabase-settings.repository.ts
+  29:55  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  41:43  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  46:70  warning  'e' is defined but never used             @typescript-eslint/no-unused-vars
+  53:62  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  65:31  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/data/repositories/supabase-user.repository.ts
+    9:35  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   41:48  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   57:29  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   66:33  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   76:49  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   95:48  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  107:31  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  116:68  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/domain/entities/audit-log.ts
+  4:14  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/domain/interfaces/area-repository.interface.ts
+  4:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/domain/interfaces/category-repository.interface.ts
+  4:100  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5:46   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6:42   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/domain/interfaces/event-repository.interface.ts
+  4:94  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  7:98  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  8:65  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  9:38  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/domain/interfaces/place-repository.interface.ts
+  20:65  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  21:61  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  22:38  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/domain/interfaces/settings-repository.interface.ts
+  6:49  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  7:56  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/domain/interfaces/user-repository.interface.ts
+  10:29  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  11:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  12:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  13:43  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  14:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  15:62  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/domain/repositories/favorites.repository.ts
+  5:47  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/domain/use-cases/admin/create-event.usecase.ts
+  10:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/domain/use-cases/admin/create-place.usecase.ts
+  7:67  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/domain/use-cases/admin/delete-event.usecase.ts
+  6:54  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/domain/use-cases/admin/delete-place.usecase.ts
+  6:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/domain/use-cases/admin/get-admin-events.usecase.ts
+  7:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/domain/use-cases/admin/get-admin-places.usecase.ts
+  18:29  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/domain/use-cases/admin/get-areas.usecase.ts
+  7:28  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/domain/use-cases/admin/get-category-by-id.usecase.ts
+  7:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/domain/use-cases/admin/get-user-logs.usecase.ts
+  7:44  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/domain/use-cases/admin/get-user-stats.usecase.ts
+  6:44  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/domain/use-cases/admin/get-users.usecase.ts
+  7:28  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/domain/use-cases/admin/update-event.usecase.ts
+  11:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/domain/use-cases/admin/update-place.usecase.ts
+  7:63  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/domain/use-cases/admin/update-setting.usecase.ts
+  6:56  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/domain/use-cases/admin/update-user-role.usecase.ts
+  6:61  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/domain/use-cases/auth/get-current-user.usecase.ts
+  7:28  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/domain/use-cases/auth/get-user-role.usecase.ts
+  6:44  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/domain/use-cases/get-categories.usecase.ts
+  7:97  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/lib/audit.ts
+  16:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  17:17  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  19:35  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  64:48  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  64:60  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/lib/icons.ts
+  19:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/lib/supabase/middleware.ts
+  18:58  warning  'options' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/shaban/Documents/daleel_al_suez/src/lib/supabase/server.ts
+  1:35  warning  'CookieOptions' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/components/admin/CategoriesClient.tsx
+  6:48  warning  'Star' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/components/admin/CategoryForm.tsx
+  142:53  warning  'currentUserRole' is defined but never used                                                              @typescript-eslint/no-unused-vars
+  189:8   warning  React Hook useEffect has a missing dependency: 'slug'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/components/admin/PlaceForm.tsx
+   8:75  warning  'Share2' is defined but never used                                                                       @typescript-eslint/no-unused-vars
+  46:44  error    Unexpected any. Specify a different type                                                                 @typescript-eslint/no-explicit-any
+  48:67  error    Unexpected any. Specify a different type                                                                 @typescript-eslint/no-explicit-any
+  86:8   warning  React Hook useEffect has a missing dependency: 'slug'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/components/admin/PlacesFilterBar.tsx
+  3:18  warning  'Filter' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/components/admin/UsersClientPage.tsx
+    5:31  warning  'ShieldAlert' is defined but never used   @typescript-eslint/no-unused-vars
+    8:30  warning  'CheckCircle' is defined but never used   @typescript-eslint/no-unused-vars
+    8:43  warning  'XCircle' is defined but never used       @typescript-eslint/no-unused-vars
+   20:42  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   34:36  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   50:14  warning  'error' is defined but never used         @typescript-eslint/no-unused-vars
+  113:80  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  115:25  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/components/admin/create-event-form.tsx
+  15:19   error    Unexpected any. Specify a different type                                                                 @typescript-eslint/no-explicit-any
+  43:8    warning  React Hook useEffect has a missing dependency: 'slug'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  45:103  error    Unexpected any. Specify a different type                                                                 @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/components/admin/create-place-form.tsx
+  5:10  warning  'useState' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/components/admin/events-list-client.tsx
+  74:56  warning  'places' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/components/admin/places-list-client.tsx
+  5:10  warning  'Plus' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/components/admin/toggle-status-button.tsx
+  24:69  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/components/shared/layout/footer.tsx
+   4:66  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  40:62  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/components/shared/layout/header.tsx
+    7:10  warning  'cn' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+   12:66  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    @typescript-eslint/no-explicit-any
+   15:38  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    @typescript-eslint/no-explicit-any
+   19:9   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/components/shared/layout/header.tsx:19:9
+  17 |
+  18 |     useEffect(() => {
+> 19 |         setMounted(true)
+     |         ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  20 |     }, [])
+  21 |
+  22 |     useEffect(() => {  react-hooks/set-state-in-effect
+   47:25  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @next/next/no-img-element
+  131:41  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @next/next/no-img-element
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/components/shared/theme-toggle.tsx
+  8:13  warning  'theme' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/features/ai/chat-widget.tsx
+   37:10  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  108:51  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  117:68  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/features/categories/components/category-icon.tsx
+  23:5  warning  'HelpCircle' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/features/places/components/favorite-button.tsx
+  48:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/features/places/components/google-map-embed.tsx
+  20:18  warning  'e' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/features/places/components/place-action-buttons.tsx
+   3:75  warning  'Heart' is defined but never used  @typescript-eslint/no-unused-vars
+  25:5   warning  'slug' is defined but never used   @typescript-eslint/no-unused-vars
+  40:22  warning  'err' is defined but never used    @typescript-eslint/no-unused-vars
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/features/profile/activity-dashboard.tsx
+  11:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  12:58  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  13:50  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/features/profile/danger-zone.tsx
+   4:33  warning  'UserX' is defined but never used         @typescript-eslint/no-unused-vars
+   8:11  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  12:30  warning  'user' is defined but never used          @typescript-eslint/no-unused-vars
+  43:25  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  61:25  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/features/profile/notification-settings.tsx
+   8:10  warning  'Button' is defined but never used        @typescript-eslint/no-unused-vars
+  15:52  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  44:18  warning  'error' is defined but never used         @typescript-eslint/no-unused-vars
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/features/profile/overview-section.tsx
+   7:11  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   8:14  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  12:41  warning  'profile' is defined but never used       @typescript-eslint/no-unused-vars
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/features/profile/profile-content.tsx
+   25:38  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   26:44  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   29:44  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  116:25  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  154:37  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/features/profile/profile-tabs.tsx
+  13:24  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/features/profile/security-section.tsx
+   7:11  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  11:35  warning  'user' is defined but never used          @typescript-eslint/no-unused-vars
+  41:25  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/features/profile/support/create-ticket-dialog.tsx
+  38:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/features/profile/support/support-list.tsx
+  19:18  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-explicit-any
+  27:14  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-explicit-any
+  32:58  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-explicit-any
+  39:17  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/features/profile/support/support-list.tsx:39:17
+  37 |             const ticket = tickets.find(t => t.id === initialTicketId)
+  38 |             if (ticket) {
+> 39 |                 setSelectedTicket(ticket)
+     |                 ^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  40 |             }
+  41 |         }
+  42 |     }, [initialTicketId, tickets, selectedTicket])  react-hooks/set-state-in-effect
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/features/profile/support/ticket-chat.tsx
+   8:34  warning  'AvatarImage' is defined but never used                                                                           @typescript-eslint/no-unused-vars
+  22:13  error    Unexpected any. Specify a different type                                                                          @typescript-eslint/no-explicit-any
+  26:46  error    Unexpected any. Specify a different type                                                                          @typescript-eslint/no-explicit-any
+  62:8   warning  React Hook useEffect has a missing dependency: 'fetchMessages'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/features/reviews/components/review-card.tsx
+  100:29  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/features/reviews/components/review-form.tsx
+  51:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/shaban/Documents/daleel_al_suez/src/presentation/ui/image-upload.tsx
+  5:37  warning  'ImageIcon' is defined but never used  @typescript-eslint/no-unused-vars
+
+✖ 249 problems (189 errors, 60 warnings)
+  1 error and 0 warnings potentially fixable with the `--fix` option.
+

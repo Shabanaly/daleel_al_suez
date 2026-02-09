@@ -2,11 +2,11 @@ import Link from "next/link";
 import { ArrowRight, MapPin, Star, Clock, Tag } from "lucide-react";
 import { Place } from "@/domain/entities/place";
 import { Review, RatingStats } from "@/domain/entities/review";
-import { PlaceImageSlider } from "../components/place-image-slider";
-import { PlaceActionButtons } from "../components/place-action-buttons";
-import { GoogleMapEmbed } from "../components/google-map-embed";
-import { PlaceCard } from "../components/place-card";
-import { ReviewsSectionWrapper } from "../components/reviews-section-wrapper";
+import { PlaceImageSlider } from "@/presentation/features/places/components/place-image-slider";
+import { PlaceActionButtons } from "@/presentation/features/places/components/place-action-buttons";
+import { GoogleMapEmbed } from "@/presentation/features/places/components/google-map-embed";
+import { PlaceCard } from "@/presentation/features/places/components/place-card";
+import { ReviewsSectionWrapper } from "@/presentation/features/reviews/components/reviews-section-wrapper";
 
 interface PlaceDetailsViewProps {
     place: Place;
@@ -108,7 +108,6 @@ export function PlaceDetailsView({
                                 facebook={place.facebook}
                                 instagram={place.instagram}
                                 placeName={place.name}
-                                slug={place.slug}
                                 placeId={place.id}
                             />
                         </div>

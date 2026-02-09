@@ -28,8 +28,8 @@ export default function ForgotPasswordPage() {
                 text: 'تم إرسال رابط استعادة كلمة المرور إلى بريدك الإلكتروني.',
                 type: 'success'
             })
-        } catch (error: any) {
-            setMessage({ text: error.message, type: 'error' })
+        } catch (error) {
+            setMessage({ text: error instanceof Error ? error.message : 'حدث خطأ', type: 'error' })
         } finally {
             setLoading(false)
         }

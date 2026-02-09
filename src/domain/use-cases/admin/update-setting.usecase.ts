@@ -3,7 +3,7 @@ import { ISettingsRepository } from "../../interfaces/settings-repository.interf
 export class UpdateSettingUseCase {
     constructor(private settingsRepository: ISettingsRepository) { }
 
-    async execute(key: string, value: string, client?: any): Promise<void> {
+    async execute(key: string, value: string, client?: unknown): Promise<void> {
         return this.settingsRepository.updateSetting(key, value, client);
     }
 }

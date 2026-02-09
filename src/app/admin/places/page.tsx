@@ -1,7 +1,11 @@
 import { createClient } from '@/lib/supabase/server'
-import { getAdminPlacesUseCase, getCategoriesUseCase } from '@/di/modules'
-import { AdminPlacesListView } from '@/presentation/admin/places-list-view'
-import { getAreas } from '@/services/admin/areas.service'
+import {
+    getAdminPlacesUseCase,
+    getCategoriesUseCase,
+    getAreasUseCase,
+    getCurrentUserUseCase
+} from '@/di/modules'
+import { AdminPlacesListView } from '@/presentation/components/admin/places-list-view'
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
 
@@ -12,25 +16,23 @@ export default async function AdminPlacesPage({
 }) {
     const params = await searchParams
     const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
 
-    if (!user) return null
+    // 1. Get User & Role using Use Cases
+    const currentUser = await getCurrentUserUseCase.execute(supabase);
+    if (!currentUser) return null;
 
-    // 1. Get User Role
-    const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .single()
-
-    const role = profile?.role || 'user'
-    const isSuperAdmin = role === 'super_admin'
+    // Role is already part of the User entity returned by getCurrentUserUseCase, 
+    // but the page logic was explicitly fetching role separately.
+    // Our new GetCurrentUserUseCase returns role in the User object.
+    const role = currentUser.role;
+    const isSuperAdmin = role === 'super_admin';
 
     // 2. Fetch Filters Data (Parallel)
     const [categories, areas, users] = await Promise.all([
         getCategoriesUseCase.execute(),
-        getAreas(),
+        getAreasUseCase.execute(supabase), // Pass client if needed
         isSuperAdmin ? supabase.from('profiles').select('id, full_name').then(res => res.data || []) : Promise.resolve([])
+        // Note: We might want a GetUsersUseCase for the users list later, but for now we focus on fixing areas/current_user
     ])
 
     // 3. Prepare Filter Object
@@ -43,7 +45,7 @@ export default async function AdminPlacesPage({
     }
 
     // 4. Fetch Places with Filters
-    const places = await getAdminPlacesUseCase.execute(user.id, role, filters)
+    const places = await getAdminPlacesUseCase.execute(currentUser.id, role, filters)
 
     // 5. Render
     return <AdminPlacesListView

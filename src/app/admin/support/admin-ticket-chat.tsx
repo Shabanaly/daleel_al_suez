@@ -1,23 +1,41 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { Send, User, Loader2, CheckCheck, ShieldAlert } from 'lucide-react'
+import { Send, User, Loader2, ShieldAlert } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { ar } from 'date-fns/locale'
 import { replyAsAdmin, updateTicketStatus, getAdminTicketMessages } from '@/actions/admin-support.actions'
 import { cn } from '@/lib/utils'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Badge } from '@/components/ui/badge'
+import { ScrollArea } from '@/presentation/ui/scroll-area'
+import { Badge } from '@/presentation/ui/badge'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 
+interface AdminTicket {
+    id: string
+    subject: string
+    category: string
+    status: string
+    created_at: string
+    profiles: { full_name: string } | null
+    [key: string]: unknown
+}
+
+interface AdminMessage {
+    id: string
+    message: string
+    is_admin: boolean
+    created_at: string
+    [key: string]: unknown
+}
+
 interface AdminTicketChatProps {
-    ticket: any
-    initialMessages: any[]
+    ticket: AdminTicket
+    initialMessages: AdminMessage[]
 }
 
 export function AdminTicketChat({ ticket, initialMessages }: AdminTicketChatProps) {
-    const [messages, setMessages] = useState(initialMessages)
+    const [messages, setMessages] = useState<AdminMessage[]>(initialMessages)
     const [newMessage, setNewMessage] = useState('')
     const [sending, setSending] = useState(false)
     const [updatingStatus, setUpdatingStatus] = useState(false)
@@ -44,7 +62,7 @@ export function AdminTicketChat({ ticket, initialMessages }: AdminTicketChatProp
                         return latestMessages
                     })
                 }
-            } catch (error) {
+            } catch (error: unknown) {
                 console.error('Polling error:', error)
             }
         }
@@ -64,7 +82,7 @@ export function AdminTicketChat({ ticket, initialMessages }: AdminTicketChatProp
                     filter: `ticket_id=eq.${ticket.id}`
                 },
                 (payload) => {
-                    const newMsg = payload.new
+                    const newMsg = payload.new as AdminMessage
                     setMessages(prev => {
                         if (prev.find(m => m.id === newMsg.id)) return prev
                         return [...prev, newMsg]
@@ -89,7 +107,7 @@ export function AdminTicketChat({ ticket, initialMessages }: AdminTicketChatProp
             await replyAsAdmin(ticket.id, newMessage)
             setNewMessage('')
             // Optimistic update handled by realtime or refresh
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Failed to send message:', error)
             alert('فشل إرسال الرسالة')
         } finally {
@@ -142,7 +160,7 @@ export function AdminTicketChat({ ticket, initialMessages }: AdminTicketChatProp
             {/* Messages Area */}
             <ScrollArea className="flex-1 bg-slate-950/50">
                 <div className="p-4 space-y-4">
-                    {messages.map((msg: any) => {
+                    {messages.map((msg) => {
                         const isAdmin = msg.is_admin
 
                         return (

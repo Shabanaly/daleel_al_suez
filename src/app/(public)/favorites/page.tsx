@@ -1,7 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
 import { SupabaseFavoritesRepository } from '@/data/repositories/supabase-favorites.repository'
-import { PlaceCard } from '@/presentation/components/place-card'
+import { PlaceCard } from '@/presentation/features/places/components/place-card'
 import { Heart } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
@@ -48,12 +49,12 @@ export default async function FavoritesPage() {
                     <p className="text-muted-foreground mb-8 max-w-md mx-auto">
                         لم تقم بإضافة أي أماكن للمفضلة بعد. تصفح الأماكن واضغط على أيقونة القلب لحفظها هنا.
                     </p>
-                    <a
+                    <Link
                         href="/places"
                         className="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
                     >
                         تصفح الأماكن
-                    </a>
+                    </Link>
                 </div>
             )}
         </div>

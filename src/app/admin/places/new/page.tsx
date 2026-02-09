@@ -1,6 +1,5 @@
-import PlaceForm from "@/components/admin/PlaceForm";
-import { getCategoriesUseCase } from "@/di/modules";
-import { getAreas } from "@/services/admin/areas.service";
+import PlaceForm from "@/presentation/components/admin/PlaceForm";
+import { getCategoriesUseCase, getAreasUseCase } from "@/di/modules";
 import { ArrowLeft, MapPin } from "lucide-react";
 import Link from "next/link";
 
@@ -8,15 +7,11 @@ export default async function NewPlacePage() {
     // 1. Fetch Data (Parallel)
     const [categories, areas] = await Promise.all([
         getCategoriesUseCase.execute(),
-        getAreas()
-    ])
+        getAreasUseCase.execute()
+    ]);
 
     return (
         <div className="w-full">
-            {/* Header */}
-            {/* Header */}
-            {/* Header */}
-            {/* Header */}
             <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 mb-6 shadow-sm">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="flex items-center gap-4">
@@ -44,5 +39,5 @@ export default async function NewPlacePage() {
                 areas={areas}
             />
         </div>
-    )
+    );
 }

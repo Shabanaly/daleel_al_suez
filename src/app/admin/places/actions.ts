@@ -3,7 +3,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { createPlaceUseCase, deletePlaceUseCase, updatePlaceUseCase } from '@/di/modules'
 import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
 
 export type ActionState = {
     message?: string
@@ -50,9 +49,10 @@ export async function createPlaceAction(prevState: ActionState, formData: FormDa
 
         revalidatePath('/admin/places')
         return { success: true, message: 'تم حفظ المكان بنجاح' }
-    } catch (e: any) {
+    } catch (e: unknown) {
         console.error(e)
-        return { success: false, message: e.message || 'فشل في حفظ المكان' }
+        const message = e instanceof Error ? e.message : 'فشل في حفظ المكان'
+        return { success: false, message }
     }
 }
 
@@ -86,9 +86,10 @@ export async function updatePlaceAction(id: string, prevState: ActionState, form
 
         revalidatePath('/admin/places')
         return { success: true, message: 'تم تحديث البيانات بنجاح' }
-    } catch (e: any) {
+    } catch (e: unknown) {
         console.error(e)
-        return { success: false, message: e.message || 'فشل في تحديث البيانات' }
+        const message = e instanceof Error ? e.message : 'فشل في تحديث البيانات'
+        return { success: false, message }
     }
 }
 
@@ -104,8 +105,9 @@ export async function deletePlaceAction(placeId: string): Promise<ActionState> {
         await deletePlaceUseCase.execute(placeId, supabase)
         revalidatePath('/admin/places')
         return { success: true, message: 'تم الحذف بنجاح' }
-    } catch (e: any) {
+    } catch (e: unknown) {
         console.error('SERVER ACTION ERROR:', e)
-        return { success: false, message: e.message || 'فشل الحذف' }
+        const message = e instanceof Error ? e.message : 'فشل الحذف'
+        return { success: false, message }
     }
 }

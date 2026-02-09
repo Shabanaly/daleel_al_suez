@@ -3,7 +3,7 @@
 import { createEventUseCase, updateEventUseCase, deleteEventUseCase, getAdminEventsUseCase } from "@/di/modules"
 import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
-import { SuezEvent, EventStatus } from "@/domain/entities/suez-event"
+import { SuezEvent, EventStatus, EventType } from "@/domain/entities/suez-event"
 
 export type EventState = {
     message?: string
@@ -12,19 +12,6 @@ export type EventState = {
     data?: SuezEvent
 }
 
-async function getAdminRole() {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return null
-
-    const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .single()
-
-    return profile?.role || null
-}
 
 export async function createEventAction(prevState: EventState, formData: FormData): Promise<EventState> {
     const supabase = await createClient()
@@ -47,8 +34,8 @@ export async function createEventAction(prevState: EventState, formData: FormDat
     const endDate = formData.get('endDate') as string
     const location = formData.get('location') as string
     const placeId = formData.get('placeId') as string
-    const status = formData.get('status') as any
-    const type = formData.get('type') as any
+    const status = formData.get('status') as EventStatus
+    const type = formData.get('type') as EventType
 
     try {
         const event = await createEventUseCase.execute(role, {
@@ -67,8 +54,8 @@ export async function createEventAction(prevState: EventState, formData: FormDat
         revalidatePath('/admin/events')
         revalidatePath('/events')
         return { success: true, data: event, message: "Event created successfully" }
-    } catch (error: any) {
-        return { success: false, message: error.message || "Failed to create event" }
+    } catch (error) {
+        return { success: false, message: error instanceof Error ? error.message : "Failed to create event" }
     }
 }
 
@@ -94,16 +81,16 @@ export async function updateEventAction(id: string, prevState: EventState, formD
     if (formData.has('endDate')) updates.endDate = new Date(formData.get('endDate') as string)
     if (formData.has('location')) updates.location = formData.get('location') as string
     if (formData.has('placeId')) updates.placeId = (formData.get('placeId') as string) || null
-    if (formData.has('status')) updates.status = formData.get('status') as any
-    if (formData.has('type')) updates.type = formData.get('type') as any
+    if (formData.has('status')) updates.status = formData.get('status') as EventStatus
+    if (formData.has('type')) updates.type = formData.get('type') as EventType
 
     try {
         const event = await updateEventUseCase.execute(id, role, updates, supabase)
         revalidatePath('/admin/events')
         revalidatePath('/events')
         return { success: true, data: event, message: "Event updated successfully" }
-    } catch (error: any) {
-        return { success: false, message: error.message || "Failed to update event" }
+    } catch (error) {
+        return { success: false, message: error instanceof Error ? error.message : "Failed to update event" }
     }
 }
 
@@ -125,8 +112,8 @@ export async function deleteEventAction(id: string): Promise<{ success: boolean;
         revalidatePath('/admin/events')
         revalidatePath('/events')
         return { success: true, message: "Event deleted successfully" }
-    } catch (error: any) {
-        return { success: false, message: error.message || "Failed to delete event" }
+    } catch (error) {
+        return { success: false, message: error instanceof Error ? error.message : "Failed to delete event" }
     }
 }
 
@@ -148,8 +135,8 @@ export async function toggleEventStatusAction(id: string, newStatus: EventStatus
         revalidatePath('/admin/events')
         revalidatePath('/events')
         return { success: true, message: `Status updated to ${newStatus}` }
-    } catch (error: any) {
-        return { success: false, message: error.message || "Failed to update status" }
+    } catch (error) {
+        return { success: false, message: error instanceof Error ? error.message : "Failed to update status" }
     }
 }
 

@@ -16,10 +16,10 @@ export async function POST(req: Request) {
             return new Response('Invalid messages format', { status: 400 })
         }
 
-        const lastMessage = messages[messages.length - 1]
+        const lastMessage = messages[messages.length - 1] as { content?: string; parts?: { type: string; text: string }[] }
         const query = typeof lastMessage.content === 'string' && lastMessage.content
             ? lastMessage.content
-            : lastMessage.parts?.find((p: any) => p.type === 'text')?.text || ''
+            : lastMessage.parts?.find((p) => p.type === 'text')?.text || ''
 
         if (!query) {
             console.error('Gemini: No text content found in last message')
@@ -30,11 +30,16 @@ export async function POST(req: Request) {
             return new Response('Missing GOOGLE_GENERATIVE_AI_API_KEY', { status: 500 })
         }
 
-        // 1. Generate Embedding for user query
+        // Generate embedding for user query
         const { embedding } = await embed({
-            // models/gemini-embedding-001 is the available model
             model: google.textEmbeddingModel('gemini-embedding-001'),
             value: query,
+            providerOptions: {
+                google: {
+                    outputDimensionality: 768,
+                    taskType: 'RETRIEVAL_QUERY'
+                }
+            }
         })
 
         // 2. Search Database (Parallel)
@@ -55,7 +60,7 @@ export async function POST(req: Request) {
         const eventsContext = events.map(e => `- **${e.title}**: ${e.description} (المكان: ${e.location}, التاريخ: ${new Date(e.start_date).toLocaleDateString('ar-EG')})`).join('\n')
 
         // 3. Construct Context
-        const context = (documents || []).map((doc: any) => doc.content).join('\n---\n')
+        const context = (documents as { content: string }[] || []).map((doc) => doc.content).join('\n---\n')
         console.log('Gemini: Context length:', context.length)
 
         // 4. System Prompt
@@ -97,11 +102,11 @@ ${context}
 تاريخ اليوم: ${new Date().toLocaleDateString('ar-EG')}
 `
 
-        const modelMessages = messages
-            .filter((m: any) => (m.content !== undefined && m.content !== null) || (m.parts && m.parts.length > 0))
-            .map((m: any) => ({
+        const modelMessages = (messages as { role: 'user' | 'assistant' | 'system'; content?: string; parts?: { type: string; text: string }[] }[])
+            .filter((m) => (m.content !== undefined && m.content !== null) || (m.parts && m.parts.length > 0))
+            .map((m) => ({
                 role: m.role,
-                content: m.content || m.parts?.find((p: any) => p.type === 'text')?.text || ''
+                content: m.content || m.parts?.find((p) => p.type === 'text')?.text || ''
             }))
         // 5. Stream Response
         const result = await streamText({
@@ -129,9 +134,10 @@ ${context}
 
         return result.toUIMessageStreamResponse()
 
-    } catch (error: any) {
+    } catch (error) {
+        const message = error instanceof Error ? error.message : String(error)
         console.error('Chat API Error:', error)
-        return new Response(JSON.stringify({ error: error.message }), {
+        return new Response(JSON.stringify({ error: message }), {
             status: 500,
             headers: { 'Content-Type': 'application/json' }
         })

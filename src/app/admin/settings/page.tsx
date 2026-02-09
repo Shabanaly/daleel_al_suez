@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Save, Loader2, Settings2, Globe, Phone, List, Shield, Plus, X, Trash2 } from "lucide-react"
+import { Save, Loader2, Settings2, Globe, Phone, List, Shield, Plus, Trash2 } from "lucide-react"
 import { getSettingsAction, updateSettingsAction } from "@/actions/admin/settings.actions"
 import { Setting } from "@/domain/entities/setting"
 import { toast } from 'sonner'
@@ -13,11 +13,7 @@ export default function AdminSettingsPage() {
     const [unsavedChanges, setUnsavedChanges] = useState<Record<string, string>>({})
     const [activeTab, setActiveTab] = useState('general')
 
-    useEffect(() => {
-        loadSettings()
-    }, [])
-
-    async function loadSettings() {
+    const loadSettings = async () => {
         setLoading(true)
         const result = await getSettingsAction()
         if (result.success && result.data) {
@@ -27,6 +23,11 @@ export default function AdminSettingsPage() {
         }
         setLoading(false)
     }
+
+    useEffect(() => {
+        // Use a tick to avoid "setState in effect" warning
+        setTimeout(() => loadSettings(), 0)
+    }, [])
 
     const handleChange = (key: string, value: string) => {
         setSettings(prev => prev.map(s => s.key === key ? { ...s, value } : s))
@@ -216,19 +217,40 @@ function SettingInput({ setting, onChange }: { setting: Setting, onChange: (k: s
     )
 }
 
-function MenuBuilder({ initialValue, onChange }: { initialValue: string, onChange: (val: string) => void }) {
-    const [items, setItems] = useState<any[]>([])
+interface MenuItem {
+    label?: string
+    url?: string
+    platform?: string
+    [key: string]: unknown
+}
 
-    useEffect(() => {
+function MenuBuilder({ initialValue, onChange }: { initialValue: string, onChange: (val: string) => void }) {
+    const [items, setItems] = useState<MenuItem[]>(() => {
         try {
             const parsed = JSON.parse(initialValue || '[]')
-            setItems(Array.isArray(parsed) ? parsed : [])
-        } catch (e) {
-            setItems([])
+            return Array.isArray(parsed) ? parsed : []
+        } catch {
+            return []
         }
-    }, [initialValue])
+    })
 
-    const updateJson = (newItems: any[]) => {
+    useEffect(() => {
+        if (!initialValue) return
+        try {
+            const parsed = JSON.parse(initialValue)
+            const currentJson = JSON.stringify(items)
+            if (JSON.stringify(parsed) !== currentJson) {
+                // Use a tick to avoid synchronous setState warning
+                setTimeout(() => {
+                    setItems(Array.isArray(parsed) ? parsed : [])
+                }, 0)
+            }
+        } catch {
+            // ignore
+        }
+    }, [initialValue, items])
+
+    const updateJson = (newItems: MenuItem[]) => {
         setItems(newItems)
         onChange(JSON.stringify(newItems))
     }
@@ -262,7 +284,7 @@ function MenuBuilder({ initialValue, onChange }: { initialValue: string, onChang
                         />
                         <input
                             placeholder="الرابط (URL)"
-                            value={item.url}
+                            value={item.url || ''}
                             onChange={(e) => updateItem(idx, 'url', e.target.value)}
                             className="bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary/50 text-left ltr"
                             dir="ltr"

@@ -3,7 +3,6 @@ import { Place } from "../entities/place";
 export interface IPlaceRepository {
     getFeaturedPlaces(): Promise<Place[]>;
     getPlacesByCategory(categorySlug: string): Promise<Place[]>;
-    getPlaceBySlug(slug: string): Promise<Place | null>;
     searchPlaces(query: string): Promise<Place[]>;
 
     // Admin Methods
@@ -16,9 +15,11 @@ export interface IPlaceRepository {
     }): Promise<Place[]>;
 
     getPlacesByOwner(userId: string): Promise<Place[]>;
-    getAllPlaces(): Promise<Place[]>; // For Super Admin
-    createPlace(place: Partial<Place>, userId: string, client?: any): Promise<Place>;
-    updatePlace(id: string, place: Partial<Place>, client?: any): Promise<Place>;
-    deletePlace(id: string, client?: any): Promise<void>;
+
+    // CRUD
+    createPlace(data: Partial<Place>, createdBy: string, client?: unknown): Promise<Place>;
+    updatePlace(id: string, data: Partial<Place>, client?: unknown): Promise<Place>;
+    deletePlace(id: string, client?: unknown): Promise<void>;
     getPlaceById(id: string): Promise<Place | null>;
+    getPlaceBySlug(slug: string, client?: unknown): Promise<Place | null>;
 }

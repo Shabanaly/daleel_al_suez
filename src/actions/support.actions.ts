@@ -12,7 +12,7 @@ export async function createSupportTicket({
     subject: string
     category: string
     message: string
-    attachments?: any[]
+    attachments?: string[]
 }) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()

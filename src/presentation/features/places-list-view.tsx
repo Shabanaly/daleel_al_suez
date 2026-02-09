@@ -1,8 +1,8 @@
 import { Place } from "@/domain/entities/place";
 import { Category } from "@/domain/entities/category";
-import { PlaceCard } from "../components/place-card";
-import { PlacesSearchBar } from "../components/places-search-bar";
-import { PlacesFilters } from "../components/places-filters";
+import { PlaceCard } from "@/presentation/features/places/components/place-card";
+import { PlacesSearchBar } from "@/presentation/features/places/components/places-search-bar";
+import { PlacesFilters } from "@/presentation/features/places/components/places-filters";
 import { MapPin, Grid3x3 } from "lucide-react";
 
 interface PlacesListViewProps {

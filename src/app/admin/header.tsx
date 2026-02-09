@@ -1,4 +1,4 @@
-import { Search, Globe, User } from 'lucide-react'
+import { Search, Globe } from 'lucide-react'
 import Link from 'next/link'
 import { NotificationBell } from './NotificationBell'
 import { createClient } from '@/lib/supabase/server'
@@ -30,6 +30,7 @@ export async function AdminHeader() {
                 <Link href="/admin/profile" className="flex items-center gap-3 pl-2">
                     <div className="w-8 h-8 rounded-full bg-primary overflow-hidden flex items-center justify-center text-sm font-bold border border-slate-700">
                         {avatarUrl ? (
+                            // eslint-disable-next-line @next/next/no-img-element
                             <img src={avatarUrl} alt={userName} className="w-full h-full object-cover" />
                         ) : (
                             fallbackLetter

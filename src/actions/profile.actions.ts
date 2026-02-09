@@ -11,7 +11,7 @@ export async function updateProfile(data: { fullName?: string, password?: string
         throw new Error('Not authenticated')
     }
 
-    const updates: any = {}
+    const updates: import('@supabase/supabase-js').UserAttributes = {}
     if (data.password && data.password.trim() !== '') {
         updates.password = data.password
     }

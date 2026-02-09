@@ -31,8 +31,8 @@ export async function getMyNotifications() {
         if (error) throw error
 
         return { success: true, data: data as Notification[] }
-    } catch (error: any) {
-        return { success: false, message: error.message }
+    } catch (error) {
+        return { success: false, message: error instanceof Error ? error.message : "An unknown error occurred" }
     }
 }
 
@@ -48,8 +48,8 @@ export async function markAsRead(id: string) {
 
         revalidatePath('/admin/notifications')
         return { success: true }
-    } catch (error: any) {
-        return { success: false, message: error.message }
+    } catch (error) {
+        return { success: false, message: error instanceof Error ? error.message : "An unknown error occurred" }
     }
 }
 
@@ -82,9 +82,9 @@ export async function notifySuperAdmins(title: string, message: string, type: st
 
         if (error) throw error
         return { success: true }
-    } catch (error: any) {
+    } catch (error) {
         console.error("Failed to notify super admins:", error)
-        return { success: false, message: error.message }
+        return { success: false, message: error instanceof Error ? error.message : "An unknown error occurred" }
     }
 }
 
@@ -103,8 +103,8 @@ export async function sendNotification(userId: string, title: string, message: s
 
         if (error) throw error
         return { success: true }
-    } catch (error: any) {
+    } catch (error) {
         console.error("Failed to send notification:", error)
-        return { success: false, message: error.message }
+        return { success: false, message: error instanceof Error ? error.message : "An unknown error occurred" }
     }
 }

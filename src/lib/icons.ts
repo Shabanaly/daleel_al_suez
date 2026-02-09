@@ -1,4 +1,5 @@
 import {
+    LucideIcon,
     // General
     Folder, Star, Heart, Info, Home, MapPin, Globe, Flag, Bell, Calendar,
     // Food & Drink
@@ -16,7 +17,7 @@ import {
 } from 'lucide-react'
 
 // Centralized Map of all icons used in the app
-export const ICON_MAP: { [key: string]: any } = {
+export const ICON_MAP: Record<string, LucideIcon> = {
     // General
     Folder, Star, Heart, Info, Home, MapPin, Globe, Flag, Bell, Calendar,
     // Food

@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Layers, ArrowLeft } from 'lucide-react'
-import CategoryForm from '@/components/admin/CategoryForm'
+import CategoryForm from '@/presentation/components/admin/CategoryForm'
 
 interface Props {
     params: Promise<{ id: string }>

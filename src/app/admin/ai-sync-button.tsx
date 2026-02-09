@@ -1,9 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/presentation/ui/button'
 import { RefreshCw, Bot } from 'lucide-react'
 import { toast } from 'sonner'
+
+interface ApiResponse {
+    processed?: number;
+    error?: string;
+}
 
 export function AiSyncButton() {
     const [loading, setLoading] = useState(false)
@@ -14,16 +19,17 @@ export function AiSyncButton() {
 
         try {
             const res = await fetch('/api/admin/embeddings', { method: 'POST' })
-            const data = await res.json()
+            const data: ApiResponse = await res.json()
 
             if (!res.ok) {
                 throw new Error(data.error || 'فشل التحديث')
             }
 
-            toast.success(`تم تحديث ${data.processed} مكان بنجاح`, { id: toastId })
-        } catch (err: any) {
+            toast.success(`تم تحديث ${data.processed ?? 0} مكان بنجاح`, { id: toastId })
+        } catch (err: unknown) { // Explicitly type err as unknown
             console.error(err)
-            toast.error(err.message || 'حدث خطأ أثناء التحديث', { id: toastId })
+            // Safely check if err is an instance of Error
+            toast.error(err instanceof Error ? err.message : 'حدث خطأ أثناء التحديث', { id: toastId })
         } finally {
             setLoading(false)
         }

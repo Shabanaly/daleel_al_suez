@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { getAdminPlacesUseCase } from '@/di/modules'
-import { CreateEventForm } from '@/presentation/admin/create-event-form'
+import { CreateEventForm } from '@/presentation/components/admin/create-event-form'
 import { ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 

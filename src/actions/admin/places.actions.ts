@@ -58,13 +58,14 @@ export async function createPlaceAction(data: Partial<Place>): Promise<PlaceStat
         revalidatePath('/admin/places')
         // Return null/success state, or redirect
         return { success: true, message: "Place created successfully", data: place }
-    } catch (error: any) {
+    } catch (error) {
         console.error("Create Place Error:", error)
+        const message = error instanceof Error ? error.message : "Failed to create place"
         // Check for specific DB errors (like unique slug)
-        if (error.message?.includes('violates unique constraint "places_slug_key"')) {
+        if (message.includes('violates unique constraint "places_slug_key"')) {
             return { message: "Error creating place", errors: { slug: ["This slug is already taken"] }, success: false }
         }
-        return { message: error.message || "Failed to create place", success: false }
+        return { message, success: false }
     }
 }
 
@@ -105,9 +106,9 @@ export async function updatePlaceAction(id: string, data: Partial<Place>): Promi
         // Also revalidate the specific edit page
         revalidatePath(`/admin/places/${id}/edit`)
         return { success: true, message: "Place updated successfully", data: place }
-    } catch (error: any) {
+    } catch (error) {
         console.error("Update Place Error:", error)
-        return { message: error.message || "Failed to update place", success: false }
+        return { message: error instanceof Error ? error.message : "Failed to update place", success: false }
     }
 }
 
@@ -155,9 +156,9 @@ export async function togglePlaceStatus(id: string, newStatus: 'active' | 'inact
 
         revalidatePath('/admin/places')
         return { success: true }
-    } catch (error: any) {
+    } catch (error) {
         console.error("Toggle Status Error:", error)
-        return { success: false, message: error.message }
+        return { success: false, message: error instanceof Error ? error.message : "An unknown error occurred" }
     }
 }
 
@@ -167,8 +168,8 @@ export async function deletePlaceAction(id: string) {
         await deletePlaceUseCase.execute(id, supabase)
         revalidatePath('/admin/places')
         return { success: true }
-    } catch (error: any) {
+    } catch (error) {
         console.error("Delete Place Error:", error)
-        return { success: false, error: error.message }
+        return { success: false, error: error instanceof Error ? error.message : "Failed to delete place" }
     }
 }

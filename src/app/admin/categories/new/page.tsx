@@ -1,4 +1,4 @@
-import CategoryForm from '@/components/admin/CategoryForm'
+import CategoryForm from '@/presentation/components/admin/CategoryForm'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Layers, ArrowLeft } from 'lucide-react'

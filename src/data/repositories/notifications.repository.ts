@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/client";
+import { SupabaseClient } from "@supabase/supabase-js";
 
 export interface Notification {
     id: string;
@@ -15,7 +16,7 @@ export interface Notification {
 export class NotificationsRepository {
     private supabase;
 
-    constructor(supabaseClient?: any) {
+    constructor(supabaseClient?: SupabaseClient) {
         this.supabase = supabaseClient || createClient();
     }
 
@@ -47,7 +48,7 @@ export class NotificationsRepository {
             return [];
         }
 
-        return data || [];
+        return (data || []) as Notification[];
     }
 
     async markAsRead(notificationId: string): Promise<void> {

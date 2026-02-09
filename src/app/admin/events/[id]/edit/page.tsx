@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
-import { getAdminPlacesUseCase, getAdminEventsUseCase } from '@/di/modules'
-import { CreateEventForm } from '@/presentation/admin/create-event-form' // We can reuse the form if we add initialData
+import { getAdminPlacesUseCase } from '@/di/modules'
+import { CreateEventForm } from '@/presentation/components/admin/create-event-form' // We can reuse the form if we add initialData
 import { ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
