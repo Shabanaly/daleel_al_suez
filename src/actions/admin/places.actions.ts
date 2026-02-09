@@ -56,6 +56,7 @@ export async function createPlaceAction(data: Partial<Place>): Promise<PlaceStat
         )
 
         revalidatePath('/admin/places')
+        revalidatePath('/') // Update Home Page (Featured Places)
         // Return null/success state, or redirect
         return { success: true, message: "Place created successfully", data: place }
     } catch (error) {
@@ -103,6 +104,7 @@ export async function updatePlaceAction(id: string, data: Partial<Place>): Promi
         }
 
         revalidatePath('/admin/places')
+        revalidatePath('/') // Update Home Page (Featured Places)
         // Also revalidate the specific edit page
         revalidatePath(`/admin/places/${id}/edit`)
         return { success: true, message: "Place updated successfully", data: place }
@@ -155,6 +157,7 @@ export async function togglePlaceStatus(id: string, newStatus: 'active' | 'inact
         }
 
         revalidatePath('/admin/places')
+        revalidatePath('/') // Update Home Page (Featured Places)
         return { success: true }
     } catch (error) {
         console.error("Toggle Status Error:", error)

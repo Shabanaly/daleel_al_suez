@@ -167,7 +167,8 @@ export class SupabasePlaceRepository implements IPlaceRepository {
                 created_by: userId,
                 opens_at: place.opensAt,
                 closes_at: place.closesAt,
-                status: place.status || 'pending'
+                status: place.status || 'pending',
+                is_featured: place.isFeatured || false
             })
             .select("*, categories(name), areas(name)")
             .maybeSingle();
@@ -187,6 +188,7 @@ export class SupabasePlaceRepository implements IPlaceRepository {
         if (place.googleMapsUrl) updates.google_maps_url = place.googleMapsUrl;
         if (place.opensAt !== undefined) updates.opens_at = place.opensAt;
         if (place.closesAt !== undefined) updates.closes_at = place.closesAt;
+        if (place.isFeatured !== undefined) updates.is_featured = place.isFeatured;
 
         // Clean up entity keys
         delete updates.categoryId;
@@ -199,6 +201,7 @@ export class SupabasePlaceRepository implements IPlaceRepository {
         delete updates.closesAt;
         delete updates.createdBy;
         delete updates.createdByName;
+        delete updates.isFeatured;
         delete updates.id;
 
         const { data, error } = await supabaseClient

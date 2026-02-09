@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { createPlaceAction, updatePlaceAction, PlaceState } from '@/actions/admin/places.actions'
 import { translateAndSlugify } from '@/app/actions/translate'
 import { useDebounce } from 'use-debounce'
-import { Loader2, Store, User, MapPin, Globe, Phone, Facebook, Instagram } from 'lucide-react'
+import { Loader2, Store, User, MapPin, Globe, Phone, Facebook, Instagram, Sparkles } from 'lucide-react'
 import ImageUpload from '@/presentation/ui/image-upload'
 import { Place } from '@/domain/entities/place'
 import { Area } from '@/domain/entities/area'
@@ -33,6 +33,7 @@ export default function PlaceForm({ initialData, categories, areas }: PlaceFormP
     const [address, setAddress] = useState(initialData?.address || '')
     const [opensAt, setOpensAt] = useState(initialData?.opensAt || '')
     const [closesAt, setClosesAt] = useState(initialData?.closesAt || '')
+    const [isFeatured, setIsFeatured] = useState(initialData?.isFeatured || false)
 
     // Social Links State
     const [socialLinks, setSocialLinks] = useState(initialData?.socialLinks || { facebook: '', instagram: '' })
@@ -52,7 +53,8 @@ export default function PlaceForm({ initialData, categories, areas }: PlaceFormP
             socialLinks,
             type,
             opensAt,
-            closesAt
+            closesAt,
+            isFeatured
         }
 
         if (initialData?.id) {
@@ -128,6 +130,20 @@ export default function PlaceForm({ initialData, categories, areas }: PlaceFormP
                         <span className="font-bold">فني / مهني مستقل</span>
                     </button>
                 </div>
+            </div>
+
+            {/* Featured Toggle */}
+            <div className="flex items-center gap-2 p-4 bg-slate-950 border border-slate-800 rounded-xl">
+                <input
+                    type="checkbox"
+                    id="isFeatured"
+                    checked={isFeatured}
+                    onChange={(e) => setIsFeatured(e.target.checked)}
+                    className="w-5 h-5 text-primary bg-slate-900 border-slate-700 rounded focus:ring-primary focus:ring-offset-slate-900"
+                />
+                <label htmlFor="isFeatured" className="text-sm font-medium text-slate-300 select-none cursor-pointer">
+                    تمييز هذا المكان (يعرض في الصفحة الرئيسية كـ &quot;مكان مميز&quot;)
+                </label>
             </div>
 
             <div className="border-t border-slate-800"></div>
@@ -358,17 +374,21 @@ export default function PlaceForm({ initialData, categories, areas }: PlaceFormP
                 />
             </div>
 
-            {state.message && !state.success && (
-                <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-xl text-sm">
-                    {state.message}
-                </div>
-            )}
+            {
+                state.message && !state.success && (
+                    <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-xl text-sm">
+                        {state.message}
+                    </div>
+                )
+            }
 
-            {state.message && state.success && (
-                <div className="bg-green-500/10 border border-green-500/20 text-green-500 p-4 rounded-xl text-sm">
-                    {state.message}
-                </div>
-            )}
+            {
+                state.message && state.success && (
+                    <div className="bg-green-500/10 border border-green-500/20 text-green-500 p-4 rounded-xl text-sm">
+                        {state.message}
+                    </div>
+                )
+            }
 
             <div className="flex items-center justify-end gap-3 pt-4">
                 <button type="button" onClick={() => router.back()} className="px-6 py-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl font-medium transition-colors">
@@ -382,6 +402,6 @@ export default function PlaceForm({ initialData, categories, areas }: PlaceFormP
                     {isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : (initialData?.id ? 'حفظ التعديلات' : 'إضافة المكان')}
                 </button>
             </div>
-        </form>
+        </form >
     )
 }

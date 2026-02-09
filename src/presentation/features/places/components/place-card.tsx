@@ -35,6 +35,14 @@ export function PlaceCard({ place }: PlaceCardProps) {
                     </span>
                 )}
 
+                {/* Featured Badge */}
+                {place.isFeatured && (
+                    <span className="absolute top-12 right-3 bg-yellow-500/90 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-bold shadow-sm z-20 flex items-center gap-1">
+                        <Star className="w-3 h-3 fill-current" />
+                        مميز
+                    </span>
+                )}
+
                 {/* Favorite Button */}
                 <div className="absolute top-3 left-3 z-20 pointer-events-auto">
                     <FavoriteButton placeId={place.id} />
