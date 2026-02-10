@@ -16,7 +16,7 @@ export default async function AdminDashboard() {
         )
     }
 
-    const { placesCount, reviewsCount, usersCount, visitsCount, isSuperAdmin } = result.data
+    const { placesCount, reviewsCount, usersCount, visitsCount, isAdmin } = result.data
 
     // Info Cards Config
     const stats = [
@@ -27,8 +27,8 @@ export default async function AdminDashboard() {
             color: 'text-primary-400',
             bg: 'bg-primary/10 border-primary/20'
         },
-        // Only show Users stat for Super Admin
-        ...(isSuperAdmin && usersCount !== null ? [
+        // Only show Users stat for Admin
+        ...(isAdmin && usersCount !== null ? [
             {
                 name: 'المستخدمين',
                 value: usersCount.toLocaleString('en-US'),

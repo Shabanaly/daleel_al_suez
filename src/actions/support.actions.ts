@@ -2,7 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
-import { notifySuperAdmins } from '@/actions/admin/notifications.actions'
+import { notifyAdmins } from '@/actions/admin/notifications.actions'
 
 export async function createSupportTicket({
     subject,
@@ -44,7 +44,7 @@ export async function createSupportTicket({
     if (msgError) throw msgError
 
     // Notify Admins
-    await notifySuperAdmins(
+    await notifyAdmins(
         'تذكرة دعم جديدة',
         `قام ${user.email} بفتح تذكرة جديدة باسم: ${subject}`,
         'support',

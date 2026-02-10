@@ -18,22 +18,16 @@ export function AdminSidebar({ currentUserRole }: AdminSidebarProps) {
     const supabase = createClient()
     const [isOpen, setIsOpen] = useState(false)
 
-    const isSuperAdmin = currentUserRole === 'super_admin'
-
-    // Dynamic navigation based on role
     const navigation = [
         { name: 'الرئيسية', href: '/admin', icon: LayoutDashboard },
         { name: 'الأماكن', href: '/admin/places', icon: Store },
         { name: 'مقترحات جوجل', href: '/admin/places/suggestions', icon: Sparkles },
         { name: 'الفعاليات', href: '/admin/events', icon: Calendar },
         { name: 'التصنيفات', href: '/admin/categories', icon: Variable },
-        // Only show Users and Settings for Super Admin
-        ...(isSuperAdmin ? [
-            { name: 'المقالات والأخبار', href: '/admin/articles', icon: Newspaper },
-            { name: 'المستخدمين', href: '/admin/users', icon: Users },
-            { name: 'الدعم الفني', href: '/admin/support', icon: LifeBuoy },
-            { name: 'الإعدادات', href: '/admin/settings', icon: Settings }
-        ] : []),
+        { name: 'المقالات والأخبار', href: '/admin/articles', icon: Newspaper },
+        { name: 'المستخدمين', href: '/admin/users', icon: Users },
+        { name: 'الدعم الفني', href: '/admin/support', icon: LifeBuoy },
+        { name: 'الإعدادات', href: '/admin/settings', icon: Settings },
         { name: 'حسابي', href: '/admin/profile', icon: User },
     ]
 

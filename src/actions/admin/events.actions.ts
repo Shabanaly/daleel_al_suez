@@ -128,7 +128,7 @@ export async function toggleEventStatusAction(id: string, newStatus: EventStatus
         .eq('id', user.id)
         .single()
     const role = profile?.role || null
-    if (role !== 'super_admin') return { success: false, message: "Unauthorized" }
+    if (role !== 'admin') return { success: false, message: "Unauthorized" }
 
     try {
         await updateEventUseCase.execute(id, role, { status: newStatus }, supabase)
@@ -151,7 +151,7 @@ export async function getAdminEventsAction() {
         .eq('id', user.id)
         .single()
     const role = profile?.role || null
-    if (role !== 'super_admin') throw new Error("Unauthorized")
+    if (role !== 'admin') throw new Error("Unauthorized")
 
     return getAdminEventsUseCase.execute(role, supabase)
 }

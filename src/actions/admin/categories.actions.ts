@@ -46,7 +46,7 @@ export async function createCategory(prevState: CategoryState, formData: FormDat
             .eq('id', user.id)
             .single()
 
-        if (profile?.role !== 'super_admin') {
+        if (profile?.role !== 'admin') {
             return { errors: { _form: ['Access denied. Only Super Admin can manage categories.'] }, success: false }
         }
 
@@ -110,7 +110,7 @@ export async function updateCategory(id: string, prevState: CategoryState, formD
             .eq('id', user.id)
             .single()
 
-        if (profile?.role !== 'super_admin') {
+        if (profile?.role !== 'admin') {
             return { errors: { _form: ['Access denied. Only Super Admin can manage categories.'] }, success: false }
         }
 
@@ -179,7 +179,7 @@ export async function deleteCategory(formData: FormData) {
             .eq('id', user.id)
             .single()
 
-        if (profile?.role !== 'super_admin') {
+        if (profile?.role !== 'admin') {
             console.error('Delete category error: Access denied')
             return
         }

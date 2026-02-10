@@ -15,7 +15,7 @@ export default async function NewEventPage() {
         .eq('id', user.id)
         .single()
 
-    if (profile?.role !== 'super_admin') return <div>Unauthorized</div>
+    if (profile?.role !== 'admin') return <div>Unauthorized</div>
 
     const places = await getAdminPlacesUseCase.execute(user.id, profile.role, {})
 

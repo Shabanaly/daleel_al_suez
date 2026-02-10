@@ -24,7 +24,7 @@ export function NotificationBell() {
     const getNotificationLink = (notification: Notification): string => {
         // If notification has place_slug, route based on user role
         if (notification.place_slug) {
-            if (userRole === 'admin' || userRole === 'super_admin') {
+            if (userRole === 'admin') {
                 return '/admin/places'
             }
             return `/places/${notification.place_slug}`

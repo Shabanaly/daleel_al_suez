@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 interface SupabaseProfile {
     id: string;
     email: string;
-    role: 'user' | 'admin' | 'super_admin';
+    role: 'user' | 'admin';
     full_name: string;
     avatar_url?: string;
     created_at: string;

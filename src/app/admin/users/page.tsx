@@ -15,8 +15,8 @@ export default async function UsersPage() {
         redirect('/login')
     }
 
-    // 2. Check permissions (Super Admin only)
-    if (currentUser.role !== 'super_admin') {
+    // 2. Check permissions (Admin only)
+    if (currentUser.role !== 'admin') {
         redirect('/admin')
     }
 

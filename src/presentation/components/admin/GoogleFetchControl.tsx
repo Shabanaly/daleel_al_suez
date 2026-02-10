@@ -42,20 +42,20 @@ export function GoogleFetchControl({ onDataFetched }: GoogleFetchControlProps) {
                     <Sparkles className="text-purple-400" size={20} />
                 </div>
                 <div>
-                    <h3 className="text-lg font-bold text-white">إضافة سريعة من جوجل مابس</h3>
-                    <p className="text-slate-400 text-sm">أدخل رابط المكان وسيتم ملء البيانات تلقائياً</p>
+                    <h3 className="text-lg font-bold text-foreground">إضافة سريعة من جوجل مابس</h3>
+                    <p className="text-muted-foreground text-sm">أدخل رابط المكان وسيتم ملء البيانات تلقائياً</p>
                 </div>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3">
                 <div className="relative flex-1">
-                    <Globe className="absolute right-3 top-3.5 text-slate-500 w-5 h-5" />
+                    <Globe className="absolute right-3 top-3.5 text-muted-foreground w-5 h-5" />
                     <input
                         type="url"
                         value={url}
                         onChange={(e) => setUrl(e.target.value)}
                         placeholder="https://maps.app.goo.gl/..."
-                        className="w-full pr-10 pl-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white outline-none focus:border-purple-500 transition-colors ltr:text-left"
+                        className="w-full pr-10 pl-4 py-3 bg-background border border-border rounded-xl text-foreground outline-none focus:border-purple-500 transition-colors ltr:text-left placeholder:text-muted-foreground/50"
                     />
                 </div>
                 <button

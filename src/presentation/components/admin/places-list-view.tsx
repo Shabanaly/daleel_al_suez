@@ -15,7 +15,7 @@ interface AdminPlacesListViewProps {
 }
 
 export function AdminPlacesListView({ places, categories, areas, users, currentUserRole }: AdminPlacesListViewProps) {
-    const isSuperAdmin = currentUserRole === 'super_admin'
+    const isAdmin = currentUserRole === 'admin'
 
     return (
         <div>
@@ -55,7 +55,7 @@ export function AdminPlacesListView({ places, categories, areas, users, currentU
             />
 
             {/* Places List with Expandable Details */}
-            <PlacesListClient places={places} isSuperAdmin={isSuperAdmin} />
+            <PlacesListClient places={places} isSuperAdmin={isAdmin} />
         </div>
     )
 }

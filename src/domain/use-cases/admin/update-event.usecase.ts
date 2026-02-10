@@ -10,8 +10,8 @@ export class UpdateEventUseCase {
         eventData: Partial<SuezEvent>,
         client?: unknown
     ): Promise<SuezEvent> {
-        if (role !== 'super_admin') {
-            throw new Error("Unauthorized: Only super_admin can update events.");
+        if (role !== 'admin') {
+            throw new Error("Unauthorized: Only admin can update events.");
         }
         return this.eventRepository.updateEvent(id, eventData, client);
     }

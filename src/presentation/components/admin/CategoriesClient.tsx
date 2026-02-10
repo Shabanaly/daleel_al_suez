@@ -18,7 +18,7 @@ export default function CategoriesClient({
     const [categories] = useState<Category[]>(initialCategories)
     const [searchQuery, setSearchQuery] = useState('')
 
-    const isSuperAdmin = currentUserRole === 'super_admin'
+    const isAdmin = currentUserRole === 'admin'
 
     const filteredCategories = categories.filter(cat =>
         cat.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -39,7 +39,7 @@ export default function CategoriesClient({
                             إدارة التصنيفات
                         </h1>
                         <p className="text-slate-400 text-sm mr-12">
-                            {isSuperAdmin ? 'أضف وقم بتعديل تصنيفات الأماكن' : 'عرض جميع تصنيفات الأماكن'}
+                            {isAdmin ? 'أضف وقم بتعديل تصنيفات الأماكن' : 'عرض جميع تصنيفات الأماكن'}
                         </p>
                     </div>
 
@@ -57,8 +57,8 @@ export default function CategoriesClient({
                             />
                         </div>
 
-                        {/* Add Button - Super Admin Only */}
-                        {isSuperAdmin && (
+                        {/* Add Button - Admin Only */}
+                        {isAdmin && (
                             <Link
                                 href="/admin/categories/new"
                                 className="bg-primary hover:brightness-110 text-primary-foreground px-4 py-2 rounded-xl font-medium flex items-center justify-center gap-2 transition-all whitespace-nowrap shadow-lg shadow-primary/20 hover:shadow-primary/30"
@@ -81,7 +81,7 @@ export default function CategoriesClient({
                                 <th className="px-6 py-4 font-semibold text-slate-400 text-sm">التصنيف</th>
                                 <th className="px-6 py-4 font-semibold text-slate-400 text-sm hidden md:table-cell">الاسم اللطيف (Slug)</th>
                                 <th className="px-6 py-4 font-semibold text-slate-400 text-sm hidden sm:table-cell">تاريخ الإضافة</th>
-                                {isSuperAdmin && (
+                                {isAdmin && (
                                     <th className="px-6 py-4 font-semibold text-slate-400 text-sm w-20">الإجراءات</th>
                                 )}
                             </tr>
@@ -114,7 +114,7 @@ export default function CategoriesClient({
                                         <td className="px-6 py-4 text-slate-500 text-sm hidden sm:table-cell">
                                             {cat.createdAt ? format(new Date(cat.createdAt), 'dd MMM yyyy') : '-'}
                                         </td>
-                                        {isSuperAdmin && (
+                                        {isAdmin && (
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-2">
                                                     <Link href={`/admin/categories/${cat.id}`}>
@@ -139,7 +139,7 @@ export default function CategoriesClient({
                                 )
                             }) : (
                                 <tr>
-                                    <td colSpan={isSuperAdmin ? 4 : 3} className="px-6 py-12 text-center text-slate-500">
+                                    <td colSpan={isAdmin ? 4 : 3} className="px-6 py-12 text-center text-slate-500">
                                         {searchQuery ? 'لا يوجد تصنيفات مطابقة للبحث' : 'لم يتم إضافة تصنيفات بعد'}
                                     </td>
                                 </tr>

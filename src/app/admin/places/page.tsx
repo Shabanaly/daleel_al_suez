@@ -25,13 +25,13 @@ export default async function AdminPlacesPage({
     // but the page logic was explicitly fetching role separately.
     // Our new GetCurrentUserUseCase returns role in the User object.
     const role = currentUser.role;
-    const isSuperAdmin = role === 'super_admin';
+    const isAdmin = role === 'admin';
 
     // 2. Fetch Filters Data (Parallel)
     const [categories, areas, users] = await Promise.all([
         getCategoriesUseCase.execute(),
         getAreasUseCase.execute(supabase), // Pass client if needed
-        isSuperAdmin ? supabase.from('profiles').select('id, full_name').then(res => res.data || []) : Promise.resolve([])
+        isAdmin ? supabase.from('profiles').select('id, full_name').then(res => res.data || []) : Promise.resolve([])
         // Note: We might want a GetUsersUseCase for the users list later, but for now we focus on fixing areas/current_user
     ])
 

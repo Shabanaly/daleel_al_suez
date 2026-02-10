@@ -17,7 +17,7 @@ export default async function EditEventPage({ params }: { params: Promise<{ id: 
         .eq('id', user.id)
         .single()
 
-    if (profile?.role !== 'super_admin') return <div>Unauthorized</div>
+    if (profile?.role !== 'admin') return <div>Unauthorized</div>
 
     // Fetch Event, Places
     const [event, places] = await Promise.all([

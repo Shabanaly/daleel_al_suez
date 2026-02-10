@@ -53,21 +53,21 @@ export async function markAsRead(id: string) {
     }
 }
 
-// Helper to notify all super admins
-export async function notifySuperAdmins(title: string, message: string, type: string = 'system', link?: string) {
+// Helper to notify all admins
+export async function notifyAdmins(title: string, message: string, type: string = 'system', link?: string) {
     try {
         const supabase = await createClient()
 
-        // 1. Get all super admins
-        const { data: superAdmins } = await supabase
+        // 1. Get all admins
+        const { data: admins } = await supabase
             .from('profiles')
             .select('id')
-            .eq('role', 'super_admin')
+            .eq('role', 'admin')
 
-        if (!superAdmins || superAdmins.length === 0) return
+        if (!admins || admins.length === 0) return
 
         // 2. Prepare notifications
-        const notifications = superAdmins.map(admin => ({
+        const notifications = admins.map(admin => ({
             user_id: admin.id,
             title,
             message,
@@ -83,7 +83,7 @@ export async function notifySuperAdmins(title: string, message: string, type: st
         if (error) throw error
         return { success: true }
     } catch (error) {
-        console.error("Failed to notify super admins:", error)
+        console.error("Failed to notify admins:", error)
         return { success: false, message: error instanceof Error ? error.message : "An unknown error occurred" }
     }
 }

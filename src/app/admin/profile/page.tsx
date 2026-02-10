@@ -32,8 +32,7 @@ export default async function AdminProfilePage() {
     })
 
     const roleLabels: Record<string, string> = {
-        'super_admin': 'مدير أعلى (Super Admin)',
-        'admin': 'مدير محتوى (Admin)',
+        'admin': 'مدير (Admin)',
         'user': 'مستخدم'
     }
 

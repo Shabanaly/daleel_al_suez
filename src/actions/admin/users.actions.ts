@@ -15,8 +15,8 @@ export async function updateUserRole(userId: string, newRole: string) {
     try {
         // 1. Check permissions (Super Admin only)
         const currentUser = await getCurrentUserUseCase.execute(supabase)
-        if (!currentUser || currentUser.role !== 'super_admin') {
-            return { success: false, error: 'Access denied. Only Super Admin can manage users.' }
+        if (!currentUser || currentUser.role !== 'admin') {
+            return { success: false, error: 'Access denied. Only Super Admin can manage users.' } // Update error message text if desired, or keep generic
         }
 
         // 2. Update role via Use Case
@@ -36,7 +36,7 @@ export async function getUserDetails(userId: string) {
     try {
         // 1. Check permissions (Super Admin only)
         const currentUser = await getCurrentUserUseCase.execute(supabase)
-        if (!currentUser || currentUser.role !== 'super_admin') {
+        if (!currentUser || currentUser.role !== 'admin') {
             throw new Error('Access denied. Only Super Admin can view user details.')
         }
 

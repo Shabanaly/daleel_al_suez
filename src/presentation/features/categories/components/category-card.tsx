@@ -44,7 +44,7 @@ export function CategoryCard({ category, placesCount = 0 }: CategoryCardProps) {
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <span className="font-semibold text-primary">{placesCount}</span>
                     <span>مكان</span>
-                    <ArrowLeft size={14} className="group-hover:translate-x-1 transition-transform" />
+                    <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
                 </div>
             </div>
 

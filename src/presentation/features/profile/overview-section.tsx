@@ -1,6 +1,6 @@
 'use client'
 
-import { User, Mail, Calendar, Heart, Star } from 'lucide-react'
+import { User, Mail, Calendar, Heart, Star, PlusCircle } from 'lucide-react'
 import Link from 'next/link'
 import { User as SupabaseUser } from '@supabase/supabase-js'
 
@@ -62,6 +62,19 @@ export function OverviewSection({ user, isAdmin }: OverviewSectionProps) {
                 <h3 className="text-lg font-bold">روابط سريعة</h3>
 
                 <div className="grid gap-3">
+                    <Link
+                        href="/places/new"
+                        className="flex items-center gap-3 p-4 bg-card hover:bg-accent border border-border rounded-xl transition-all group"
+                    >
+                        <div className="p-2 bg-green-500/10 text-green-500 rounded-lg">
+                            <PlusCircle size={20} className="fill-current" />
+                        </div>
+                        <div className="flex-1">
+                            <p className="font-bold text-foreground">أضف مكانك</p>
+                            <p className="text-sm text-muted-foreground">أضف نشاطك التجاري للدليل</p>
+                        </div>
+                    </Link>
+
                     <Link
                         href="/favorites"
                         className="flex items-center gap-3 p-4 bg-card hover:bg-accent border border-border rounded-xl transition-all group"

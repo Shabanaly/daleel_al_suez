@@ -19,8 +19,8 @@ export default async function NewCategoryPage() {
         .eq('id', user.id)
         .single()
 
-    // Redirect if not Super Admin
-    if (profile?.role !== 'super_admin') {
+    // Redirect if not Admin
+    if (profile?.role !== 'admin') {
         redirect('/admin/categories')
     }
 

@@ -138,7 +138,7 @@ export function ProfileContent() {
 
     if (!user) return null
 
-    const isAdmin = profile?.role === 'admin' || profile?.role === 'super_admin'
+    const isAdmin = profile?.role === 'admin'
     const isOAuthUser = user.app_metadata?.provider === 'google' || user.app_metadata?.provider === 'facebook'
 
     const tabs: (TabItem<TabType> & { component: React.ReactNode })[] = [

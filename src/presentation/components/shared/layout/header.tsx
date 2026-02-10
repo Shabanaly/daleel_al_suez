@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import Link from 'next/link'
-import { Menu, X, Search, User, Heart, Compass } from 'lucide-react'
+import { Menu, X, Search, User, Heart, Compass, PlusCircle } from 'lucide-react'
 import { ThemeToggle } from '../theme-toggle'
 import { NotificationBell } from '../notification-bell'
 import { createClient } from '@/lib/supabase/client'
@@ -83,6 +83,13 @@ export function Header({ settings }: { settings?: Record<string, unknown> }) {
 
                 {/* Desktop Actions */}
                 <div className="hidden md:flex items-center gap-4">
+                    <Link
+                        href="/places/new"
+                        className="flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 text-green-600 hover:bg-green-500/20 transition-colors text-sm font-medium border border-green-500/20"
+                    >
+                        <PlusCircle size={16} />
+                        <span>أضف مكانك</span>
+                    </Link>
                     <ThemeToggle />
                     {user && <NotificationBell />}
                     {user ? (
@@ -231,6 +238,14 @@ export function Header({ settings }: { settings?: Record<string, unknown> }) {
                                             <span>تسجيل الدخول</span>
                                         </Link>
                                     )}
+                                    <Link
+                                        href="/places/new"
+                                        className="flex items-center justify-center gap-2 bg-green-500 text-white px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-green-600 transition-colors shadow-sm mt-2 w-full"
+                                        onClick={() => setIsMenuOpen(false)}
+                                    >
+                                        <PlusCircle size={18} />
+                                        <span>أضف مكانك</span>
+                                    </Link>
                                 </div>
                             </div>
                         </div>

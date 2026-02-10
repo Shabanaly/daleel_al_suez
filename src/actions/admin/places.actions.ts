@@ -4,7 +4,7 @@ import { createPlaceUseCase, updatePlaceUseCase, deletePlaceUseCase } from "@/di
 import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 import { Place } from "@/domain/entities/place"
-import { sendNotification, notifySuperAdmins } from "./notifications.actions"
+import { sendNotification, notifyAdmins } from "./notifications.actions"
 
 // Define the state type expected by useActionState
 export type PlaceState = {
@@ -22,6 +22,10 @@ export async function createPlaceAction(data: Partial<Place>): Promise<PlaceStat
         if (!user) {
             return { message: "Unauthorized", success: false }
         }
+
+        // Sanitize Data (Convert empty strings to null/undefined for UUIDs)
+        if (data.areaId === '') delete data.areaId
+        if (data.categoryId === '') delete data.categoryId
 
         // Validate required fields (Basic manual validation)
         const errors: Record<string, string[]> = {}
@@ -47,8 +51,8 @@ export async function createPlaceAction(data: Partial<Place>): Promise<PlaceStat
             "system"
         )
 
-        // 2. Notify Super Admins
-        await notifySuperAdmins(
+        // 2. Notify Admins
+        await notifyAdmins(
             "مكان جديد بحاجة للمراجعة",
             `قام المستخدم بإضافة مكان جديد: "${place.name}".`,
             "place_approval",

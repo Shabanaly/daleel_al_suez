@@ -9,8 +9,8 @@ export class CreateEventUseCase {
         eventData: Omit<SuezEvent, 'id' | 'createdAt' | 'updatedAt' | 'placeName'>,
         client?: unknown
     ): Promise<SuezEvent> {
-        if (role !== 'super_admin') {
-            throw new Error("Unauthorized: Only super_admin can create events.");
+        if (role !== 'admin') {
+            throw new Error("Unauthorized: Only admin can create events.");
         }
         return this.eventRepository.createEvent(eventData, client);
     }

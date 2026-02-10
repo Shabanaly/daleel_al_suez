@@ -2,7 +2,7 @@
 
 import { PlusCircle } from 'lucide-react'
 import { useState } from 'react'
-import { notifySuperAdmins } from '@/actions/admin/notifications.actions'
+import { notifyAdmins } from '@/actions/admin/notifications.actions'
 
 export function RequestCategoryButton() {
     const [isLoading, setIsLoading] = useState(false)
@@ -18,7 +18,7 @@ export function RequestCategoryButton() {
             // but usually we can't call it directly if it's not marked 'use server' at function level or file level.
             // `src/actions/admin/notifications.actions.ts` has 'use server' at top. So it's fine.
 
-            await notifySuperAdmins(
+            await notifyAdmins(
                 "طلب إضافة تصنيف جديد",
                 `يرغب أحد الأدمن بإضافة تصنيف: "${name}"`,
                 "system"

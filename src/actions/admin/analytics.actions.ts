@@ -7,7 +7,7 @@ export interface DashboardStats {
     reviewsCount: number
     usersCount: number | null
     visitsCount: number // Placeholder
-    isSuperAdmin: boolean
+    isAdmin: boolean
 }
 
 export async function getDashboardStats(): Promise<{ success: boolean, data?: DashboardStats, message?: string }> {
@@ -26,12 +26,12 @@ export async function getDashboardStats(): Promise<{ success: boolean, data?: Da
             .eq('id', user.id)
             .single()
 
-        const isSuperAdmin = profile?.role === 'super_admin'
+        const isAdmin = profile?.role === 'admin'
 
         // 1. Places Count
         let placesQuery = supabase.from('places').select('*', { count: 'exact', head: true })
 
-        if (!isSuperAdmin) {
+        if (!isAdmin) {
             placesQuery = placesQuery.eq('created_by', user.id)
         }
 
@@ -40,12 +40,12 @@ export async function getDashboardStats(): Promise<{ success: boolean, data?: Da
 
         // 2. Reviews Count
         let reviewsCount = 0
-        if (isSuperAdmin) {
+        if (isAdmin) {
             const { count, error } = await supabase.from('reviews').select('*', { count: 'exact', head: true })
             if (error) throw error
             reviewsCount = count || 0
         } else {
-            // For regular admin, we need reviews on THEIR places
+            // For regular admin (or user), we need reviews on THEIR places
             // Approach: Get IDs of their places first, then count reviews
             // Or use a join if Supabase client supports deep filtering easily. 
             // For simplicity and correctness with RLS, let's try the join approach:
@@ -60,9 +60,9 @@ export async function getDashboardStats(): Promise<{ success: boolean, data?: Da
             reviewsCount = count || 0
         }
 
-        // 3. Users Count (Super Admin Only)
+        // 3. Users Count (Admin Only)
         let usersCount = null
-        if (isSuperAdmin) {
+        if (isAdmin) {
             const { count, error } = await supabase.from('profiles').select('*', { count: 'exact', head: true })
             if (error) throw error
             usersCount = count
@@ -88,7 +88,7 @@ export async function getDashboardStats(): Promise<{ success: boolean, data?: Da
                 reviewsCount: reviewsCount || 0,
                 usersCount: usersCount,
                 visitsCount: visitsCount,
-                isSuperAdmin
+                isAdmin
             }
         }
 

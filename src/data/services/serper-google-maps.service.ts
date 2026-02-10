@@ -1,5 +1,28 @@
 import { GooglePlaceDetails, IGooglePlacesService } from '@/domain/interfaces/google-places-service.interface';
 
+interface SerperPlace {
+    placeId?: string;
+    cid?: string;
+    fid?: string;
+    title?: string;
+    description?: string;
+    snippet?: string;
+    address?: string;
+    phoneNumber?: string;
+    website?: string;
+    rating?: number;
+    ratingCount?: number;
+    reviewCount?: number;
+    thumbnailUrl?: string;
+    types?: string[];
+    category?: string;
+    openingHours?: string[];
+}
+
+interface SerperImage {
+    imageUrl: string;
+}
+
 export class SerperGoogleMapsService implements IGooglePlacesService {
     private apiKey: string;
     private baseUrl = 'https://google.serper.dev/maps';
@@ -33,7 +56,7 @@ export class SerperGoogleMapsService implements IGooglePlacesService {
 
             // Add photos for each place in parallel to be efficient
             const entities = await Promise.all(
-                data.places.map(async (p: any) => {
+                data.places.map(async (p: SerperPlace) => {
                     // Use name + address to find more photos via images search
                     const query = `${p.title} ${p.address}`;
                     const extraPhotos = await this.fetchPhotos(query);
@@ -69,7 +92,7 @@ export class SerperGoogleMapsService implements IGooglePlacesService {
             if (!data.images || !Array.isArray(data.images)) return [];
 
             // Return top 5 images
-            return data.images.slice(0, 5).map((img: any) => img.imageUrl);
+            return data.images.slice(0, 5).map((img: SerperImage) => img.imageUrl);
         } catch (error) {
             console.error('Serper Photos Error:', error);
             return [];
@@ -83,11 +106,23 @@ export class SerperGoogleMapsService implements IGooglePlacesService {
     }
 
     async fetchPlaceByUrl(url: string): Promise<GooglePlaceDetails | null> {
-        // Serper doesn't support URL scraping. We can try to extract keywords from URL
-        // but it's unreliable. Since we are moving to Serper, this method might be 
-        // less used or we can try to extract a query from the URL.
-        const query = this.extractQueryFromUrl(url);
+        let finalUrl = url;
+
+        // 1. Resolve Short URLs (maps.app.goo.gl, goo.gl/maps)
+        if (url.includes('goo.gl') || url.includes('maps.app.goo.gl')) {
+            try {
+                const response = await fetch(url, { method: 'HEAD', redirect: 'follow' });
+                finalUrl = response.url;
+            } catch (error) {
+                console.error('Error resolving short URL:', error);
+                // Continue with original URL if fetch fails, though it likely won't work
+            }
+        }
+
+        // 2. Extract Query/ID from Final URL
+        const query = this.extractQueryFromUrl(finalUrl);
         if (!query) return null;
+
         return this.getPlaceDetails(query);
     }
 
@@ -95,7 +130,7 @@ export class SerperGoogleMapsService implements IGooglePlacesService {
         return photoReference;
     }
 
-    private mapToEntity(p: any, extraPhotos: string[] = []): GooglePlaceDetails {
+    private mapToEntity(p: SerperPlace, extraPhotos: string[] = []): GooglePlaceDetails {
         const allImages = [...extraPhotos];
         if (p.thumbnailUrl && !allImages.includes(p.thumbnailUrl)) {
             allImages.unshift(p.thumbnailUrl);
@@ -114,8 +149,16 @@ export class SerperGoogleMapsService implements IGooglePlacesService {
             googleTypes: p.types || (p.category ? [p.category] : []),
             googleMapsUrl: p.placeId
                 ? `https://www.google.com/maps/place/?q=place_id:${p.placeId}`
-                : `https://www.google.com/maps/place/?q=${encodeURIComponent(p.title + ' ' + p.address)}`,
-            openingHours: p.openingHours
+                : `https://www.google.com/maps/place/?q=${encodeURIComponent((p.title || '') + ' ' + (p.address || ''))}`,
+            openingHours: p.openingHours?.reduce((acc: Record<string, string>, curr: string) => {
+                const parts = curr.split(': ');
+                if (parts.length >= 2) {
+                    acc[parts[0]] = parts.slice(1).join(': ');
+                } else {
+                    acc['General'] = curr;
+                }
+                return acc;
+            }, {})
         };
     }
 

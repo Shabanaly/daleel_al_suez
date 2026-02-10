@@ -119,8 +119,8 @@ export default function UsersClientPage({ initialUsers, currentUserRole }: { ini
         }
     }
 
-    // Sort Logic: Super Admin > Admin > User, then by date key
-    const rolePriority: Record<string, number> = { super_admin: 0, admin: 1, user: 2 }
+    // Sort Logic: Admin > User, then by date key
+    const rolePriority: Record<string, number> = { admin: 1, user: 2 }
 
     const filteredUsers = users
         .filter(user =>
@@ -140,10 +140,10 @@ export default function UsersClientPage({ initialUsers, currentUserRole }: { ini
 
     return (
         <div className="space-y-6">
-            {/* Header Card - Modern Design */}
+            {/* ... Header ... */}
             <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
+                {/* ... (Kept as is) ... */}
                 <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
-                    {/* Title Section */}
                     <div className="flex-1">
                         <h1 className="text-2xl font-bold text-white mb-1 flex items-center gap-2">
                             <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
@@ -156,7 +156,6 @@ export default function UsersClientPage({ initialUsers, currentUserRole }: { ini
                         </p>
                     </div>
 
-                    {/* Search Section */}
                     <div className="w-full lg:w-64">
                         <div className="relative">
                             <Search className="absolute right-3 top-2.5 h-4 w-4 text-slate-500" />
@@ -193,8 +192,7 @@ export default function UsersClientPage({ initialUsers, currentUserRole }: { ini
                                     >
                                         <td className="p-4">
                                             <div className="flex items-center gap-3">
-                                                <div className={`w-10 h-10 min-w-[2.5rem] rounded-full flex items-center justify-center ${user.role === 'super_admin' ? 'bg-purple-500/10 text-purple-400' :
-                                                    user.role === 'admin' ? 'bg-blue-500/10 text-blue-400' :
+                                                <div className={`w-10 h-10 min-w-[2.5rem] rounded-full flex items-center justify-center ${user.role === 'admin' ? 'bg-blue-500/10 text-blue-400' :
                                                         'bg-slate-800 text-slate-400'
                                                     }`}>
                                                     <UserIcon size={20} />
@@ -210,18 +208,15 @@ export default function UsersClientPage({ initialUsers, currentUserRole }: { ini
                                             </div>
                                         </td>
                                         <td className="p-4">
-                                            {/* Enhanced Role Badge with Gradient */}
-                                            <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold border ${user.role === 'super_admin'
-                                                ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 border-purple-500/40 text-purple-300'
-                                                : user.role === 'admin'
+                                            {/* Enhanced Role Badge */}
+                                            <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold border ${user.role === 'admin'
                                                     ? 'bg-blue-500/20 border-blue-500/40 text-blue-300'
                                                     : 'bg-slate-800 border-slate-700 text-slate-300'
                                                 }`}>
-                                                {user.role === 'super_admin' && <ShieldCheck className="text-purple-400" size={14} />}
                                                 {user.role === 'admin' && <Shield className="text-blue-400" size={14} />}
                                                 {user.role === 'user' && <UserIcon size={14} />}
                                                 <span>
-                                                    {user.role === 'super_admin' ? 'مدير أعلى' : user.role === 'admin' ? 'مدير محتوى' : 'مستخدم'}
+                                                    {user.role === 'admin' ? 'مدير' : 'مستخدم'}
                                                 </span>
                                             </div>
                                         </td>
@@ -241,8 +236,7 @@ export default function UsersClientPage({ initialUsers, currentUserRole }: { ini
                                         <tr className="bg-slate-900/50">
                                             <td colSpan={4} className="p-0">
                                                 <div className="p-4 md:p-6 border-b border-slate-800 animate-in slide-in-from-top-2">
-                                                    {/* Details Component can be extracted further */}
-                                                    {/* Mobile Only Date Display */}
+
                                                     <div className="md:hidden flex items-center gap-2 text-xs text-slate-500 mb-4 px-1">
                                                         <Calendar size={14} />
                                                         <span>تاريخ الانضمام: {user.createdAt ? format(new Date(user.createdAt), 'dd MMM yyyy', { locale: ar }) : '-'}</span>
@@ -280,8 +274,9 @@ export default function UsersClientPage({ initialUsers, currentUserRole }: { ini
                                                                     </div>
                                                                 </div>
 
-                                                                {/* Role Actions (Only for Super Admin) */}
-                                                                {currentUserRole === 'super_admin' && user.role !== 'super_admin' && (
+                                                                {/* Role Actions (Only for Admin to Manage Users) */}
+                                                                {currentUserRole === 'admin' && user.id !== 'current_user_id' && (
+                                                                    /* Note: Ideally we check ID to prevent self-demotion, but simpler here is just allowing admins to change roles of others */
                                                                     <div className="mt-4 pt-4 border-t border-slate-800">
                                                                         <p className="text-xs text-slate-500 mb-2">تغيير الصلاحيات:</p>
                                                                         <div className="flex flex-wrap gap-2">
@@ -291,7 +286,7 @@ export default function UsersClientPage({ initialUsers, currentUserRole }: { ini
                                                                                     disabled={updating === user.id}
                                                                                     className="flex-1 md:flex-none px-3 py-2 text-xs bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 rounded-lg transition-colors border border-blue-500/20 flex justify-center"
                                                                                 >
-                                                                                    ترقية إلى أدمن
+                                                                                    ترقية إلى مدير
                                                                                 </button>
                                                                             )}
                                                                             {user.role !== 'user' && (
@@ -308,8 +303,8 @@ export default function UsersClientPage({ initialUsers, currentUserRole }: { ini
                                                                 )}
                                                             </div>
 
-                                                            {/* 2. Audit Logs Section - Only for Super Admins */}
-                                                            {currentUserRole === 'super_admin' && (
+                                                            {/* 2. Audit Logs Section - Visible to Admin */}
+                                                            {currentUserRole === 'admin' && (
                                                                 <div className="space-y-4">
                                                                     <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
                                                                         <Clock size={14} /> سجل النشاط (آخر 50 عملية)

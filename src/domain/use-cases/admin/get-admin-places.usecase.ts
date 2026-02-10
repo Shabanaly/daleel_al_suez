@@ -18,12 +18,12 @@ export class GetAdminPlacesUseCase {
         const queryFilters: Record<string, string | undefined> = { ...filters };
 
         // RBAC Logic:
-        // If NOT Super Admin, enforce 'userId' filter to be their own ID.
-        if (role !== 'super_admin') {
+        // If NOT Admin, enforce 'userId' filter to be their own ID.
+        if (role !== 'admin') {
             queryFilters.userId = userId;
-            delete queryFilters.creatorId; // Ignore creatorId if regular admin tries to send it
+            delete queryFilters.creatorId; // Ignore creatorId if regular user tries to send it
         } else {
-            // If Super Admin, use 'creatorId' as 'userId' filter if provided
+            // If Admin, use 'creatorId' as 'userId' filter if provided
             if (filters.creatorId) {
                 queryFilters.userId = filters.creatorId;
             }

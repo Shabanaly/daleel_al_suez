@@ -16,7 +16,7 @@ export default async function AdminEventsPage() {
         .single()
 
     const role = profile?.role || 'user'
-    if (role !== 'super_admin') return <div>Unauthorized</div>
+    if (role !== 'admin') return <div>Unauthorized</div>
 
     // Fetch Events and Places (for linking)
     const [events, places] = await Promise.all([

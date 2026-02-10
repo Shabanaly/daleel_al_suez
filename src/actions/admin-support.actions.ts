@@ -7,7 +7,7 @@ import { sendNotification } from '@/actions/admin/notifications.actions'
 export async function getAllTickets(filters?: { status?: string, priority?: string }) {
     const supabase = await createClient()
 
-    // Check if user is super_admin
+    // Check if user is admin
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) throw new Error('Unauthorized')
 
@@ -17,8 +17,8 @@ export async function getAllTickets(filters?: { status?: string, priority?: stri
         .eq('id', user.id)
         .single()
 
-    if (profile?.role !== 'super_admin') {
-        throw new Error('Access denied. Super Admin only.')
+    if (profile?.role !== 'admin') {
+        throw new Error('Access denied. Admin only.')
     }
 
     let query = supabase
@@ -90,7 +90,7 @@ export async function replyAsAdmin(ticketId: string, message: string) {
         .eq('id', user.id)
         .single()
 
-    if (!profile || (profile.role !== 'admin' && profile.role !== 'super_admin')) {
+    if (!profile || profile.role !== 'admin') {
         throw new Error('Access denied. Admins only.')
     }
 

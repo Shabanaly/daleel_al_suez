@@ -28,7 +28,7 @@ export default async function AdminLayout({
     const userRole = profile?.role || 'user'
 
     // Block non-admins
-    if (userRole !== 'admin' && userRole !== 'super_admin') {
+    if (userRole !== 'admin') {
         redirect('/') // Or a custom 403 page
     }
 

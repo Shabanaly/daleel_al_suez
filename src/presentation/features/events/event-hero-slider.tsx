@@ -160,13 +160,13 @@ export function EventHeroSlider({ events }: EventHeroSliderProps) {
                     onClick={() => emblaApi?.scrollPrev()}
                     className="p-4 rounded-full bg-slate-900/40 hover:bg-slate-900/60 text-white backdrop-blur-md transition-all border border-white/20 pointer-events-auto hover:scale-110 active:scale-95"
                 >
-                    <ArrowLeft size={28} />
+                    <ArrowRight size={28} />
                 </button>
                 <button
                     onClick={() => emblaApi?.scrollNext()}
                     className="p-4 rounded-full bg-slate-900/40 hover:bg-slate-900/60 text-white backdrop-blur-md transition-all border border-white/20 pointer-events-auto hover:scale-110 active:scale-95"
                 >
-                    <ArrowRight size={28} />
+                    <ArrowLeft size={28} />
                 </button>
             </div>
         </section>

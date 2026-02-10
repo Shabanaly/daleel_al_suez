@@ -22,7 +22,7 @@ export default async function SettingsLayout({
 
     const role = profile?.role
 
-    if (role !== 'super_admin') {
+    if (role !== 'admin') {
         redirect('/admin')
     }
 
